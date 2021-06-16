@@ -1,0 +1,49 @@
+{
+  "name": "ccn-game-explorer",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "lint:js": "eslint --ext \".js,.vue\" --ignore-path .gitignore .",
+    "lint": "yarn lint:js"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.3.20",
+    "@nuxtjs/apollo": "^4.0.1-rc.5",
+    "@nuxtjs/axios": "^5.13.6",
+    "@nuxtjs/dotenv": "^1.4.1",
+    "@nuxtjs/pwa": "^3.3.5",
+    "apollo-client": "^2.6.10",
+    "apollo-link": "^1.2.14",
+    "apollo-link-context": "^1.0.20",
+    "apollo-link-http": "^1.5.17",
+    "bootstrap": "^4.6.0",
+    "bootstrap-vue": "^2.21.2",
+    "core-js": "^3.9.1",
+    "eslint-plugin-promise": "^5.1.0",
+    "graphql": "^15.5.0",
+    "graphql-tag": "^2.12.4",
+    "nuxt": "^2.15.3",
+    "tb-skeleton": "^0.3.6",
+    "vue-apollo": "^3.0.7",
+    "vue-i18n": "^8.24.4",
+    "vue-loading-skeleton": "^1.1.9",
+    "vuex-easy-access": "^3.1.8"
+  },
+  "devDependencies": {
+    "@nuxtjs/eslint-config": "^6.0.0",
+    "@nuxtjs/eslint-module": "^3.0.2",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.22.0",
+    "eslint-plugin-nuxt": "^2.0.0",
+    "eslint-plugin-vue": "^7.7.0",
+    "fibers": "^5.0.0",
+    "pug": "^3.0.2",
+    "pug-plain-loader": "^1.1.0",
+    "sass": "^1.35.0",
+    "sass-loader": "10"
+  }
+}

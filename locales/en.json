@@ -1,0 +1,17 @@
+{
+  "menu": {
+    "block": "Blocks",
+    "validator": "Validators"
+  },
+  "text": {
+    "view_all": "View all",
+    "block": {
+      "height": "Height",
+      "transaction": "Transaction",
+      "bonded_tokens": "Bonded Tokens",
+      "inflation": "Inflation",
+      "year": "Year",
+      "total": "Total"
+    }
+  }
+}
