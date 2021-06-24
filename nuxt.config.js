@@ -29,7 +29,8 @@ module.exports = {
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     '~/static/assets/vendor/font-awesome/css/font-awesome.min.css',
-    '~/static/assets/css/app.css'
+    '~/static/assets/css/app.css',
+    '~/static/custom/css/_for_element.css'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
@@ -40,6 +41,7 @@ module.exports = {
       ssr: false
     },
     '~/plugins/skeleton.js',
+    '~/plugins/pagination2.js',
     '~/plugins/tbskeleton.js'
   ],
 

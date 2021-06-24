@@ -57,8 +57,8 @@
                 </h3>
               </div>
               <div class="cos-table-list">
-                <div class="table-responsive">
-                  <table v-if="blocks" class="table table-striped table-bordered table-hover text-center">
+                <div class="table-responsives">
+                  <table v-if="blocks" class="table table-striped table-bordered table-hover text-center table-home-block">
                     <thead>
                       <tr>
                         <th>Height</th>
@@ -79,12 +79,16 @@
                           </nuxt-link>
                         </td>
                         <td class="text-left">
-                          <nuxt-link class="box btn1" :to="'/validators/'+block.operator_address">
+                          <nuxt-link class="" :to="'/validators/'+block.operator_address">
                             {{ block.moniker }}
                           </nuxt-link>
                         </td>
-                        <td>{{ block.num_txs }}</td>
+                        <td>
+                          <span class="title">Txs</span>
+                          {{ block.num_txs }}
+                        </td>
                         <td class="text-left">
+                          <span class="title">Time</span>
                           <p class="cos-note">
                             {{ block.time | getTime }}
                           </p>
@@ -141,9 +145,11 @@
                           <a class="box btn2" href="#">Get Reward</a>
                         </td>
                         <td class="text-left">
+                          <span class="title">Height</span>
                           <span class="box btn1">{{ tx.height }}</span>
                         </td>
                         <td class="text-left">
+                          <span class="title">Time</span>
                           <p class="cos-note">
                             {{ tx.timestamp | getTime }}
                           </p>
@@ -173,7 +179,7 @@ import helper from '@/utils/helper'
 export default {
   filters: {
     formatTxHash (value) {
-      return value.substr(0, 6) + '...' + value.substr(value.length - 7, value.length - 1)
+      return helper.formatHash(value, 6, 6)
     },
     formatNumber (value) {
       return helper.formatNumber(value)

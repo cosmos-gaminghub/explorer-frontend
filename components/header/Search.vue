@@ -46,11 +46,11 @@ export default {
         this.textSearchButton = ''
         this.errorSearch = true
         /** check regex: account, validator, block, tx */
-        if (/^(cosmosvaloper)[a-zA-Z0-9]{6,}$/.test(value)) {
+        if (/^(cosmosvaloper)[a-zA-Z0-9]{39}$/.test(value)) {
           this.textSearchButton = 'Search validator'
           this.linkToSearch = '/validators/' + value
           this.errorSearch = false
-        } else if (/^(cosmos)[a-zA-Z0-9]{6,}$/.test(value)) {
+        } else if (/^(cosmos)[a-zA-Z0-9]{39}$/.test(value)) {
           this.textSearchButton = 'Search Account'
           this.linkToSearch = '/proposals/' + value
           this.errorSearch = false

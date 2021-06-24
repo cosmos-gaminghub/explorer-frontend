@@ -1,21 +1,12 @@
+import helper from '~/utils/helper'
+
 const mutations = {
   SET_STATUS_INFO (state, data) {
-    data.bonded_token_percent = 0
-    data.total_supply = 0
     state.bondedTokens = data.bonded_tokens
-    if (data && data.total_supply_tokens && data.total_supply_tokens.supply) {
-      let totalSupplyTokens = 0
-      let item
-      for (let i = 0; i < data.total_supply_tokens.supply.length; i++) {
-        item = data.total_supply_tokens.supply[i]
-        totalSupplyTokens += parseInt(item.amount)
-      }
 
-      if (totalSupplyTokens) {
-        data.bonded_token_percent = parseInt((data.bonded_tokens / totalSupplyTokens) * 10000) / 100
-      }
-      data.total_supply = totalSupplyTokens
-    }
+    data.total_supply = 0
+    data.total_supply = helper.totalSupplyTokens(data)
+    data.bonded_token_percent = data.total_supply ? ((data.bonded_tokens / data.total_supply) * 100).toFixed(2) : 0
 
     state.info = data
     state.loaded = true

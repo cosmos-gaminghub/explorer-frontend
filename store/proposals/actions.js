@@ -15,7 +15,7 @@ const actions = {
         }).catch((error) => {
           reject(error)
         })
-      }, 1000)
+      }, process.env.REAL_TIME_DELAY_MS)
     })
   }
 }

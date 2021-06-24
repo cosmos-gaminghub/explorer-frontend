@@ -1,41 +1,41 @@
+import helper from '~/utils/helper'
+
 const mutations = {
   SET_VALIDATORS (state, data) {
-    let totalVotingPower = 0
+    state.validators.origin = data
 
     for (let i = 0; i < data.length; i++) {
-      if (data[i].voting_power) {
-        totalVotingPower += parseFloat(data[i].voting_power)
-      }
-    }
-
-    for (let i = 0; i < data.length; i++) {
-      data[i].cumulative_share = -1
+      data[i].index = i
       data[i].uptime = 100 - data[i].uptime
 
-      if (data[i].voting_power) {
-        data[i].percent_voting_power = parseFloat(data[i].voting_power) / totalVotingPower
-      } else {
-        data[i].percent_voting_power = 0
-      }
-
-      if (i <= 125) {
+      if (helper.isActiveValidator(data[i])) {
         state.validators.active.push(data[i])
       } else {
         state.validators.inactive.push(data[i])
       }
     }
+    state.loaded = true
   },
   SET_CUMULATIVE_SHARE (state, data) {
-    for (let i = 0; i < state.validators.active.length; i++) {
-      if (state.validators.active[i].voting_power) {
-        state.validators.active[i].cumulative_share = parseFloat(state.validators.active[i].voting_power) / data
-      }
+    state.tokens = data
+    state.calculatedCumulativeShare = true
+  },
+  SET_VALIDATOR (state, data) {
+    state.loaded = true
+    state.validator = data
+  },
+  SET_EMPTY_VALIDATORS (state) {
+    state.validators = {
+      active: [],
+      inactive: [],
+      origin: []
     }
-    for (let i = 0; i < state.validators.inactive.length; i++) {
-      if (state.validators.inactive[i].voting_power) {
-        state.validators.inactive[i].cumulative_share = parseFloat(state.validators.inactive[i].voting_power) / data
-      }
-    }
+    state.tokens = 0
+    state.calculatedCumulativeShare = false
+    state.loaded = false
+  },
+  SET_EMPTY_VALIDATOR (state) {
+    state.validator = {}
   }
 }
 

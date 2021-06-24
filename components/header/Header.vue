@@ -22,7 +22,7 @@
         {{ info.bonded_token_percent }}%
       </div>
       <div class="sub-title">
-        {{ Math.round(info.bonded_tokens / 1000000000000) }} M / {{ Math.round(info.total_supply / 1000000000000) }} M
+        {{ Math.round(info.bonded_tokens / Math.pow(10, 12)) }} M / {{ Math.round(info.total_supply / Math.pow(10, 12)) }} M
       </div>
     </div>
     <div class="status-items">
@@ -48,7 +48,7 @@ export default {
       return helper.formatNumber(value)
     },
     getInflation (value) {
-      return parseInt(value * 10000) / 100
+      return (value * 100).toFixed(2)
     }
   },
   computed: {

@@ -17,28 +17,50 @@
             <div class="validator-search md-full mdb_10 fl_right">
               <div class="valida-search">
                 <div class="input-search">
-                  <input class="form-control" type="text" placeholder="Search Validators"><i class="fa fa-search" aria-hidden="true" />
+                  <input v-model="searchValidatorMoniker" class="form-control" type="text" placeholder="Search Validators">
+                  <i class="fa fa-search" aria-hidden="true" />
                 </div>
               </div>
 
               <div class="valida-button">
-                <button class="btn btn-default active" type="button" data-dismiss="modal">
+                <button :class="'btn btn-default' + (tab ? ' active' : '')" type="button" data-dismiss="modal" @click="changeTab(1)">
                   Active
                 </button>
-                <button class="btn btn-default" type="button" data-dismiss="modal">
+                <button :class="'btn btn-default' + (!tab ? ' active' : '')" type="button" data-dismiss="modal" @click="changeTab(0)">
                   Inactive
                 </button>
               </div>
             </div>
             <div class="cos-table-list md-full">
               <div class="table-responsive">
-                <table-el :validators="validators.active" :type="'active'"></table-el>
-                <table-el :validators="validators.inactive" :type="'inactive'"></table-el>
+                <table-el
+                  v-show="tab"
+                  :loaded="loaded"
+                  :origin="validators.origin"
+                  :validators="validators.active"
+                  :search="searchValidatorMoniker"
+                  :type="'active'"
+                  :calculated="calculatedCumulativeShare"
+                  :token="tokens"
+                />
+                <table-el
+                  v-show="!tab"
+                  :loaded="loaded"
+                  :origin="validators.origin"
+                  :validators="validators.inactive"
+                  :search="searchValidatorMoniker"
+                  :type="'inactive'"
+                  :calculated="calculatedCumulativeShare"
+                  :token="tokens"
+                />
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
+    <div class="back-top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
     </div>
   </div>
 </template>
@@ -47,6 +69,9 @@
 import { mapActions, mapState, mapMutations } from 'vuex'
 import headerData from '@/components/header/Header.vue'
 import tableEl from '@/components/elements/validator.vue'
+
+import Vue from 'vue'
+export const eventBus = new Vue()
 
 export default {
   components: {
@@ -57,14 +82,21 @@ export default {
   },
   data () {
     return {
-      tab: 1
+      tab: 1,
+      searchValidatorMoniker: ''
     }
   },
   computed: {
-    ...mapState('validators', ['validators']),
+    ...mapState('validators', ['validators', 'tokens', 'calculatedCumulativeShare', 'loaded']),
     ...mapState('network', ['info', 'bondedTokens'])
   },
+  watch: {
+    searchValidatorMoniker (val) {
+      eventBus.$emit('search', val)
+    }
+  },
   mounted () {
+    this.$store.commit('validators/SET_EMPTY_VALIDATORS')
     this.getValidators()
     if (this.info) {
       this.cumulativeShare(this.bondedTokens)
@@ -81,7 +113,10 @@ export default {
     }),
     ...mapMutations({
       cumulativeShare: 'validators/SET_CUMULATIVE_SHARE'
-    })
+    }),
+    changeTab (status) {
+      this.tab = status
+    }
   }
 }
 </script>
