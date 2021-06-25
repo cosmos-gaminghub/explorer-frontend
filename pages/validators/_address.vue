@@ -1,6 +1,7 @@
 <template>
   <div class="main-body-content">
-    <div class="cos-notice custom-page-title cos-validator-detail">
+    <not-found v-if="notFound" :obj-name="'Validator'" />
+    <div v-else class="cos-notice custom-page-title cos-validator-detail">
       <div class="row">
         <div class="col-lg-4 col-md-12 col-sm-12">
           <h2 class="page-title">
@@ -362,6 +363,7 @@
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex'
 import headerData from '@/components/header/Header.vue'
+import NotFound from '@/components/error/NotFound.vue'
 import helper from '~/utils/helper'
 
 export default {
@@ -413,7 +415,7 @@ export default {
     }
   },
   components: {
-    headerData
+    headerData, NotFound
   },
   header: {
     title: 'Validator'
@@ -440,7 +442,8 @@ export default {
           totalRecords: 25,
           totalPage: 5
         }
-      }
+      },
+      notFound: false
     }
   },
   computed: {
@@ -553,8 +556,9 @@ export default {
         this.getLastBlocks({
           operator_address: validator.operator_address
         })
+        this.notFound = false
       }).catch(() => {
-        this.$router.push('/validators')
+        this.notFound = true
       })
       /** get last 100 Blocks */
       this.getProposedBlocks({

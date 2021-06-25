@@ -2,7 +2,8 @@ import actions from './actions'
 import mutations from './mutations'
 
 export const state = () => ({
-  transactions: []
+  transactions: [],
+  tx_detail: {}
 })
 
 export default {

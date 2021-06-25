@@ -21,8 +21,8 @@ module.exports = {
     ],
     script: [
       { src: '/assets/js/jquery-3.3.1.min.js' },
-      { src: '/assets/vendor/bootstrap/js/bootstrap.min.js' },
-      { src: '/assets/vendor/owl/js/owl.carousel.min.js' }
+      { src: '/assets/vendor/bootstrap/js/bootstrap.min.js' }
+      // { src: '/assets/vendor/owl/js/owl.carousel.min.js' }
     ]
   },
 

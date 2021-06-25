@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col-lg-4 col-md-12 col-sm-12">
           <h2 class="page-title">
-            Blocks
+            Transactions
           </h2>
         </div>
         <div class="col-lg-8 col-md-12 col-sm-12">
@@ -32,188 +32,41 @@
                           <th>Time</th>
                         </tr>
                       </thead>
-                      <tbody>
-                        <tr>
-                          <td><a class="box btn1" href="transaction-detail.html">D457E2…B6C5C7</a></td>
-                          <td><a class="box btn2" href="transaction-detail.html">Get Reward</a></td>
-                          <td class="green">
-                            Success
+                      <tbody v-if="loaded">
+                        <tr v-for="tx in transactions" :key="tx.tx_hash">
+                          <td>
+                            <nuxt-link class="box btn1" :to="'/transactions/' + tx.tx_hash">
+                              {{ tx.tx_hash | formatHash }}
+                            </nuxt-link>
                           </td>
-                          <td>0.0001 ATOM</td>
+                          <td><span class="box btn2">{{ tx.messages | getTypeTx }}</span></td>
+                          <td :class="tx.status ? 'green' : 'red'">
+                            {{ tx.status ? 'Success' : 'Failed' }}
+                          </td>
+                          <td v-if="tx.total_amount != null">
+                            {{ tx.total_amount | formatAmount }} ATOM
+                          </td>
+                          <td v-else>
+                            <nuxt-link :to="'/transactions/'+tx.tx_hash">
+                              More
+                            </nuxt-link>
+                          </td>
                           <td class="text-center">
-                            0.000001 ATOM
+                            {{ tx.fee | getFeeTx }} ATOM
                           </td>
-                          <td><a class="box btn1" href="#">63081012</a></td>
-                          <td>2s ago</td>
+                          <td>
+                            <nuxt-link class="box btn1" :to="'/blocks/' + tx.height">
+                              {{ tx.height }}
+                            </nuxt-link>
+                          </td>
+                          <td>{{ tx.timestamp | getTime }} ago</td>
                         </tr>
-                        <tr>
-                          <td><a class="box btn1" href="#">D457E2…B6C5C7</a></td>
-                          <td><a class="box btn2" href="#">Get Reward</a></td>
-                          <td class="green">
-                            Success
+                      </tbody>
+                      <tbody v-else>
+                        <tr v-for="i in 5" :key="i">
+                          <td colspan="7">
+                            <Skeleton />
                           </td>
-                          <td>0.0001 ATOM</td>
-                          <td class="text-center">
-                            0.000001 ATOM
-                          </td>
-                          <td><a class="box btn1" href="#">63081012</a></td>
-                          <td>2s ago</td>
-                        </tr>
-                        <tr>
-                          <td><a class="box btn1" href="#">D457E2…B6C5C7</a></td>
-                          <td><a class="box btn2" href="#">Get Reward</a></td>
-                          <td class="green">
-                            Success
-                          </td>
-                          <td>0.0001 ATOM</td>
-                          <td class="text-center">
-                            0.000001 ATOM
-                          </td>
-                          <td><a class="box btn1" href="#">63081012</a></td>
-                          <td>2s ago</td>
-                        </tr>
-                        <tr>
-                          <td><a class="box btn1" href="#">D457E2…B6C5C7</a></td>
-                          <td><a class="box btn2" href="#">Get Reward</a></td>
-                          <td class="green">
-                            Success
-                          </td>
-                          <td>0.0001 ATOM</td>
-                          <td class="text-center">
-                            0.000001 ATOM
-                          </td>
-                          <td><a class="box btn1" href="#">63081012</a></td>
-                          <td>2s ago</td>
-                        </tr>
-                        <tr>
-                          <td><a class="box btn1" href="#">D457E2…B6C5C7</a></td>
-                          <td><a class="box btn2" href="#">Get Reward</a></td>
-                          <td class="green">
-                            Success
-                          </td>
-                          <td>0.0001 ATOM</td>
-                          <td class="text-center">
-                            0.000001 ATOM
-                          </td>
-                          <td><a class="box btn1" href="#">63081012</a></td>
-                          <td>2s ago</td>
-                        </tr>
-                        <tr>
-                          <td><a class="box btn1" href="#">D457E2…B6C5C7</a></td>
-                          <td><a class="box btn2" href="#">Get Reward</a></td>
-                          <td class="green">
-                            Success
-                          </td>
-                          <td>0.0001 ATOM</td>
-                          <td class="text-center">
-                            0.000001 ATOM
-                          </td>
-                          <td><a class="box btn1" href="#">63081012</a></td>
-                          <td>2s ago</td>
-                        </tr>
-                        <tr>
-                          <td><a class="box btn1" href="#">D457E2…B6C5C7</a></td>
-                          <td><a class="box btn2" href="#">Get Reward</a></td>
-                          <td class="green">
-                            Success
-                          </td>
-                          <td>0.0001 ATOM</td>
-                          <td class="text-center">
-                            0.000001 ATOM
-                          </td>
-                          <td><a class="box btn1" href="#">63081012</a></td>
-                          <td>2s ago</td>
-                        </tr>
-                        <tr>
-                          <td><a class="box btn1" href="#">D457E2…B6C5C7</a></td>
-                          <td><a class="box btn2" href="#">Get Reward</a></td>
-                          <td class="green">
-                            Success
-                          </td>
-                          <td>0.0001 ATOM</td>
-                          <td class="text-center">
-                            0.000001 ATOM
-                          </td>
-                          <td><a class="box btn1" href="#">63081012</a></td>
-                          <td>2s ago</td>
-                        </tr>
-                        <tr>
-                          <td><a class="box btn1" href="#">D457E2…B6C5C7</a></td>
-                          <td><a class="box btn2" href="#">Get Reward</a></td>
-                          <td class="green">
-                            Success
-                          </td>
-                          <td>0.0001 ATOM</td>
-                          <td class="text-center">
-                            0.000001 ATOM
-                          </td>
-                          <td><a class="box btn1" href="#">63081012</a></td>
-                          <td>2s ago</td>
-                        </tr>
-                        <tr>
-                          <td><a class="box btn1" href="#">D457E2…B6C5C7</a></td>
-                          <td><a class="box btn2" href="#">Get Reward</a></td>
-                          <td class="green">
-                            Success
-                          </td>
-                          <td>0.0001 ATOM</td>
-                          <td class="text-center">
-                            0.000001 ATOM
-                          </td>
-                          <td><a class="box btn1" href="#">63081012</a></td>
-                          <td>2s ago</td>
-                        </tr>
-                        <tr>
-                          <td><a class="box btn1" href="#">D457E2…B6C5C7</a></td>
-                          <td><a class="box btn2" href="#">Get Reward</a></td>
-                          <td class="green">
-                            Success
-                          </td>
-                          <td>0.0001 ATOM</td>
-                          <td class="text-center">
-                            0.000001 ATOM
-                          </td>
-                          <td><a class="box btn1" href="#">63081012</a></td>
-                          <td>2s ago</td>
-                        </tr>
-                        <tr>
-                          <td><a class="box btn1" href="#">D457E2…B6C5C7</a></td>
-                          <td><a class="box btn2" href="#">Get Reward</a></td>
-                          <td class="green">
-                            Success
-                          </td>
-                          <td>0.0001 ATOM</td>
-                          <td class="text-center">
-                            0.000001 ATOM
-                          </td>
-                          <td><a class="box btn1" href="#">63081012</a></td>
-                          <td>2s ago</td>
-                        </tr>
-                        <tr>
-                          <td><a class="box btn1" href="#">D457E2…B6C5C7</a></td>
-                          <td><a class="box btn2" href="#">Get Reward</a></td>
-                          <td class="green">
-                            Success
-                          </td>
-                          <td>0.0001 ATOM</td>
-                          <td class="text-center">
-                            0.000001 ATOM
-                          </td>
-                          <td><a class="box btn1" href="#">63081012</a></td>
-                          <td>2s ago</td>
-                        </tr>
-                        <tr>
-                          <td><a class="box btn1" href="#">D457E2…B6C5C7</a></td>
-                          <td><a class="box btn2" href="#">Get Reward</a></td>
-                          <td class="green">
-                            Success
-                          </td>
-                          <td>0.0001 ATOM</td>
-                          <td class="text-center">
-                            0.000001 ATOM
-                          </td>
-                          <td><a class="box btn1" href="#">63081012</a></td>
-                          <td>2s ago</td>
                         </tr>
                       </tbody>
                     </table>
@@ -228,11 +81,51 @@
   </div>
 </template>
 <script>
+import { mapState, mapActions } from 'vuex'
 import headerData from '@/components/header/Header.vue'
+import helper from '~/utils/helper'
 
 export default {
+  filters: {
+    formatHash (value) {
+      return helper.formatHash(value, 6, 6)
+    },
+    getTypeTx (value) {
+      return helper.getTypeTx(value)
+    },
+    getFeeTx (value) {
+      const totalAmount = helper.getFeeTx(value)
+      return (totalAmount / Math.pow(10, 6)).toFixed(6)
+    },
+    formatAmount (value) {
+      return (value / Math.pow(10, 6)).toFixed(6)
+    },
+    getTime (value) {
+      return helper.formatTime(value)
+    }
+  },
   components: {
     headerData
+  },
+  data () {
+    return {
+      loaded: false
+    }
+  },
+  computed: {
+    ...mapState('transactions', ['transactions'])
+  },
+  mounted () {
+    this.getTxs({
+      size: 20
+    }).then(() => {
+      this.loaded = true
+    })
+  },
+  methods: {
+    ...mapActions({
+      getTxs: 'transactions/GET_DATA'
+    })
   }
 }
 </script>

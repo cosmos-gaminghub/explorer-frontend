@@ -2,17 +2,17 @@
 var resizeId;
 
 $(document).ready(function($) {
-	$(".owl-carousel").owlCarousel({
-	    loop:true,
-	    margin:10,
-	    autoplay:true,
-	    autoplayTimeout:3000,
-	    autoplayHoverPause:true,
-	    nav:true,
-	    dots:false,
-	    items:1,
-	    navText : ['<i class="fa fa-arrow-left" aria-hidden="true"></i>','<i class="fa fa-arrow-right" aria-hidden="true"></i>']
-	})
+	// $(".owl-carousel").owlCarousel({
+	//     loop:true,
+	//     margin:10,
+	//     autoplay:true,
+	//     autoplayTimeout:3000,
+	//     autoplayHoverPause:true,
+	//     nav:true,
+	//     dots:false,
+	//     items:1,
+	//     navText : ['<i class="fa fa-arrow-left" aria-hidden="true"></i>','<i class="fa fa-arrow-right" aria-hidden="true"></i>']
+	// })
 
 	$(document).ready(function() {
 		$('.mobi-overlay').on('click', function() {

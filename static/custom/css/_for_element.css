@@ -73,3 +73,6 @@
     font-weight: 500;
     line-height: 1.21;
 }
+.list-owl-block.owl-carousel.owl-theme {
+    display: block !important;
+}

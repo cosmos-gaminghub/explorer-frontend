@@ -1,21 +1,61 @@
 import api from '@/utils/api'
+let blockInterval = {}
+let uptimesInterval = {}
 
 const actions = {
   // eslint-disable-next-line require-await
   async GET_DATA ({ commit }, params) {
     return new Promise((resolve, reject) => {
+      clearInterval(blockInterval)
       const client = this.app.apolloProvider.defaultClient
-      setInterval(() => {
+      blockInterval = setInterval(() => {
         client.cache.data.clear()
         client.query({
           query: api.GET_BLOCKS_QUERY,
           variables: params
         }).then((response) => {
           commit('SET_BLOCKS', response.data.blocks)
+          resolve()
         }).catch((error) => {
           reject(error)
         })
       }, process.env.REAL_TIME_DELAY_MS)
+    })
+  },
+  // eslint-disable-next-line require-await
+  async GET_BLOCK_DETAIL ({ commit }, params) {
+    return new Promise((resolve, reject) => {
+      const client = this.app.apolloProvider.defaultClient
+      client.cache.data.clear()
+      client.query({
+        query: api.GET_BLOCK_DETAIL,
+        variables: params
+      }).then((response) => {
+        if (!response.data.block_detail.height) {
+          reject(response)
+        } else {
+          commit('SET_BLOCK_DETAIL', response.data.block_detail)
+          resolve()
+        }
+      }).catch((error) => {
+        reject(error)
+      })
+    })
+  },
+  // eslint-disable-next-line require-await
+  async GET_BLOCK_TXS ({ commit }, params) {
+    return new Promise((resolve, reject) => {
+      const client = this.app.apolloProvider.defaultClient
+      client.cache.data.clear()
+      client.query({
+        query: api.GET_BLOCK_TXS,
+        variables: params
+      }).then((response) => {
+        commit('SET_BLOCK_TXS', response.data.block_txs)
+        resolve()
+      }).catch((error) => {
+        reject(error)
+      })
     })
   },
   // eslint-disable-next-line require-await
@@ -41,7 +81,8 @@ const actions = {
   // eslint-disable-next-line require-await
   async GET_UPTIMES ({ commit }, params) {
     return new Promise((resolve, reject) => {
-      setInterval(() => {
+      clearInterval(uptimesInterval)
+      uptimesInterval = setInterval(() => {
         const client = this.app.apolloProvider.defaultClient
         client.cache.data.clear()
         client.query({

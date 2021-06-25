@@ -48,6 +48,34 @@ const api = {
         operator_address
       }
     }`,
+  GET_BLOCK_DETAIL: gql`
+    query GET_BLOCK_DETAIL ($height: Int!) {
+      block_detail (height: $height) {
+        height,
+        hash,
+        proposer_addr,
+        num_txs,
+        time,
+        moniker,
+        operator_address,
+        total_records,
+      }
+    }`,
+  GET_BLOCK_TXS: gql`
+    query GET_BLOCK_TXS ($height: Int!) {
+      block_txs (height:$height) {
+        tx_hash,
+        status,
+        fee,
+        height,
+        timestamp,
+        messages,
+        logs,
+        memo,
+        gas_used,
+        gas_wanted,
+      }
+    }`,
   GET_DELEGATIONS_QUERY: gql`
     query GET_DELEGATIONS_QUERY ($acc_address: String!) {
       delegations (acc_address: $acc_address) {
@@ -106,9 +134,9 @@ const api = {
         gas_wanted,
       }
     }`,
-  SEARCH_TRANSACTIONS_QUERY: gql`
-    query GET_TRANSACTIONS_QUERY ($size: Int!) {
-      txs(size:$size) {
+  GET_TRANSACTION_DETAIL_QUERY: gql`
+    query GET_TRANSACTION_DETAIL_QUERY ($tx_hash: String!) {
+      tx_detail(tx_hash: $tx_hash) {
         tx_hash,
         status,
         fee,

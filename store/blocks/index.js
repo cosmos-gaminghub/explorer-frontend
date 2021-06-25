@@ -3,6 +3,8 @@ import mutations from './mutations'
 
 export const state = () => ({
   blocks: [],
+  block_detail: {},
+  block_txs: [],
   proposedBlocks: [],
   lastProposedBlocks: [],
   powerEvents: [],

@@ -1,11 +1,14 @@
 import api from '@/utils/api'
 
+let statusInterval = {}
+
 const actions = {
   // eslint-disable-next-line require-await
   async GET_DATA ({ commit }) {
     return new Promise((resolve, reject) => {
       const client = this.app.apolloProvider.defaultClient
-      setInterval(() => {
+      clearInterval(statusInterval)
+      statusInterval = setInterval(() => {
         client.cache.data.clear()
         client.query({
           query: api.GET_NETWORK_STATUS_QUERY
