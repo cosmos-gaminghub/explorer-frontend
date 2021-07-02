@@ -7,9 +7,7 @@
       <div class="page-content-wrapper">
         <div class="container">
           <search />
-          <div class="page-content">
-            <nuxt />
-          </div>
+          <nuxt />
         </div>
       <!-- .page-content-->
       </div>

@@ -1,7 +1,9 @@
 <template>
   <div v-if="loaded" class="blocks-status no-tablet">
     <div class="status-items">
-      <div class="title">{{ $t('text.block.height') }}</div>
+      <div class="title">
+        {{ $t('text.block.height') }}
+      </div>
       <div class="number">
         {{ info.block_height | formatNumber }}
       </div>
@@ -10,14 +12,20 @@
       </div>
     </div>
     <div class="status-items">
-      <div class="title">{{ $t('text.block.transaction') }}</div>
+      <div class="title">
+        {{ $t('text.block.transaction') }}
+      </div>
       <div class="number">
         {{ info.total_txs_num | formatNumber }}
       </div>
-      <div class="sub-title">{{ $t('text.block.total') }}</div>
+      <div class="sub-title">
+        {{ $t('text.block.total') }}
+      </div>
     </div>
     <div class="status-items">
-      <div class="title">{{ $t('text.block.bonded_tokens') }}</div>
+      <div class="title">
+        {{ $t('text.block.bonded_tokens') }}
+      </div>
       <div class="number">
         {{ info.bonded_token_percent }}%
       </div>
@@ -26,11 +34,15 @@
       </div>
     </div>
     <div class="status-items">
-      <div class="title">{{ $t('text.block.inflation') }}</div>
+      <div class="title">
+        {{ $t('text.block.inflation') }}
+      </div>
       <div class="number">
         {{ inflation | getInflation }}%
       </div>
-      <div class="sub-title">{{ $t('text.block.year') }}</div>
+      <div class="sub-title">
+        {{ $t('text.block.year') }}
+      </div>
     </div>
   </div>
   <Skeleton v-else class="blocks-status no-tablet" />

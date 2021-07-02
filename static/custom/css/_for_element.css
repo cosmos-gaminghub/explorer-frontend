@@ -37,7 +37,7 @@
     vertical-align: baseline;
 }
 .DelegatorTable__delegators-table-container--15lfW {
-    height: 340px;
+    height: 268px;
     margin: 0;
     padding: 0;
     border: 0;
@@ -75,4 +75,77 @@
 }
 .list-owl-block.owl-carousel.owl-theme {
     display: block !important;
+}
+
+td.td-skeleton > span {
+    width: 100%;
+}
+.pu-skeleton {
+    background-color: #ddd !important;
+}
+
+.PROPOSAL_STATUS_VOTING_PERIOD {
+    background: #00b1ff !important;
+}
+
+.PROPOSAL_STATUS_PASSED {
+    background: #37cc6e !important;
+}
+
+.PROPOSAL_STATUS_DEPOSIT_PERIOD {
+    background: #f3a52f !important;
+}
+
+.PROPOSAL_STATUS_REJECTED {
+    background: #ff2745 !important;
+}
+#copied-address {
+    opacity: 1;
+    transition: opacity 1s;
+}
+#copied-address.hide {
+    opacity: 0;
+}
+
+.col-05 i {
+    color: #B8BDC6;
+}
+
+.cos-table-list[v-hide="true"] {
+    display: none;
+}
+
+.table-votes .cos-title .list-filter li span.tab {
+    display: block;
+    font-size: 10px;
+    line-height: 20px;
+    color: #000;
+    cursor: pointer;
+}
+
+.table-votes .cos-title .list-filter li.active span.tab,
+.table-votes .cos-title .list-filter li:hover span.tab {
+    font-weight: 700;
+    color: #fff;
+    display: block;
+    font-size: 10px;
+    line-height: 20px;
+}
+
+.proposals-detail a.btn-status-proposal {
+    width: fit-content;
+    max-width: unset;
+}
+
+.cnt-chart-acc .content-chart .note-chart ul li div.percent {
+    padding-left: 10px;
+}
+
+@media (max-width: 1024px) {
+    .cos-table-item .cos-item-content table.table-home-block tbody tr td.td-skeleton {
+        width: 100%;
+    }
+    .validator-detail-content .status-validator.skeleton {
+        display: flex;
+    }
 }

@@ -9,7 +9,6 @@ const mutations = {
     state.transactions = data
   },
   SET_TRANSACTION_DETAIL (state, data) {
-    console.log(data)
     state.tx_detail = data
   }
 }

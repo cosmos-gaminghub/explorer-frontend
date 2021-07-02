@@ -1,66 +1,68 @@
 <template>
-  <div class="main-body-content">
-    <div class="cos-notice custom-page-title">
-      <div class="row">
-        <div class="col-lg-4 col-md-12 col-sm-12">
-          <h2 class="page-title">
-            {{ $t('menu.validator') }}
-          </h2>
+  <div class="page-content">
+    <div class="main-body-content">
+      <div class="cos-notice custom-page-title">
+        <div class="row">
+          <div class="col-lg-4 col-md-12 col-sm-12">
+            <h2 class="page-title">
+              {{ $t('menu.validator') }}
+            </h2>
+          </div>
+          <div class="col-lg-8 col-md-12 col-sm-12">
+            <header-data />
+          </div>
         </div>
-        <div class="col-lg-8 col-md-12 col-sm-12">
-          <header-data />
-        </div>
-      </div>
-      <div class="main-md-content md-full main-validator">
-        <div class="cos-table-item md-full">
-          <div class="cos-item-content md-full">
-            <div class="validator-search md-full mdb_10 fl_right">
-              <div class="valida-search">
-                <div class="input-search">
-                  <input v-model="searchValidatorMoniker" class="form-control" type="text" placeholder="Search Validators">
-                  <i class="fa fa-search" aria-hidden="true" />
+        <div class="main-md-content md-full main-validator">
+          <div class="cos-table-item md-full">
+            <div class="cos-item-content md-full">
+              <div class="validator-search md-full mdb_10 fl_right">
+                <div class="valida-search">
+                  <div class="input-search">
+                    <input v-model="searchValidatorMoniker" class="form-control" type="text" placeholder="Search Validators">
+                    <i class="fa fa-search" aria-hidden="true" />
+                  </div>
+                </div>
+
+                <div class="valida-button">
+                  <button :class="'btn btn-default' + (tab ? ' active' : '')" type="button" data-dismiss="modal" @click="changeTab(1)">
+                    Active
+                  </button>
+                  <button :class="'btn btn-default' + (!tab ? ' active' : '')" type="button" data-dismiss="modal" @click="changeTab(0)">
+                    Inactive
+                  </button>
                 </div>
               </div>
-
-              <div class="valida-button">
-                <button :class="'btn btn-default' + (tab ? ' active' : '')" type="button" data-dismiss="modal" @click="changeTab(1)">
-                  Active
-                </button>
-                <button :class="'btn btn-default' + (!tab ? ' active' : '')" type="button" data-dismiss="modal" @click="changeTab(0)">
-                  Inactive
-                </button>
-              </div>
-            </div>
-            <div class="cos-table-list md-full">
-              <div class="table-responsive">
-                <table-el
-                  v-show="tab"
-                  :loaded="loaded"
-                  :origin="validators.origin"
-                  :validators="validators.active"
-                  :search="searchValidatorMoniker"
-                  :type="'active'"
-                  :calculated="calculatedCumulativeShare"
-                  :token="tokens"
-                />
-                <table-el
-                  v-show="!tab"
-                  :loaded="loaded"
-                  :origin="validators.origin"
-                  :validators="validators.inactive"
-                  :search="searchValidatorMoniker"
-                  :type="'inactive'"
-                  :calculated="calculatedCumulativeShare"
-                  :token="tokens"
-                />
+              <div class="cos-table-list md-full">
+                <div class="table-responsive">
+                  <table-el
+                    v-show="tab"
+                    :loaded="loaded"
+                    :origin="validators.origin"
+                    :validators="validators.active"
+                    :search="searchValidatorMoniker"
+                    :type="'active'"
+                    :calculated="calculatedCumulativeShare"
+                    :token="tokens"
+                  />
+                  <table-el
+                    v-show="!tab"
+                    :loaded="loaded"
+                    :origin="validators.origin"
+                    :validators="validators.inactive"
+                    :search="searchValidatorMoniker"
+                    :type="'inactive'"
+                    :calculated="calculatedCumulativeShare"
+                    :token="tokens"
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="back-top">
-      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+      <div class="back-top" onclick="$('html').animate({scrollTop: 0},500);">
+        <i class="fa fa-arrow-up" aria-hidden="true" />
+      </div>
     </div>
   </div>
 </template>

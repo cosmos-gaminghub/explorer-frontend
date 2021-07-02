@@ -134,6 +134,21 @@ const api = {
         gas_wanted,
       }
     }`,
+  GET_ACCOUNT_TRANSACTIONS_QUERY: gql`
+    query GET_ACCOUNT_TRANSACTIONS_QUERY ($acc_address: String!) {
+      account_transactions(acc_address:$acc_address) {
+        tx_hash,
+        status,
+        fee,
+        height,
+        timestamp,
+        messages,
+        logs,
+        memo,
+        gas_used,
+        gas_wanted
+      }
+    }`,
   GET_TRANSACTION_DETAIL_QUERY: gql`
     query GET_TRANSACTION_DETAIL_QUERY ($tx_hash: String!) {
       tx_detail(tx_hash: $tx_hash) {
@@ -168,6 +183,137 @@ const api = {
     query GET_INFLATION_QUERY {
       inflation {
         inflation
+      }
+    }`,
+  GET_REWARDS_QUERY: gql`
+    query GET_REWARDS_QUERY ($acc_address: String!) {
+      rewards (acc_address: $acc_address) {
+        rewards {
+          validator_address,
+          reward {
+            denom,
+            amount
+          }
+        }
+      }
+    }`,
+  GET_COMMISSION_QUERY: gql`
+    query GET_COMMISSION_QUERY ($operator_address: String!) {
+      commission (operator_address: $operator_address) {
+        commission {
+          commission {
+            denom,
+            amount
+          }
+        }
+      }
+    }`,
+  GET_UNBONDINGS_QUERY: gql`
+    query GET_UNBONDINGS_QUERY ($acc_address: String!) {
+      unbonding (acc_address: $acc_address) {
+        unbonding_responses {
+          delegator_address,
+          validator_address,
+          entries {
+            creation_height,
+            completion_time,
+            initial_balance,
+            balance
+          }
+        }
+      }
+    }`,
+  GET_BALANCES_QUERY: gql`
+    query GET_BALANCES_QUERY ($acc_address: String!) {
+      balances(acc_address:$acc_address) {
+        balances {
+          denom,
+          amount
+        }
+      }
+    }`,
+  GET_PROPOSALS_QUERY: gql`
+    query GET_PROPOSALS_QUERY {
+      proposals {
+        id,
+        total_deposit {
+          denom,
+          amount
+        },
+        status,
+        voting_start,
+        voting_end,
+        submit_time,
+        tally {
+          yes,
+          abstain,
+          no,
+          no_with_veto
+        },
+        content {
+         title,
+          type,
+          description,
+          changes {
+            key,
+            value,
+            subspace
+          }
+        },
+        proposer
+      }
+    }`,
+  GET_PROPOSAL_DETAIL_QUERY: gql`
+    query GET_PROPOSAL_DETAIL_QUERY ($proposal_id: Int!) {
+      proposal_detail (proposal_id: $proposal_id) {
+        id,
+        total_deposit {
+          denom,
+          amount
+        },
+        status,
+        voting_start,
+        voting_end,
+        submit_time,
+        tally {
+          yes,
+          abstain,
+          no,
+          no_with_veto
+        },
+        content {
+         title,
+          type,
+          description,
+          changes {
+            key,
+            value,
+            subspace
+          }
+        },
+        proposer
+      }
+    }`,
+  GET_DEPOSIT_QUERY: gql`
+    query GET_DEPOSIT_QUERY ($proposal_id: Int!) {
+      deposit (proposal_id: $proposal_id) {
+        depositor,
+        amount,
+        tx_hash,
+        time
+      }
+    }`,
+  GET_VOTE_QUERY: gql`
+    query GET_VOTE_QUERY ($before: Int!, $size: Int!, $proposal_id: Int!) {
+      vote (
+        before: $before,
+        size: $size,
+        proposal_id: $proposal_id
+      ) {
+        voter,
+        option,
+        tx_hash,
+        time
       }
     }`
 }

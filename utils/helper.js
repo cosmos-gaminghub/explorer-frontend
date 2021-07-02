@@ -1,19 +1,27 @@
 import round from 'lodash/round'
 
-const formatTime = (date) => {
+const formatTime = (date, isUnbonding = false) => {
   if (!date) { return '0s' }
   const now = new Date()
   const dateConvert = new Date(date)
   const days = (now - dateConvert) / 86400000
+
+  const year = days / 365
+  if (year > 1) { return Math.round(year) + ' years' }
+  const month = days / 30
+  if (month > 1) { return Math.round(month) + ' months' }
 
   const hours = (days - parseInt(days)) * 24
   const minutes = (hours - parseInt(hours)) * 60
   const seconds = (minutes - parseInt(minutes)) * 60
 
   let str = ''
-  if (days > 0) { str += parseInt(days) + 'd ' }
-  if (hours > 0) { str += parseInt(hours) + 'h ' }
-  if (days > 0) { return ' > ' + str }
+  if (days > 1) { str += parseInt(days) + 'd ' }
+
+  if (isUnbonding) { return days }
+
+  if (hours > 1) { str += parseInt(hours) + 'h ' }
+  if (days > 1) { return ' > ' + str }
   if (minutes) { str += parseInt(minutes) + 'm ' }
   str += seconds + 's '
 
@@ -57,7 +65,23 @@ const getTypeTx = (messages) => {
     '/cosmos.bank.v1beta1.MsgMultiSend': 'Multi Send',
     '/cosmos.gov.v1beta1.MsgVote': 'Vote',
     '/cosmos.staking.v1beta1.MsgBeginRedelegate': 'Redelegate',
-    '/cosmos.gov.v1beta1.MsgDeposit': 'Deposite'
+    '/cosmos.gov.v1beta1.MsgDeposit': 'Deposite',
+
+    '/cosmos.staking.v1beta1.MsgCreateValidator': 'Create Validator',
+    '/ibc.core.connection.v1.MsgConnectionOpenInit': 'IBC Connection Open Init',
+    '/ibc.core.channel.v1.MsgChannelOpenInit': 'IBC Channel Open Init',
+    '/ibc.core.channel.v1.MsgChannelOpenTry': 'IBC Channel Open Try',
+    '/ibc.core.channel.v1.MsgAcknowledgement': 'IBC Acknowledgement',
+    '/ibc.core.channel.v1.MsgRecvPacket': 'IBC Recv Packet',
+    '/ibc.core.connection.v1.MsgConnectionOpenTry': 'IBC Connection Open Try',
+    '/ibc.core.connection.v1.MsgConnectionOpenAck': 'IBC Connection Open Ack',
+    '/ibc.core.channel.v1.MsgTimeout': 'IBC Timeout',
+    '/ibc.core.channel.v1.MsgChannelOpenAck': 'IBC Channel Open Ack',
+    '/ibc.core.connection.v1.MsgConnectionOpenConfirm': 'IBC Connection Open Confirm',
+    '/cosmos.slashing.v1beta1.MsgUnjail': 'Unjail',
+    '/cosmos.staking.v1beta1.MsgEditValidator': 'Edit Validator',
+    '/cosmos.vesting.v1beta1.MsgCreateVestingAccount': 'Create Vesting Account',
+    '/cosmos.gov.v1beta1.MsgSubmitProposal': 'Submit Proposal'
   }
 
   return typeArr[strType] ? typeArr[strType] : strType
@@ -93,6 +117,32 @@ const getAmount = (messages) => {
   }
 
   return 0
+}
+
+const calculateValueFromArr = (arr) => {
+  if (!arr) { return 0 }
+
+  let i = 0
+  let total = 0
+  for (; i < arr.length; i++) {
+    total += parseFloat(arr[i].amount)
+  }
+
+  return total
+}
+
+const getTotalUnbondings = (arr) => {
+  if (!arr) { return 0 }
+
+  let i = 0
+  let total = 0
+  for (; i < arr.length; i++) {
+    if (arr[i].entries) {
+      total += arr[i].entries.balance
+    }
+  }
+
+  return total
 }
 
 const getFeeTx = (fee) => {
@@ -143,6 +193,7 @@ const isActiveValidator = (validator) => {
 }
 
 const formatHash = (value, startPos, endPos) => {
+  if (!value) { return '' }
   return value.substr(0, startPos) + '...' + value.substr(value.length - endPos, value.length - 1)
 }
 
@@ -158,6 +209,53 @@ const calcutatDelegations = (delegations) => {
   return total
 }
 
+const getTotalRewards = (rewards) => {
+  if (!rewards) { return 0 }
+
+  let total = 0
+  let i = 0
+  for (; i < rewards.length; i++) {
+    if (rewards[i].reward) {
+      let j = 0
+      for (; j < rewards[i].reward.length; j++) {
+        total += parseFloat(rewards[i].reward[j].amount)
+      }
+    }
+  }
+
+  return total
+}
+
+const getRewardByAddress = (rewards, address) => {
+  if (!rewards || !address) { return (0).toFixed(6) }
+
+  let i = 0
+  let total = 0
+  for (; i < rewards.length; i++) {
+    // eslint-disable-next-line eqeqeq
+    if (rewards[i].reward && rewards[i].validator_address == address) {
+      let j = 0
+      for (; j < rewards[i].reward.length; j++) {
+        total += parseFloat(rewards[i].reward[j].amount)
+      }
+      break
+    }
+  }
+
+  return (total / Math.pow(10, 6)).toFixed(6)
+}
+
+const getTypeProposal = (value) => {
+  const arrayType = {
+    PROPOSAL_STATUS_PASSED: 'PASSED',
+    PROPOSAL_STATUS_REJECTED: 'REJECTED',
+    PROPOSAL_STATUS_DEPOSIT_PERIOD: 'DEPOSIT PERIOD',
+    PROPOSAL_STATUS_VOTING_PERIOD: 'VOTING PERIOD'
+  }
+
+  return arrayType[value] ? arrayType[value] : ''
+}
+
 export default {
-  formatTime, formatNumber, cumulativeShare, totalSupplyTokens, isActiveValidator, formatHash, getAvatarValidator, calcutatDelegations, convertTime, getTypeTx, getAddrTx, getFeeTx, getAmount
+  getTotalUnbondings, calculateValueFromArr, getTypeProposal, getRewardByAddress, getTotalRewards, formatTime, formatNumber, cumulativeShare, totalSupplyTokens, isActiveValidator, formatHash, getAvatarValidator, calcutatDelegations, convertTime, getTypeTx, getAddrTx, getFeeTx, getAmount
 }

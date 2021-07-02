@@ -2,14 +2,15 @@ import actions from './actions'
 import mutations from './mutations'
 
 export const state = () => ({
-  proposals: [],
-  proposal: {},
-  deposit: [],
-  vote: []
+  rewards: [],
+  available: [],
+  txs: [],
+  commissions: [],
+  unbonding: []
 })
 
 export default {
-  namespaced: 'proposals',
+  namespaced: 'accounts',
   state,
   actions,
   mutations

@@ -1,25 +1,20 @@
 import api from '@/utils/api'
-let blockInterval = {}
-let uptimesInterval = {}
 
 const actions = {
   // eslint-disable-next-line require-await
   async GET_DATA ({ commit }, params) {
     return new Promise((resolve, reject) => {
-      clearInterval(blockInterval)
       const client = this.app.apolloProvider.defaultClient
-      blockInterval = setInterval(() => {
-        client.cache.data.clear()
-        client.query({
-          query: api.GET_BLOCKS_QUERY,
-          variables: params
-        }).then((response) => {
-          commit('SET_BLOCKS', response.data.blocks)
-          resolve()
-        }).catch((error) => {
-          reject(error)
-        })
-      }, process.env.REAL_TIME_DELAY_MS)
+      client.cache.data.clear()
+      client.query({
+        query: api.GET_BLOCKS_QUERY,
+        variables: params
+      }).then((response) => {
+        commit('SET_BLOCKS', response.data.blocks)
+        resolve()
+      }).catch((error) => {
+        reject(error)
+      })
     })
   },
   // eslint-disable-next-line require-await
@@ -81,19 +76,16 @@ const actions = {
   // eslint-disable-next-line require-await
   async GET_UPTIMES ({ commit }, params) {
     return new Promise((resolve, reject) => {
-      clearInterval(uptimesInterval)
-      uptimesInterval = setInterval(() => {
-        const client = this.app.apolloProvider.defaultClient
-        client.cache.data.clear()
-        client.query({
-          query: api.GET_UPTIMES,
-          variables: params
-        }).then((response) => {
-          commit('SET_UPTIMES', response.data.uptimes)
-        }).catch((error) => {
-          reject(error)
-        })
-      }, process.env.REAL_TIME_DELAY_MS * 3)
+      const client = this.app.apolloProvider.defaultClient
+      client.cache.data.clear()
+      client.query({
+        query: api.GET_UPTIMES,
+        variables: params
+      }).then((response) => {
+        commit('SET_UPTIMES', response.data.uptimes)
+      }).catch((error) => {
+        reject(error)
+      })
     })
   },
   // eslint-disable-next-line require-await
@@ -121,8 +113,8 @@ const actions = {
         query: api.GET_DELEGATIONS_QUERY,
         variables: params
       }).then((response) => {
-        console.log('delegations: ', response)
         commit('SET_DELEGATIONS', response.data.delegations)
+        resolve(response.data.delegations)
       }).catch((error) => {
         reject(error)
       })

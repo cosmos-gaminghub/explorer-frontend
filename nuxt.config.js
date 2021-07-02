@@ -20,8 +20,8 @@ module.exports = {
       { rel: 'stylesheet', type: 'text/css', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800&amp;display=swap' }
     ],
     script: [
-      { src: '/assets/js/jquery-3.3.1.min.js' },
-      { src: '/assets/vendor/bootstrap/js/bootstrap.min.js' }
+      // { src: '/assets/js/jquery-3.3.1.min.js' },
+      // { src: '/assets/vendor/bootstrap/js/bootstrap.min.js' }
       // { src: '/assets/vendor/owl/js/owl.carousel.min.js' }
     ]
   },
@@ -42,11 +42,11 @@ module.exports = {
     },
     '~/plugins/skeleton.js',
     '~/plugins/pagination2.js',
-    '~/plugins/tbskeleton.js'
+    '~/plugins/clipboard.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
-  components: true,
+  components: false,
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
@@ -56,8 +56,6 @@ module.exports = {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
-    // https://go.nuxtjs.dev/bootstrap
-    'bootstrap-vue/nuxt',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
     // https://www.npmjs.com/package/@nuxtjs/dotenv

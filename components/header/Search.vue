@@ -52,7 +52,7 @@ export default {
           this.errorSearch = false
         } else if (/^(cosmos)[a-zA-Z0-9]{39}$/.test(value)) {
           this.textSearchButton = 'Search Account'
-          this.linkToSearch = '/proposals/' + value
+          this.linkToSearch = '/account/' + value
           this.errorSearch = false
         } else if (/^[0-9]{2,}$/.test(value)) {
           this.textSearchButton = 'Search block'
@@ -69,7 +69,11 @@ export default {
       this.search = ''
       this.textSearchButton = ''
       this.errorSearch = false
-      this.$router.replace(this.linkToSearch)
+      if (this.linkToSearch.includes('account')) {
+        window.location.href = this.linkToSearch
+      } else {
+        this.$router.replace(this.linkToSearch)
+      }
     }
   }
 }

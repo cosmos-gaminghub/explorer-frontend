@@ -23,8 +23,8 @@
       </tr>
     </thead>
     <tbody v-if="!loaded">
-      <tr v-for="i in [1, 2, 3, 4, 5]" :key="i">
-        <td colspan="6">
+      <tr v-for="i in 5" :key="i">
+        <td colspan="6" class="td-skeleton">
           <Skeleton />
         </td>
       </tr>
@@ -37,7 +37,7 @@
           </div>
         </th>
         <td class="text-left">
-          <nuxt-link :to="'/validators/'+validator.operator_address">
+          <nuxt-link :to="'/validators/'+validator.operator_address" class="acount-snow">
             <div :class="'va_avatar' + (validator.jailed ? ' inactive' : ' active')">
               <img :src="validator.operator_address | avatarValidator" onError="this.onerror=null;this.src='https://www.mintscan.io/static/media/validator_none.83868b17.svg'" alt="Title">
             </div>
@@ -122,6 +122,11 @@ export default {
   },
   // eslint-disable-next-line vue/require-prop-types
   props: ['validators', 'type', 'calculated', 'token', 'loaded', 'origin'],
+  data () {
+    return {
+      searchValue: ''
+    }
+  },
   computed: {
     filteredRow () {
       return this.validators.filter((row) => {
@@ -131,11 +136,6 @@ export default {
         }
         return false
       })
-    }
-  },
-  data () {
-    return {
-      searchValue: ''
     }
   },
   created () {
