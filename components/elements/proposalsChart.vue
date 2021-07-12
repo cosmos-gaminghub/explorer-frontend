@@ -1,21 +1,21 @@
 <template>
   <div class="main-md-content delegated-missed">
     <div class="scroll-proposals">
-      <ul class="list-proposals">
-        <li>
+      <ul v-if="proposals" class="list-proposals">
+        <li v-for="proposal in filteredRow" :key="proposal.id">
           <div class="id">
-            #47
+            #{{ proposal.id }}
           </div>
           <div class="content-proposals">
             <div class="left">
-              <h4>Parameter change: lower minimum proposal deposit amount</h4>
+              <h4>{{ proposal.content ? proposal.content.title : '' }}</h4>
               <div class="list-time">
                 <div class="item">
                   <div class="name">
                     Proposer
                   </div>
                   <div class="cnt">
-                    <a href="#">cosmos18...p7wcgvqa</a>
+                    <a :href="'/account/'+proposal.proposer">{{ proposal.proposer | formatHash }}</a>
                   </div>
                 </div>
                 <div class="item">
@@ -23,7 +23,7 @@
                     Voting Start
                   </div>
                   <div class="cnt">
-                    2021-05-07 20:39:58
+                    {{ proposal.voting_start | convertTime }}
                   </div>
                 </div>
                 <div class="item">
@@ -31,164 +31,26 @@
                     Submit Time
                   </div>
                   <div class="cnt">
-                    2021-05-21 20:39:58
+                    {{ proposal.submit_time | convertTime }}
                   </div>
                 </div>
               </div>
             </div>
             <div class="right">
-              <a class="btn btn-passed">Passed</a>
+              <a :class="'btn btn-passed btn-status-proposal ' + proposal.status">{{ proposal.status | getStatusProposal }}</a>
               <div class="images">
-                <img src="/assets/images/bgr/chart3.png" alt="atom">
+                <doughnut
+                  v-if="proposal.max"
+                  :data="getDataForChart(proposal.max)"
+                  :options="option"
+                  :height="73"
+                  :width="72"
+                />
               </div>
               <div class="text-note">
-                <p>Most voted on</p>
-                <div class="note-color">
-                  <i class="fa fa-circle" aria-hidden="true" /><span>Yes 73.22%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="id">
-            #47
-          </div>
-          <div class="content-proposals">
-            <div class="left">
-              <h4>Parameter change: lower minimum proposal deposit amount</h4>
-              <div class="list-time">
-                <div class="item">
-                  <div class="name">
-                    Proposer
-                  </div>
-                  <div class="cnt">
-                    <a href="#">cosmos18...p7wcgvqa</a>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="name">
-                    Voting Start
-                  </div>
-                  <div class="cnt">
-                    2021-05-07 20:39:58
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="name">
-                    Submit Time
-                  </div>
-                  <div class="cnt">
-                    2021-05-21 20:39:58
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="right">
-              <a class="btn btn-passed">Passed</a>
-              <div class="images">
-                <img src="/assets/images/bgr/chart3.png" alt="atom">
-              </div>
-              <div class="text-note">
-                <p>Most voted on</p>
-                <div class="note-color">
-                  <i class="fa fa-circle" aria-hidden="true" /><span>Yes 73.22%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="id">
-            #47
-          </div>
-          <div class="content-proposals">
-            <div class="left">
-              <h4>Parameter change: lower minimum proposal deposit amount</h4>
-              <div class="list-time">
-                <div class="item">
-                  <div class="name">
-                    Proposer
-                  </div>
-                  <div class="cnt">
-                    <a href="#">cosmos18...p7wcgvqa</a>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="name">
-                    Voting Start
-                  </div>
-                  <div class="cnt">
-                    2021-05-07 20:39:58
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="name">
-                    Submit Time
-                  </div>
-                  <div class="cnt">
-                    2021-05-21 20:39:58
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="right">
-              <a class="btn btn-passed">Passed</a>
-              <div class="images">
-                <img src="/assets/images/bgr/chart3.png" alt="atom">
-              </div>
-              <div class="text-note">
-                <p>Most voted on</p>
-                <div class="note-color">
-                  <i class="fa fa-circle" aria-hidden="true" /><span>Yes 73.22%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="id">
-            #47
-          </div>
-          <div class="content-proposals">
-            <div class="left">
-              <h4>Parameter change: lower minimum proposal deposit amount</h4>
-              <div class="list-time">
-                <div class="item">
-                  <div class="name">
-                    Proposer
-                  </div>
-                  <div class="cnt">
-                    <a href="#">cosmos18...p7wcgvqa</a>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="name">
-                    Voting Start
-                  </div>
-                  <div class="cnt">
-                    2021-05-07 20:39:58
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="name">
-                    Submit Time
-                  </div>
-                  <div class="cnt">
-                    2021-05-21 20:39:58
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="right">
-              <a class="btn btn-passed">Passed</a>
-              <div class="images">
-                <img src="/assets/images/bgr/chart3.png" alt="atom">
-              </div>
-              <div class="text-note">
-                <p>Most voted on</p>
-                <div class="note-color">
-                  <i class="fa fa-circle" aria-hidden="true" /><span>Yes 73.22%</span>
+                <p v-if="proposal.max">Most voted on</p>
+                <div v-if="proposal.max" class="note-color">
+                  <i :class="'fa fa-circle color-vote-option-'+(proposal.max.text).toLowerCase()" aria-hidden="true" /><span>{{ proposal.max.text }} {{ proposal.max.value | getPercent(proposal.max.total) }}%</span>
                 </div>
               </div>
             </div>
@@ -198,3 +60,82 @@
     </div>
   </div>
 </template>
+<script>
+import Doughnut from '@/components/libs/DoughnutChartEl.vue'
+import helper from '~/utils/helper'
+
+export default {
+  components: {
+    Doughnut
+  },
+  filters: {
+    formatHash (value) {
+      return helper.formatHash(value, 6, 6)
+    },
+    convertTime (value) {
+      return helper.convertTime(value)
+    },
+    getStatusProposal (value) {
+      return helper.getTypeProposal(value)
+    },
+    getPercent (value, total) {
+      const percent = (total) ? (value / total) * Math.pow(10, 2) : 0
+
+      return percent.toFixed(2)
+    }
+  },
+  // eslint-disable-next-line vue/require-prop-types
+  props: ['proposals'],
+  data () {
+    return {
+      option: {
+        responsive: true,
+        maintainAspectRatio: false,
+        legend: {
+          display: false
+        }
+      },
+      arrayColors: {
+        yes: '#65A246',
+        no: '#F0142F',
+        no_with_veto: '#F99600',
+        abstain: '#57B8FF'
+      }
+    }
+  },
+  computed: {
+    filteredRow () {
+      return this.proposals.filter((row, index) => {
+        const from = 0
+        const to = 5
+        if (index >= from && index < to) {
+          console.log('row = ', row)
+          return true
+        }
+        return false
+      })
+    }
+  },
+  methods: {
+    emptyTallyData (value) {
+      if (!value) { return true }
+      const total = parseFloat(value.yes) + parseFloat(value.no) + parseFloat(value.no_with_veto) + parseFloat(value.abstain)
+      return !total
+    },
+    getDataForChart (value) {
+      return {
+        labels: [
+          value.text
+        ],
+        datasets: [{
+          data: [value.value],
+          backgroundColor: [
+            this.arrayColors[(value.text).toLowerCase()]
+          ],
+          hoverOffset: 1
+        }]
+      }
+    }
+  }
+}
+</script>

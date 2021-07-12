@@ -39,6 +39,7 @@
                 </div>
                 <h3>{{ dataChart.totalAtom | convertNumber(true) }}.{{ dataChart.totalAtom | convertNumber(false) }}</h3>
                 <div class="detail-chart">
+                  <p>${{ current_price.toFixed(2) }} / ATOM</p>
                   <p>${{ dataChart.totalUsd | convertNumber(true) }}.{{ dataChart.totalUsd | convertNumber(false) }}</p>
                 </div>
               </div>
@@ -140,11 +141,11 @@
                 <empty-table v-if="loaded.delegations && !delegations.length" :obj-name="'Delegations'" />
                 <div v-else class="cos-table-list">
                   <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-hover text-left">
+                    <table class="table table-striped table-bordered table-hover text-left table-delegation-account">
                       <thead>
                         <tr>
                           <th>Address</th>
-                          <th class="text-left">
+                          <th class="text-center">
                             Amount
                           </th>
                           <th class="text-center">
@@ -159,12 +160,12 @@
                               {{ delegation.moniker }}
                             </nuxt-link>
                           </td>
-                          <td class="text-left">
-                            {{ delegation.validator_address | getRewardByAddress(rewards) }}
+                          <td class="text-center">
+                            {{ delegation.amount | convertNumber(true) }}.{{ delegation.amount | convertNumber(false) }} ATOM
                           </td>
                           <td class="text-center">
                             <span class="title">Shares</span>
-                            {{ delegation.amount | formatAmountDelegation }}
+                            {{ delegation.validator_address | getRewardByAddress(rewards) }} ATOM
                           </td>
                         </tr>
                       </tbody>
@@ -204,10 +205,10 @@
                       <thead>
                         <tr>
                           <th>Validator</th>
-                          <th class="text-left">
+                          <th class="text-center">
                             Height
                           </th>
-                          <th class="text-left">
+                          <th class="text-center">
                             Amount
                           </th>
                           <th class="text-right">
@@ -219,22 +220,22 @@
                         <tr v-for="(unbonding, index) in filteredRowUnbondings" :key="index">
                           <td>
                             <nuxt-link :to="'/validators/' + unbonding.validator_address">
-                              {{ unbonding.validator_address }}
+                              {{ unbonding.validator }}
                             </nuxt-link>
                           </td>
-                          <td class="text-left">
-                            <span>{{ unbonding.entries.creation_height }}</span>
+                          <td class="text-center">
+                            <span>{{ unbonding.height }}</span>
                           </td>
-                          <td class="text-left">
+                          <td class="text-center">
                             <span class="title">Amount</span>
-                            <span>{{ unbonding.entries.balance | formatNumber }} ATOM</span>
+                            <span>{{ unbonding.amount | convertNumber(true) }}.{{ unbonding.amount | convertNumber(false) }} ATOM</span>
                           </td>
                           <td class="text-right">
                             <span class="title">Completion Time</span>
                             <div class="time-unbon">
                               <p class="cos-note">
-                                {{ unbonding.entries.completion_time | convertTime }}
-                              </p><span class="remain">({{ unbonding.entries.completion_time | getTime(true) }}days remaining)</span>
+                                {{ unbonding.time | convertTime }}
+                              </p><span class="remain">({{ unbonding.time | getTime }} remaining)</span>
                             </div>
                           </td>
                         </tr>
@@ -252,7 +253,7 @@
                     <div v-if="loaded.unbonding" class="pagination-wrapper">
                       <pagination
                         v-model="pagination.unbonding.page"
-                        :records="unbonding.length"
+                        :records="unbondingDataConver.length"
                         :per-page="pagination.unbonding.per"
                         :options="optionPaginate"
                       />
@@ -279,13 +280,13 @@
                       <thead>
                         <tr>
                           <th>Tx Hash</th>
-                          <th>Type</th>
-                          <th>Result</th>
+                          <th class="text-center">Type</th>
+                          <th class="text-center">Result</th>
                           <th>Amount</th>
-                          <th class="text-center">
+                          <th>
                             Fee
                           </th>
-                          <th>Height</th>
+                          <th class="text-center">Height</th>
                           <th>Time</th>
                         </tr>
                       </thead>
@@ -296,14 +297,14 @@
                               {{ tx.tx_hash | formatHash }}
                             </nuxt-link>
                           </td>
-                          <td><span class="box btn2">{{ tx.messages | getTypeTx }}</span></td>
-                          <td :class="tx.status ? 'green' : 'red'">
+                          <td class="text-center"><span class="box btn2">{{ tx.messages | getTypeTx }}</span></td>
+                          <td :class="'text-center ' + (!tx.status ? 'green' : 'red')">
                             <span class="title">Result</span>
-                            {{ tx.status ? 'Success' : 'Failed' }}
+                            {{ !tx.status ? 'Success' : 'Failed' }}
                           </td>
                           <td v-if="tx.total_amount !== null">
                             <span class="title">Amount</span>
-                            {{ tx.total_amount | formatAmount }} ATOM
+                            {{ tx.total_amount | convertNumber(true) }}.{{ tx.total_amount | convertNumber(false) }} ATOM
                           </td>
                           <td v-else>
                             <span class="title">Amount</span>
@@ -311,17 +312,17 @@
                               More
                             </nuxt-link>
                           </td>
-                          <td class="text-center">
+                          <td>
                             <span class="title">Free</span>
                             {{ tx.fee | getFeeTx }} ATOM
                           </td>
-                          <td>
+                          <td class="text-center">
                             <span class="title">Height</span>
                             <nuxt-link class="box btn1" :to="'/blocks/' + tx.height">
                               {{ tx.height }}
                             </nuxt-link>
                           </td>
-                          <td>
+                          <td class="text-center">
                             <span class="title">Time</span>
                             {{ tx.timestamp | getTime }} ago
                           </td>
@@ -342,6 +343,85 @@
                         v-model="pagination.txs.page"
                         :records="txs.length"
                         :per-page="pagination.txs.per"
+                        :options="optionPaginate"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-if="redelegationsDataConver.length" class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="cos-table-item table-transactions">
+              <div class="cos-item-content">
+                <div class="cos-title">
+                  <h3 class="title-cos">
+                    <span>Redelegation Status</span>
+                  </h3>
+                </div>
+                <div class="cos-title">
+                  <span>1. You must wait 21 days in order to be able to redelegate from the "To" validator.</span><br>
+                  <span>2. You can redelegate from and to the same validator set only up to 7 times.</span>
+                </div>
+                <div class="cos-table-list">
+                  <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover text-left">
+                      <thead>
+                        <tr>
+                          <th>From</th>
+                          <th class="text-left">To</th>
+                          <th class="text-left">Height</th>
+                          <th>Amount</th>
+                          <th class="text-right">Time</th>
+                        </tr>
+                      </thead>
+                      <tbody v-if="loaded.redelegations">
+                        <tr v-for="(item, index) in filteredRowRedelegations" :key="'redelegation_'+index">
+                          <td>
+                            <nuxt-link class="box btn1" :to="'/validators/' + item.validator_src_address">
+                              {{ item.validator_src_moniker }}
+                            </nuxt-link>
+                          </td>
+                          <td class="text-left">
+                            <span class="title">To</span>
+                            <nuxt-link class="box btn1" :to="'/validators/' + item.validator_dst_address">
+                              {{ item.validator_dst_moniker }}
+                            </nuxt-link>
+                          </td>
+                          <td class="text-center">
+                            <span class="title">Height</span>
+                            <nuxt-link class="box btn1" :to="'/blocks/' + 1">
+                              {{ item.height }}
+                            </nuxt-link>
+                          </td>
+                          <td class="text-left">
+                            <span class="title">Amount</span>
+                            {{ item.amount | convertNumber(true) }}.{{ item.amount | convertNumber(false) }} ATOM
+                          </td>
+                          <td class="text-right">
+                            <span class="title">Time</span>
+                            <p>{{ item.time | convertTime }}</p>
+                            <p>({{ item.time | getTime }} remaining)</p>
+                          </td>
+                        </tr>
+                      </tbody>
+                      <tbody v-else>
+                        <tr v-for="i in 5" :key="i">
+                          <td colspan="7" class="td-skeleton">
+                            <Skeleton />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="well">
+                    <div v-if="loaded.redelegations" class="pagination-wrapper">
+                      <pagination
+                        v-model="pagination.redelegations.page"
+                        :records="redelegationsDataConver.length"
+                        :per-page="pagination.redelegations.per"
                         :options="optionPaginate"
                       />
                     </div>
@@ -379,20 +459,11 @@ export default {
     formatHash (value) {
       return helper.formatHash(value, 6, 6)
     },
-    formatAmountDelegation (value) {
-      return (value / Math.pow(10, 6)).toFixed(6)
-    },
-    formatAmount (value) {
-      return (helper.getAmount(value) / Math.pow(10, 6)).toFixed(6)
-    },
     formatNumber (value) {
       return helper.formatNumber(value)
     },
     getRewardByAddress (value, rewards) {
       return helper.getRewardByAddress(rewards, value)
-    },
-    getStatusTx (value) {
-      return value ? 'Success' : 'Failed'
     },
     getTypeTx (value) {
       return helper.getTypeTx(value)
@@ -401,14 +472,14 @@ export default {
       const totalAmount = helper.getFeeTx(value)
       return totalAmount / Math.pow(10, 6)
     },
-    getTime (value, isUnbonding = false) {
-      return helper.formatTime(value, isUnbonding)
+    getTime (value) {
+      return helper.formatTime(value)
     },
     convertTime (value) {
       return helper.convertTime(value)
     },
     convertNumber (value, isInt) {
-      const total = value / Math.pow(10, 6)
+      const total = parseFloat(value) / Math.pow(10, 6)
       if (isInt) {
         return helper.formatNumber(parseInt(total))
       } else {
@@ -428,8 +499,10 @@ export default {
     Doughnut,
     VueQr
   },
-  header: {
-    title: 'Account detail'
+  head () {
+    return {
+      title: 'COSMOS Account - ' + this.$route.params.address
+    }
   },
   data () {
     return {
@@ -453,7 +526,6 @@ export default {
           hoverOffset: 1
         }]
       },
-      current_price: 9.39,
       options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -467,7 +539,9 @@ export default {
         delegations: false,
         unbonding: false,
         commissions: false,
-        txs: false
+        txs: false,
+        redelegations: false,
+        validators: false
       },
       pagination: {
         delegations: {
@@ -479,6 +553,10 @@ export default {
           per: 5
         },
         txs: {
+          page: 1,
+          per: 5
+        },
+        redelegations: {
           page: 1,
           per: 5
         }
@@ -495,12 +573,17 @@ export default {
         commissions: 0,
         totalAtom: 0,
         totalUsd: 0
-      }
+      },
+      unbondingDataConver: [],
+      redelegationsDataConver: [],
+      current_price: 1,
+      validatorsConvert: []
     }
   },
   computed: {
-    ...mapState('accounts', ['rewards', 'available', 'txs', 'commissions', 'unbonding']),
+    ...mapState('accounts', ['rewards', 'available', 'txs', 'commissions', 'unbonding', 'price']),
     ...mapState('blocks', ['delegations']),
+    ...mapState('validators', ['validators']),
     filteredRowDelegations () {
       return this.delegations.filter((row, index) => {
         const from = (this.pagination.delegations.page - 1) * this.pagination.delegations.per
@@ -512,7 +595,7 @@ export default {
       })
     },
     filteredRowUnbondings () {
-      return this.unbonding.filter((row, index) => {
+      return this.unbondingDataConver.filter((row, index) => {
         const from = (this.pagination.unbonding.page - 1) * this.pagination.unbonding.per
         const to = from + this.pagination.unbonding.per
         if (index >= from && index < to) {
@@ -525,6 +608,16 @@ export default {
       return this.txs.filter((row, index) => {
         const from = (this.pagination.txs.page - 1) * this.pagination.txs.per
         const to = from + this.pagination.txs.per
+        if (index >= from && index < to) {
+          return true
+        }
+        return false
+      })
+    },
+    filteredRowRedelegations () {
+      return this.redelegationsDataConver.filter((row, index) => {
+        const from = (this.pagination.redelegations.page - 1) * this.pagination.redelegations.per
+        const to = from + this.pagination.redelegations.per
         if (index >= from && index < to) {
           return true
         }
@@ -556,10 +649,75 @@ export default {
       getAvailable: 'accounts/GET_BALANCES',
       getDelegations: 'blocks/GET_DELEGATIONS_QUERY',
       getTxs: 'accounts/GET_ACCOUNT_TRANSACTIONS',
-      getUnbonding: 'accounts/GET_UNBONDING'
+      getUnbonding: 'accounts/GET_UNBONDING',
+      getAllValidators: 'validators/GET_DATA',
+      getPrice: 'accounts/GET_PRICE',
+      getRedelegations: 'accounts/GET_REDELEGATIONS'
     }),
     getData (accountAddress) {
       this.accAddress = accountAddress
+
+      this.getAllValidators().then((validators) => {
+        this.loaded.validators = true
+        this.validatorsConvert = helper.convertValidators(validators)
+
+        this.getUnbonding({
+          acc_address: accountAddress
+        }).then((unbondings) => {
+          this.loaded.unbonding = true
+          this.dataChart.unbondings = helper.getTotalUnbondings(unbondings)
+          this.getTotalAtom()
+          let i = 0
+          for (; i < unbondings.length; i++) {
+            if (!unbondings[i].entries) { continue }
+            let j = 0
+            for (; j < unbondings[i].entries.length; j++) {
+              const item = unbondings[i].entries[j]
+              this.unbondingDataConver.push({
+                validator_address: unbondings[i].validator_address,
+                validator: this.validatorsConvert[unbondings[i].validator_address],
+                height: item.creation_height,
+                amount: parseFloat(item.balance),
+                time: item.completion_time
+              })
+            }
+          }
+        }).catch((error) => {
+          // eslint-disable-next-line no-console
+          console.log('error when get unbondings: ', error)
+          this.loaded.unbondings = true
+        })
+
+        this.getRedelegations({
+          acc_address: accountAddress
+        }).then((redelegations) => {
+          this.loaded.redelegations = true
+          let i = 0
+          for (; i < redelegations.length; i++) {
+            if (!redelegations[i].entries) { continue }
+            let j = 0
+            for (; j < redelegations[i].entries.length; j++) {
+              const item = redelegations[i].entries[j]
+              const info = redelegations[i].redelegation
+              console.log(info, item)
+              this.redelegationsDataConver.push({
+                validator_src_moniker: this.validatorsConvert[info.validator_src_address],
+                validator_src_address: info.validator_src_address,
+                validator_dst_moniker: this.validatorsConvert[info.validator_dst_address],
+                validator_dst_address: info.validator_dst_address,
+                height: item.redelegation_entry.creation_height,
+                amount: parseFloat(item.balance),
+                time: item.redelegation_entry.completion_time
+              })
+            }
+          }
+        }).catch((error) => {
+          // eslint-disable-next-line no-console
+          console.log('error when get redelegations: ', error)
+          this.loaded.redelegations = true
+        })
+      })
+
       this.getRewards({
         acc_address: accountAddress
       }).then((rewards) => {
@@ -608,18 +766,6 @@ export default {
         this.loaded.delegations = true
       })
 
-      this.getUnbonding({
-        acc_address: accountAddress
-      }).then((unbondings) => {
-        this.loaded.unbonding = true
-        this.dataChart.unbondings = helper.getTotalUnbondings(unbondings)
-        this.getTotalAtom()
-      }).catch((error) => {
-        // eslint-disable-next-line no-console
-        console.log('error when get unbondings: ', error)
-        this.loaded.unbondings = true
-      })
-
       this.getTxs({
         acc_address: accountAddress
       }).then(() => {
@@ -629,6 +775,15 @@ export default {
         console.log('error when getTxs: ', error)
         this.loaded.txs = true
       })
+
+      this.getPrice().then((price) => {
+        if (price) {
+          this.current_price = parseFloat(price.price)
+        }
+      }).catch((error) => {
+        // eslint-disable-next-line no-console
+        console.log('error when get price: ', error)
+      })
     },
     copy () {
       this.$clipboard(this.accAddress)
@@ -637,13 +792,11 @@ export default {
       if (x.classList.contains('hide')) {
         x.classList.remove('hide')
         setTimeout(function () { x.classList.add('hide') }, 1000)
-      } else {
-        x.classList.add('hide')
       }
     },
     getTotalAtom () {
       this.dataChart.totalAtom = this.dataChart.rewards + this.dataChart.available + this.dataChart.commissions + this.dataChart.delegations + this.dataChart.unbondings
-      this.dataChart.totalUsd = this.dataChart.totalAtom * this.current_price
+      this.dataChart.totalUsd = this.dataChart.totalAtom * parseFloat(this.current_price)
       this.data.datasets = [{
         data: [
           (this.dataChart.available / Math.pow(10, 6)).toFixed(6),

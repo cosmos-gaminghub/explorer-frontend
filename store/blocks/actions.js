@@ -62,12 +62,8 @@ const actions = {
         query: api.GET_PROPOSED_BLOCKS_QUERY,
         variables: params
       }).then((response) => {
-        if (params.last) {
-          commit('SET_LAST_PROPOSED_BLOCKS', response.data.proposed_blocks)
-        } else {
-          commit('SET_PROPOSED_BLOCKS', response.data.proposed_blocks)
-          resolve()
-        }
+        commit('SET_PROPOSED_BLOCKS', response.data.proposed_blocks)
+        resolve()
       }).catch((error) => {
         reject(error)
       })

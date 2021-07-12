@@ -60,7 +60,7 @@
           </div>
         </div>
       </div>
-      <div class="back-top" onclick="$('html').animate({scrollTop: 0},500);">
+      <div id="icon-back-to-top" class="back-top" @click="backToTop()">
         <i class="fa fa-arrow-up" aria-hidden="true" />
       </div>
     </div>
@@ -79,8 +79,8 @@ export default {
   components: {
     headerData, tableEl
   },
-  header: {
-    title: 'Validator'
+  head: {
+    title: 'CCN - COSMOS Validators'
   },
   data () {
     return {
@@ -118,6 +118,18 @@ export default {
     }),
     changeTab (status) {
       this.tab = status
+    },
+    backToTop () {
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+      if (isSafari) {
+        window.scrollTo(0, 0)
+      } else {
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: 'smooth'
+        })
+      }
     }
   }
 }

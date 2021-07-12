@@ -6,7 +6,9 @@ export const state = () => ({
   available: [],
   txs: [],
   commissions: [],
-  unbonding: []
+  unbonding: [],
+  price: [],
+  redelegations: {}
 })
 
 export default {

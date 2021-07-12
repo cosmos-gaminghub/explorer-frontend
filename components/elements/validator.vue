@@ -5,13 +5,13 @@
         <th class="text-center">
           Rank
         </th>
-        <th class="text-left">
+        <th class="text-center">
           Validator
         </th>
         <th class="text-center td_pd">
           Voting Power
         </th>
-        <th class="text-left">
+        <th class="text-center">
           % Cumulative Share
         </th>
         <th class="text-center">
@@ -31,11 +31,11 @@
     </tbody>
     <tbody v-else>
       <tr v-for="(validator, index) in filteredRow" :key="index">
-        <th class="text-center" scope="row">
-          <div class="stt">
+        <td class="text-center" scope="row">
+          <div :class="'stt' + ((parseInt(validator.rank) > 10) ? ' not-top-ten' : '')">
             {{ validator.rank }}
           </div>
-        </th>
+        </td>
         <td class="text-left">
           <nuxt-link :to="'/validators/'+validator.operator_address" class="acount-snow">
             <div :class="'va_avatar' + (validator.jailed ? ' inactive' : ' active')">
@@ -53,22 +53,17 @@
             </p>
           </div>
         </td>
-        <td v-if="calculated && type == 'active'" class="text-right">
-          <div class="prog">
+        <td v-if="calculated" class="text-right">
+          <div v-if="type == 'active'" class="prog">
             <div class="cum" :style="origin | getWidthCumulativeShare(validator.index, token)" />
             <div class="fill" :style="validator.voting_power | getWidthVotingWidth(token)" />
           </div>
-          <p class="value">
-            {{ origin | getCumulativeShare(validator.index, token) }}%
-          </p>
-        </td>
-        <td v-else-if="type == 'inactive'" class="text-right">
-          <div class="prog">
+          <div v-else class="prog">
             <div class="cum" style="width: 0%" />
             <div class="fill" style="width: 0%" />
           </div>
           <p class="value">
-            0.<small>00</small>%
+            {{ origin | getCumulativeShare(validator.index, token, type) }}%
           </p>
         </td>
         <td v-else>
@@ -114,10 +109,10 @@ export default {
       return 'width:' + (token ? ((value / token) * Math.pow(10, 2)).toFixed(2) : 0.00) + '%'
     },
     getWidthCumulativeShare (value, index, token) {
-      return 'width:' + helper.cumulativeShare(value, index, token) + '%'
+      return 'width:' + helper.cumulativeShare(value, index, token, 'active') + '%'
     },
-    getCumulativeShare (value, index, token) {
-      return helper.cumulativeShare(value, index, token)
+    getCumulativeShare (value, index, token, type) {
+      return helper.cumulativeShare(value, index, token, type)
     }
   },
   // eslint-disable-next-line vue/require-prop-types

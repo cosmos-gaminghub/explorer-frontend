@@ -32,7 +32,7 @@
                         Block Time
                       </div>
                       <div class="detail">
-                        {{ block_detail.time | getTime }} ago ( {{ block_detail.time | formatTime }} )
+                        {{ block_detail.time | getTime }} ago ({{ block_detail.time | formatTime }})
                       </div>
                     </li>
                     <li>
@@ -84,38 +84,44 @@
                       <span>Transactions</span>
                     </h3>
                   </div>
-                  <empty-table v-if="loaded && !block_txs.length" :obj-name="'Proposed Transactions'" />
+                  <empty-table v-if="loaded_block_txs && !block_txs.length" :obj-name="'Proposed Transactions'" />
                   <div v-else class="cos-table-list">
                     <div class="table-responsive">
                       <table class="table table-striped table-bordered table-hover text-left">
                         <thead>
                           <tr>
                             <th>Tx Hash</th>
-                            <th>Type</th>
-                            <th>Result</th>
-                            <th>Amount</th>
+                            <th class="text-center">Type</th>
                             <th class="text-center">
+                              Result
+                            </th>
+                            <th>
+                              Amount
+                            </th>
+                            <th>
                               Fee
                             </th>
-                            <th>Height</th>
-                            <th>Time</th>
+                            <th class="text-center">Height</th>
+                            <th class="text-center">
+                              Time
+                            </th>
                           </tr>
                         </thead>
-                        <tbody v-if="loaded">
-                          <tr v-for="tx in block_txs" :key="tx.tx_hash">
+                        <tbody v-if="loaded_block_txs">
+                          <tr v-for="tx in filteredRowTxs" :key="tx.tx_hash">
                             <td>
                               <nuxt-link class="box btn1" :to="'/transactions/' + tx.tx_hash">
                                 {{ tx.tx_hash | getHash }}
                               </nuxt-link>
                             </td>
-                            <td><span class="box btn2">{{ tx.messages | getTypeTx }}</span></td>
-                            <td :class="tx.status ? 'green' : 'red'">
+                            <td class="text-center"><span class="box btn2">{{ tx.messages | getTypeTx }}</span></td>
+                            <td :class="'text-center ' + (!tx.status ? 'green' : 'red')">
                               <span class="title">Result</span>
-                              {{ tx.status ? 'Success' : 'Failed' }}
+                              {{ !tx.status ? 'Success' : 'Failed' }}
                             </td>
                             <td v-if="tx.total_amount !== null">
                               <span class="title">Amount</span>
-                              {{ tx.total_amount | formatAmount }} ATOM
+                              {{ tx.total_amount | convertNumber(true) }}.{{ tx.total_amount | convertNumber(false) }} ATOM
                             </td>
                             <td v-else>
                               <span class="title">Amount</span>
@@ -123,17 +129,17 @@
                                 More
                               </nuxt-link>
                             </td>
-                            <td class="text-center">
+                            <td>
                               <span class="title">Free</span>
                               {{ tx.fee | getFeeTx }} ATOM
                             </td>
-                            <td>
+                            <td class="text-center">
                               <span class="title">Height</span>
                               <nuxt-link class="box btn1" :to="'/blocks/' + tx.height">
                                 {{ tx.height }}
                               </nuxt-link>
                             </td>
-                            <td>
+                            <td class="text-center">
                               <span class="title">Time</span>
                               {{ tx.timestamp | getTime }} ago
                             </td>
@@ -147,6 +153,16 @@
                           </tr>
                         </tbody>
                       </table>
+                    </div>
+                    <div class="well">
+                      <div v-if="loaded_block_txs" class="pagination-wrapper">
+                        <pagination
+                          v-model="pagination.txs.page"
+                          :records="block_txs.length"
+                          :per-page="pagination.txs.per"
+                          :options="optionPaginate"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -184,10 +200,16 @@ export default {
     },
     getFeeTx (value) {
       const totalAmount = helper.getFeeTx(value)
-      return totalAmount / Math.pow(10, 6)
+      return (totalAmount / Math.pow(10, 6)).toFixed(6)
     },
-    formatAmount (value) {
-      return (value / Math.pow(10, 6)).toFixed(6)
+    convertNumber (value, isInt) {
+      const total = parseFloat(value) / Math.pow(10, 6)
+      if (isInt) {
+        return helper.formatNumber(parseInt(total))
+      } else {
+        const decimal = (total.toFixed(6).toString()).split('.')
+        return decimal[1]
+      }
     }
   },
   components: {
@@ -195,29 +217,56 @@ export default {
     NotFound,
     EmptyTable
   },
-  header: {
-    title: 'Block detail'
-  },
   data () {
     return {
       loaded: false,
-      notFound: false
+      loaded_block_txs: false,
+      notFound: false,
+      blockInterval: null,
+      pagination: {
+        txs: {
+          page: 1,
+          per: 5
+        }
+      },
+      optionPaginate: {
+        chunk: 5
+      },
+      allowCallApi: true
+    }
+  },
+  head () {
+    return {
+      title: 'COSMOS Block#' + this.$route.params.height
     }
   },
   computed: {
-    ...mapState('blocks', ['block_detail', 'block_txs'])
+    ...mapState('blocks', ['block_detail', 'block_txs']),
+    filteredRowTxs () {
+      return this.block_txs.filter((row, index) => {
+        const from = (this.pagination.txs.page - 1) * this.pagination.txs.per
+        const to = from + this.pagination.txs.per
+        if (index >= from && index < to) {
+          return true
+        }
+        return false
+      })
+    }
   },
   watch: {
     $route () {
       if (this.$route.params.height) {
-        this.getBlock(this.$route.params.height)
+        this.getBlock(this.$route.params.height, true)
       }
     }
   },
   mounted () {
     if (this.$route.params.height) {
-      this.getBlock(this.$route.params.height)
+      this.getBlock(this.$route.params.height, true)
     }
+  },
+  destroyed () {
+    clearInterval(this.blockInterval)
   },
   // eslint-disable-next-line require-await,vue/order-in-components
   async asyncData ({ params }) {
@@ -230,27 +279,43 @@ export default {
       getBlockTxs: 'blocks/GET_BLOCK_TXS'
     }),
     goToPrev () {
+      this.loaded = false
+      clearInterval(this.blockInterval)
       this.$router.replace('/blocks/' + (parseInt(this.$route.params.height) - 1))
     },
     goToNext () {
+      this.loaded = false
+      clearInterval(this.blockInterval)
       this.$router.replace('/blocks/' + (parseInt(this.$route.params.height) + 1))
     },
-    getBlock (height) {
-      this.getBlockDetail({
-        height
-      }).then(() => {
-        this.getBlockTxs({
+    getBlock (height, init = false) {
+      if (this.allowCallApi) {
+        this.allowCallApi = false
+        this.getBlockDetail({
           height
         }).then(() => {
           this.loaded = true
           this.notFound = false
+          this.getBlockTxs({
+            height
+          }).then(() => {
+            this.allowCallApi = true
+            this.loaded_block_txs = true
+            if (init) {
+              clearInterval(this.blockInterval)
+              this.blockInterval = setInterval(() => {
+                this.getBlock(height)
+              }, process.env.REAL_TIME_DELAY_MS * 2)
+            }
+          })
+        }).catch((error) => {
+          // eslint-disable-next-line no-console
+          console.log('error get block detail: ', error)
+          this.allowCallApi = true
+          this.loaded = true
+          this.notFound = true
         })
-      }).catch((error) => {
-        // eslint-disable-next-line no-console
-        console.log('error get block detail: ', error)
-        this.loaded = true
-        this.notFound = true
-      })
+      }
     }
   }
 }

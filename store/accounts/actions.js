@@ -80,6 +80,36 @@ const actions = {
         reject(error)
       })
     })
+  },
+  // eslint-disable-next-line require-await
+  async GET_REDELEGATIONS ({ commit }, params) {
+    return new Promise((resolve, reject) => {
+      const client = this.app.apolloProvider.defaultClient
+      client.cache.data.clear()
+      client.query({
+        query: api.GET_REDELEGATIONS_QUERY,
+        variables: params
+      }).then((response) => {
+        resolve(response.data.redelegations.redelegation_responses)
+      }).catch((error) => {
+        reject(error)
+      })
+    })
+  },
+  // eslint-disable-next-line require-await
+  async GET_PRICE ({ commit }) {
+    return new Promise((resolve, reject) => {
+      const client = this.app.apolloProvider.defaultClient
+      client.cache.data.clear()
+      client.query({
+        query: api.GET_PRICE_QUERY
+      }).then((response) => {
+        commit('SET_PRICE', response.data.price)
+        resolve(response.data.price)
+      }).catch((error) => {
+        reject(error)
+      })
+    })
   }
 }
 export default actions

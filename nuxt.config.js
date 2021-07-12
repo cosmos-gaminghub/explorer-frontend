@@ -1,4 +1,6 @@
 // eslint-disable-next-line nuxt/no-cjs-in-config
+const pkg = require('./package.json')
+// eslint-disable-next-line nuxt/no-cjs-in-config
 module.exports = {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: true,
@@ -8,7 +10,7 @@ module.exports = {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'ccn-game-explorer',
+    title: pkg.name,
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },

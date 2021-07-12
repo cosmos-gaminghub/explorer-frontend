@@ -11,7 +11,7 @@ const actions = {
         variables: params
       }).then((response) => {
         commit('SET_TRANSACTIONS', response.data.txs)
-        resolve()
+        resolve(response.data.txs)
       }).catch((error) => {
         reject(error)
       })

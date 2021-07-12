@@ -32,8 +32,14 @@
                     </div>
                   </div>
                   <div class="validator-info-status">
-                    <h2 class="card-title under-line">
-                      {{ validator | getStatus }}
+                    <h2 v-if="validator.jailed" class="card-title under-line status-jailed">
+                      Jailed
+                    </h2>
+                    <h2 v-else-if="!validator.jailed && validator.status == 'BOND_STATUS_BONDED'" class="card-title under-line status-active">
+                      Active
+                    </h2>
+                    <h2 v-else-if="validator" class="card-title under-line status-inactive">
+                      Inactive
                     </h2>
                     <div class="validator-site">
                       <a :href="validator.website" target="_blank">{{ validator.website }}</a>
@@ -77,7 +83,7 @@
                     {{ validator.voting_power | getPercentVotingPower(tokens) }}%
                   </div>
                   <div class="sub-title">
-                    ({{ validator.voting_power | formatNumber }}.<small>{{ validator.voting_power | getDecimalNumber }}</small> ATOM)
+                    ({{ validator.voting_power | getAmount(true) }}.<small>{{ validator.voting_power | getAmount(false) }}</small> ATOM)
                   </div>
                 </div>
                 <div class="status-items">
@@ -93,7 +99,7 @@
                     Self Bonded
                   </div>
                   <div class="number">
-                    {{ delegations | getTotalSelfBoned }}.<small>{{ delegations | getTotalSelfBoned(true) }}</small> ATOM ( {{ delegations | getPercentSelfBoned(validator.voting_power) }})
+                    {{ delegations | getAmount(true, true) }}.<small>{{ delegations | getAmount(false, true) }}</small> ATOM ( {{ delegations | getPercentSelfBoned(validator.voting_power) }})
                   </div>
                 </div>
                 <div class="status-items">
@@ -125,7 +131,7 @@
                       </h2>
                     </div>
                     <div class="table-total">
-                      <span class="title-total">Total :</span>{{ paginateBlocks.totalRecords | formatNumberPages }} blocks
+                      <span class="title-total">Total :</span>{{ paginateBlocks.totalRecords | formatNumber }} blocks
                     </div>
                   </div>
                   <div v-if="proposedBlocks.length" class="cos-table-list">
@@ -139,7 +145,7 @@
                             <th class="text-left">
                               Block Hash
                             </th>
-                            <th class="text-right">
+                            <th class="text-center">
                               Txs
                             </th>
                             <th class="text-right">
@@ -148,7 +154,7 @@
                           </tr>
                         </thead>
                         <tbody v-if="loaded.blocks">
-                          <tr v-for="block in filteredRow" :key="block.height">
+                          <tr v-for="(block, index) in filteredRow" :key="index">
                             <td class="text-left">
                               <nuxt-link class="box btn1" :to="'/blocks/'+block.height">
                                 {{ block.height }}
@@ -159,7 +165,7 @@
                                 {{ block.hash | formatHashBlock }}
                               </nuxt-link>
                             </td>
-                            <td class="text-right">
+                            <td class="text-center">
                               <span class="title">Txs</span>
                               {{ block.num_txs }}
                             </td>
@@ -209,26 +215,23 @@
                       <span class="title-total">Last 100 Blocks</span>
                     </div>
                   </div>
-                  <div v-if="lastProposedBlocks.length" class="missed-content">
+                  <div v-if="lastProposedBlocks" class="missed-content">
                     <a
-                      v-for="block in lastProposedBlocks"
-                      :key="block.height"
-                      :href="'/blocks/'+block.height"
+                      v-for="height in 100"
+                      :key="'block_' + (lastProposedBlocks - height + 1)"
+                      :href="'/blocks/'+(lastProposedBlocks - height + 1)"
                       data-toggle="tooltip"
                       data-placement="bottom"
-                      :class="validator | getStatus"
-                      :title="block.height"
-                    />
-                    <a
-                      v-for="i in (100 - lastProposedBlocks.length)"
-                      :key="i"
-                      class="Inactive"
+                      :class="uptimes | getStatus((lastProposedBlocks - height + 1), validator)"
+                      :title="(lastProposedBlocks - height + 1)"
                     />
                   </div>
                   <div v-else class="missed-content">
                     <a
-                      v-for="i in 100"
-                      :key="i"
+                      v-for="i in 99"
+                      :key="i+1"
+                      :href="'/blocks/'+i"
+                      :title="i+1"
                       class="Inactive"
                     />
                   </div>
@@ -262,7 +265,8 @@
                       </h2>
                     </div>
                   </div>
-                  <div v-if="powerEvents.length" class="cos-table-list">
+                  <empty-table v-if="loaded.tx && !powerEvents.length" :obj-name="'Power events'" />
+                  <div v-else class="cos-table-list">
                     <div class="table-responsive">
                       <table class="table table-striped table-bordered table-hover text-center table-snow-power">
                         <thead>
@@ -270,13 +274,13 @@
                             <th class="text-left">
                               Height
                             </th>
-                            <th class="text-left">
+                            <th class="text-center">
                               TxHash
                             </th>
                             <th class="text-right">
                               Amount
                             </th>
-                            <th class="text-right">
+                            <th class="text-center">
                               Time
                             </th>
                           </tr>
@@ -288,18 +292,18 @@
                                 {{ tx.height }}
                               </nuxt-link>
                             </td>
-                            <td class="text-left">
+                            <td class="text-center">
                               <nuxt-link :to="'/transactions/'+tx.tx_hash">
                                 {{ tx.tx_hash | formatHashBlock }}
                               </nuxt-link>
                             </td>
-                            <td :class="'text-right' + (tx.type ? ' green' : ' red')">
+                            <td :class="'text-right' + ((tx.type == 'add') ? ' green' : ' red')">
                               <span class="title">Amount</span>
                               <div class="amount-power">
-                                <img :src="tx.type | getTypeTx" :alt="tx.tx_hash">{{ tx.amount | formatNumber }}.<small>{{ tx.amount | getDecimalNumber }}</small>
+                                <img :src="tx.type | getTypeTx" :alt="tx.tx_hash">{{ tx.amount | getAmount(true) }}.<small>{{ tx.amount | getAmount(false) }}</small>
                               </div>
                             </td>
-                            <td class="text-right">
+                            <td class="text-center">
                               <span class="title">Time</span>
                               <p class="cos-note">
                                 {{ tx.timestamp | getTime }} ago
@@ -328,7 +332,6 @@
                       </div>
                     </div>
                   </div>
-                  <empty-table v-else :obj-name="'Power events'" />
                 </div>
               </div>
             </div>
@@ -350,8 +353,9 @@ export default {
     avatarValidator (value) {
       return helper.getAvatarValidator(value)
     },
-    getStatus (value) {
-      return helper.isActiveValidator(value) ? 'Active' : 'Inactive'
+    getStatus (value, heightBlock, validator) {
+      if (!helper.isActiveValidator(validator)) { return 'Inactive' }
+      return (value && value.includes(heightBlock)) ? 'Inactive' : 'Active'
     },
     getPercent (value, isCalculate) {
       if (isCalculate) { value = value * Math.pow(10, 2) }
@@ -359,34 +363,33 @@ export default {
       return value.toFixed(2)
     },
     formatNumber (value) {
-      return helper.formatNumber(parseInt(value / Math.pow(10, 6)))
-    },
-    formatNumberPages (value) {
       return helper.formatNumber(value)
     },
     getTypeTx (value) {
-      return '/assets/images/icon/' + (value ? 'plus_icon.0ca4963c.svg' : 'minus_icon.ef8463f6.svg')
+      return '/assets/images/icon/' + ((value === 'add') ? 'plus_icon.0ca4963c.svg' : 'minus_icon.ef8463f6.svg')
     },
     formatHashBlock (value) {
       return helper.formatHash(value, 8, 8)
     },
-    getDecimalNumber (value) {
-      const decimal = value % Math.pow(10, 6)
-      return decimal || '00'
+    getAmount (value, isInt = false, calcutatDelegations = false) {
+      let total = 0
+      if (!calcutatDelegations) {
+        total = parseFloat(value) / Math.pow(10, 6)
+      } else {
+        total = helper.calcutatDelegations(value) / Math.pow(10, 6)
+      }
+      if (isInt) {
+        return helper.formatNumber(parseInt(total))
+      } else {
+        const decimal = (total.toFixed(6).toString()).split('.')
+        return decimal[1]
+      }
     },
     getTime (value) {
       return helper.formatTime(value)
     },
     getPercentVotingPower (value, token) {
       return (token ? ((value / token) * Math.pow(10, 2)).toFixed(2) : 0.00)
-    },
-    getTotalSelfBoned (value, isDecimal = false) {
-      if (isDecimal) {
-        const decimal = helper.calcutatDelegations(value) % Math.pow(10, 6)
-        return decimal || '00'
-      }
-      const selfBoned = helper.calcutatDelegations(value)
-      return helper.formatNumber(parseInt(selfBoned / Math.pow(10, 6)))
     },
     getPercentSelfBoned (value, votingPower) {
       const percent = votingPower ? ((helper.calcutatDelegations(value) / votingPower) * Math.pow(10, 2)) : 0
@@ -395,9 +398,6 @@ export default {
   },
   components: {
     headerData, NotFound, EmptyTable
-  },
-  header: {
-    title: 'Validator'
   },
   data () {
     return {
@@ -426,8 +426,13 @@ export default {
       uptimesInterval: null
     }
   },
+  head () {
+    return {
+      title: 'COSMOS Validator ' + this.validator.moniker
+    }
+  },
   computed: {
-    ...mapState('blocks', ['proposedBlocks', 'powerEvents', 'delegations', 'lastProposedBlocks', 'paginateBlocks', 'paginateTx']),
+    ...mapState('blocks', ['proposedBlocks', 'powerEvents', 'delegations', 'lastProposedBlocks', 'uptimes', 'paginateBlocks', 'paginateTx']),
     ...mapState('network', ['info', 'bondedTokens']),
     ...mapState('validators', ['validator', 'tokens']),
     filteredRow () {
@@ -488,7 +493,7 @@ export default {
       getProposedBlocks: 'blocks/GET_PROPOSED_BLOCKS',
       getPowerEvents: 'blocks/GET_POWER_EVENT_QUERY',
       getDelegations: 'blocks/GET_DELEGATIONS_QUERY',
-      getLastBlocks: 'blocks/GET_UPTIMES'
+      getMissedBlocks: 'blocks/GET_UPTIMES'
     }),
     ...mapMutations({
       cumulativeShare: 'validators/SET_CUMULATIVE_SHARE',
@@ -529,26 +534,16 @@ export default {
         this.getDelegations({
           acc_address: validator.acc_address
         })
-        this.uptimesInterval = setInterval(() => {
-          this.getLastBlocks({
-            operator_address: validator.operator_address
-          })
-        }, process.env.REAL_TIME_DELAY_MS)
         this.notFound = false
       }).catch(() => {
         this.notFound = true
       })
-      /** get last 100 Blocks */
-      this.getProposedBlocks({
-        before: 0,
-        size: 100,
-        operator_address: this.$route.params.address,
-        last: true
-      }).catch((error) => {
-        // eslint-disable-next-line no-console
-        console.log('error get last 100 Blocks ', error)
-      })
-      /** end last 100 Blocks */
+      this.uptimesInterval = setInterval(() => {
+        this.getMissedBlocks({
+          operator_address: this.$route.params.address
+        })
+      }, process.env.REAL_TIME_DELAY_MS)
+
       this.getProposedBlocksTable()
       this.getPowerEventsTable()
     },
@@ -572,6 +567,7 @@ export default {
       }).then(() => {
         this.loaded.tx = true
       }).catch((error) => {
+        this.loaded.tx = true
         // eslint-disable-next-line no-console
         console.log('error getPowerEvents ', error)
       })

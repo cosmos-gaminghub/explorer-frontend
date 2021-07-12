@@ -85,6 +85,33 @@ const api = {
         amount
       }
     }`,
+  GET_REDELEGATIONS_QUERY: gql`
+    query GET_REDELEGATIONS_QUERY ($acc_address: String!) {
+      redelegations (acc_address: $acc_address) {
+        redelegation_responses {
+          redelegation {
+            delegator_address,
+            validator_dst_address,
+            validator_src_address,
+            entries {
+              creation_height,
+              completion_time,
+              initial_balance,
+              shares_dst
+            }
+          },
+          entries {
+            redelegation_entry {
+              creation_height,
+              completion_time,
+              initial_balance,
+              shares_dst
+            },
+            balance
+          }
+        }
+      }
+    }`,
   GET_PROPOSED_BLOCKS_QUERY: gql`
     query GET_PROPOSED_BLOCKS_QUERY ($before: Int!, $size: Int!, $operator_address: String!) {
       proposed_blocks(before:$before, size:$size, operator_address: $operator_address) {
@@ -176,7 +203,8 @@ const api = {
             denom,
             amount
           }
-        }
+        },
+        timestamp
       }
     }`,
   GET_INFLATION_QUERY: gql`
@@ -314,6 +342,24 @@ const api = {
         option,
         tx_hash,
         time
+      }
+    }`,
+  GET_PRICE_QUERY: gql`
+    query GET_PRICE_QUERY {
+      price (slug: "cosmos") {
+        price,
+        volume_24h,
+        market_cap,
+        percent_change_24h
+      }
+    }`,
+  GET_STATS_QUERY: gql`
+    query GET_STATS_QUERY {
+       stats_assets {
+        price,
+        market_cap,
+        volume_24h,
+        timestamp
       }
     }`
 }

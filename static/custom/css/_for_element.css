@@ -12,7 +12,7 @@
 }
 .missed-content a.Inactive {
     background: transparent;
-    border: 2px solid rgb(156, 108, 255);
+    border: 2px solid #3E8CFF;
     text-align: center;
     align-items: center;
     justify-content: center;
@@ -21,7 +21,7 @@
 }
 .missed-content a.Inactive:after {
     content: 'x';
-    color: rgb(156, 108, 255);
+    color: #3E8CFF;
     font-size: 12px;
     font-weight: bold;
     line-height: 20px;
@@ -37,7 +37,7 @@
     vertical-align: baseline;
 }
 .DelegatorTable__delegators-table-container--15lfW {
-    height: 268px;
+    height: 280px;
     margin: 0;
     padding: 0;
     border: 0;
@@ -101,7 +101,7 @@ td.td-skeleton > span {
 }
 #copied-address {
     opacity: 1;
-    transition: opacity 1s;
+    transition: opacity 0.4s;
 }
 #copied-address.hide {
     opacity: 0;
@@ -132,6 +132,7 @@ td.td-skeleton > span {
     line-height: 20px;
 }
 
+.content-proposals a.btn-status-proposal,
 .proposals-detail a.btn-status-proposal {
     width: fit-content;
     max-width: unset;
@@ -141,11 +142,113 @@ td.td-skeleton > span {
     padding-left: 10px;
 }
 
+.main-validator .table tbody tr td .stt.not-top-ten {
+    color: #0058FF;
+    background-color: #F6F2FF;
+}
+
+#icon-back-to-top {
+    cursor: pointer;
+}
+
+.page-header-inner .header-search .input-search .form-control {
+    padding-right: 30px;
+}
+
+.list-proposals li .content-proposals .right .text-note {
+    min-height: 45px;
+}
+
+.list-proposals li .content-proposals .right .images {
+    min-height: 73px;
+}
+
+.list-proposals li .content-proposals .right .text-note .note-color i.color-vote-option-yes {
+    color: '#65A246';
+}
+.list-proposals li .content-proposals .right .text-note .note-color i.color-vote-option-no {
+    color: '#F0142F';
+}
+.list-proposals li .content-proposals .right .text-note .note-color i.color-vote-option-no_with_veto {
+    color: '#F99600';
+}
+.list-proposals li .content-proposals .right .text-note .note-color i.color-vote-option-abstain {
+    color: '#57B8FF';
+}
+.main-validator .table tbody tr td a.acount-snow div.va_avatar img {
+  width: 100%;
+  height: 100%;
+}
+.left-infor .chart .list-btn div.price,
+.left-infor .chart .list-btn div.volume {
+  background: #fff;
+  color: #000;
+  font-weight: 400;
+}
+.left-infor .chart .list-btn div.price.active,
+.left-infor .chart .list-btn div.volume.active {
+  background: #0058FF;
+  color: #fff;
+  font-weight: 700;
+}
+
+.main-page .chart .images div.inactive {
+  display:none
+}
+
+.main-page .chart .images div.active {
+  display:block;
+}
+
+.list-owl-block .list-infor-detail li:nth-child(3) div.detail {
+  text-transform: uppercase;
+}
+
+.validator-detail-content .validate-title-top .validator-info-title .validator-info-status h2.status-jailed {
+  color: #ff2745;
+}
+
+.validator-detail-content .validate-title-top .validator-info-title .validator-info-status h2.status-inactive {
+  color: #4b525d;
+}
+
+.validator-detail-content .cos-table-item .validate-title-top .validator-info .validator-info-link a {
+  font-family: "Inter", sans-serif;
+  font-size: 13.6px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.main-body-content .cos-validator-detail .validator-detail-content .validate-title-top .validator-info-title .validator-info-avatar .validator-avatar img {
+  border-radius: 50%;
+}
+
+table.table-validators thead tr th:first-child,
+table.table-validators tbody tr td:first-child {
+  padding: 5px 10px !important;
+}
+
+table.table-validators tbody tr td {
+  justify-content: center;
+  vertical-align: middle;
+}
+
+.table-responsive table.table-validators tbody tr td:nth-child(5),
+.table-responsive table.table-validators table tbody tr td:nth-child(6) {
+  vertical-align: middle;
+}
+
 @media (max-width: 1024px) {
     .cos-table-item .cos-item-content table.table-home-block tbody tr td.td-skeleton {
         width: 100%;
     }
     .validator-detail-content .status-validator.skeleton {
         display: flex;
+    }
+}
+@media (max-width: 768px) {
+    .main-validator .table tbody tr td .stt.not-top-ten {
+        color: #0058FF;
+        background-color: #F6F2FF;
     }
 }

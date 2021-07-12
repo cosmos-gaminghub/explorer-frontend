@@ -19,7 +19,7 @@
                 <div class="cos-item-content md-full">
                   <div class="cos-table-list">
                     <div class="table-responsive">
-                      <table class="table table-striped table-bordered table-hover text-center">
+                      <table class="table table-striped table-bordered table-hover text-center table-page-block">
                         <thead>
                           <tr>
                             <th class="text-left">
@@ -31,7 +31,7 @@
                             <th class="text-left">
                               Proposer
                             </th>
-                            <th class="text-left">
+                            <th class="text-center">
                               Txs
                             </th>
                             <th class="text-left">
@@ -53,11 +53,11 @@
                             </td>
                             <td class="text-left">
                               <span class="title">Proposer</span>
-                              <nuxt-link class="box btn1" :to="'/validators/' + block.operator_address">
+                              <nuxt-link :to="'/validators/' + block.operator_address">
                                 {{ block.moniker }}
                               </nuxt-link>
                             </td>
-                            <td class="text-left">
+                            <td class="text-center">
                               <span class="title">Txs</span>
                               {{ block.num_txs }}
                             </td>
@@ -104,24 +104,21 @@ export default {
   components: {
     headerData
   },
+  head: {
+    title: 'CCN - COSMOS Blocks'
+  },
   data () {
     return {
       loaded: false,
-      blockInterval: null
+      blockInterval: null,
+      allowCallApi: true
     }
   },
   computed: {
     ...mapState('blocks', ['blocks'])
   },
   mounted () {
-    this.blockInterval = setInterval(() => {
-      this.getBlocks({
-        offset: 0,
-        size: 20
-      }).then(() => {
-        this.loaded = true
-      })
-    }, process.env.REAL_TIME_DELAY_MS)
+    this.getBlocksFunc(true)
   },
   destroyed () {
     clearInterval(this.blockInterval)
@@ -129,7 +126,25 @@ export default {
   methods: {
     ...mapActions({
       getBlocks: 'blocks/GET_DATA'
-    })
+    }),
+    getBlocksFunc (init = false) {
+      if (this.allowCallApi) {
+        this.allowCallApi = false
+        this.getBlocks({
+          offset: 0,
+          size: 20
+        }).then(() => {
+          this.allowCallApi = true
+          this.loaded = true
+          if (init) {
+            clearInterval(this.blockInterval)
+            this.blockInterval = setInterval(() => {
+              this.getBlocksFunc()
+            }, process.env.REAL_TIME_DELAY_MS)
+          }
+        })
+      }
+    }
   }
 }
 </script>

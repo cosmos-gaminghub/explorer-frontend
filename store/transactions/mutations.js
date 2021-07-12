@@ -9,6 +9,11 @@ const mutations = {
     state.transactions = data
   },
   SET_TRANSACTION_DETAIL (state, data) {
+    if (data) {
+      data.messagesObj = JSON.parse(data.messages)
+      data.logsObj = JSON.parse(data.logs)
+    }
+    console.log('tx_detail = ', data)
     state.tx_detail = data
   }
 }

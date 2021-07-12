@@ -5,7 +5,7 @@
         <div class="row">
           <div class="col-lg-4 col-md-12 col-sm-12">
             <h2 class="page-title">
-              Dasboard
+              Dashboard
             </h2>
             <div class="left-infor">
               <div class="cnt">
@@ -14,30 +14,32 @@
                     <div class="icon">
                       <img src="/assets/images/icon/atom.png" alt="atom">
                     </div>
-                    <h3>14.30</h3>
+                    <h3 v-if="price.price">
+                      {{ parseFloat(price.price).toFixed(2) }}
+                    </h3>
                   </div>
                   <div class="sub-title">
-                    Block Time 7,742ms
-                  </div><span class="percent">7%</span>
+                    Block Time {{ (info && info.block_time) ? ((info.block_time / Math.pow(10, 9)).toFixed(3)) : 0 }}ms
+                  </div><span v-if="price.percent_change_24h" class="percent">{{ parseFloat(price.percent_change_24h).toFixed(2) }}%</span>
                 </div>
                 <div class="list-item-infor">
                   <div class="item">
-                    Market Caps:<span>$3,112,766,217</span>
+                    Market Caps:<span v-if="price.market_cap">${{ price.market_cap | convertNumber(true) }}.{{ price.market_cap | convertNumber(false) }}</span>
                   </div>
                   <div class="item">
-                    24h Vol: <span>$944,716,442.00</span>
+                    24h Vol: <span v-if="price.volume_24h">${{ price.volume_24h | convertNumber(true) }}.{{ price.volume_24h | convertNumber(false) }}</span>
                   </div>
                 </div>
               </div>
               <div class="chart">
                 <div class="images">
-                  <img src="/assets/images/bgr/chart1.png" alt="atom">
+                  <line-chart />
                 </div>
                 <div class="list-btn">
-                  <div class="btn price">
+                  <div :class="'btn price'+(chart.current_tab === chart.price ? ' active' : '')" @click="changeCurrentTab(chart.price)">
                     Price
                   </div>
-                  <div class="btn volume">
+                  <div :class="'btn volume'+(chart.current_tab === chart.volume ? ' active' : '')" @click="changeCurrentTab(chart.volume)">
                     Volume
                   </div>
                 </div>
@@ -62,11 +64,11 @@
                     <table class="table table-striped table-bordered table-hover text-center table-home-block">
                       <thead>
                         <tr>
-                          <th>Height</th>
+                          <th class="text-left">Height</th>
                           <th class="text-left">
                             Proposer
                           </th>
-                          <th>Txs</th>
+                          <th class="text-left">Txs</th>
                           <th class="text-left">
                             Time
                           </th>
@@ -74,7 +76,7 @@
                       </thead>
                       <tbody v-if="loadedBlock">
                         <tr v-for="block in blocks" :key="block.hash">
-                          <td>
+                          <td class="text-left">
                             <nuxt-link class="box btn1" :to="'/blocks/' + block.height">
                               {{ block.height }}
                             </nuxt-link>
@@ -84,7 +86,7 @@
                               {{ block.moniker }}
                             </nuxt-link>
                           </td>
-                          <td>
+                          <td class="text-left">
                             <span class="title">Txs</span>
                             {{ block.num_txs }}
                           </td>
@@ -121,7 +123,7 @@
                 </div>
                 <div class="cos-table-list">
                   <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-hover">
+                    <table class="table table-striped table-bordered table-hover tbl-transation-home">
                       <thead>
                         <tr>
                           <th>Tx Hash</th>
@@ -144,7 +146,7 @@
                             </nuxt-link>
                           </td>
                           <td class="text-left">
-                            <a class="box btn2" href="#">Get Reward</a>
+                            <a class="box btn2" href="#">{{ tx.messages | getTypeTx }}</a>
                           </td>
                           <td class="text-left">
                             <span class="title">Height</span>
@@ -180,6 +182,10 @@
 import { mapActions, mapState } from 'vuex'
 import headerData from '@/components/header/Header.vue'
 import helper from '@/utils/helper'
+import Vue from 'vue'
+import LineChart from '~/components/libs/LineChart'
+
+export const eventBus = new Vue()
 
 export default {
   filters: {
@@ -191,25 +197,51 @@ export default {
     },
     getTime (value) {
       return value ? (helper.formatTime(value) + ' ago') : ''
+    },
+    getTypeTx (value) {
+      return helper.getTypeTx(value)
+    },
+    convertNumber (value, isInt) {
+      const total = parseFloat(value)
+      if (isInt) {
+        return helper.formatNumber(parseInt(total))
+      } else {
+        const decimal = (total.toFixed(2).toString()).split('.')
+        return decimal[1]
+      }
     }
   },
   components: {
-    headerData
+    headerData,
+    LineChart
   },
   data () {
     return {
       loadedBlock: false,
       loadedTx: false,
       blockInterval: null,
-      TxInterval: null
+      TxInterval: null,
+      PriceInterval: null,
+      StatsInterval: null,
+      allowCallApiBlocks: true,
+      allowCallApiTxs: true,
+      allowCallApiPrice: true,
+      allowCallApiStats: true,
+      chart: {
+        current_tab: 1,
+        price: 1,
+        volume: 2
+      }
     }
   },
-  header: {
-    title: 'Home'
+  head: {
+    title: 'CCN - COSMOS Explorer by COSMOSTATION'
   },
   computed: {
     ...mapState('blocks', ['blocks']),
-    ...mapState('transactions', ['transactions'])
+    ...mapState('transactions', ['transactions']),
+    ...mapState('accounts', ['price']),
+    ...mapState('network', ['info', 'stats_assets'])
   },
   mounted () {
     this.loadData()
@@ -217,37 +249,135 @@ export default {
   destroyed () {
     clearInterval(this.blockInterval)
     clearInterval(this.TxInterval)
+    clearInterval(this.PriceInterval)
+    clearInterval(this.StatsInterval)
   },
   methods: {
     ...mapActions({
       getFiveNewestBlocks: 'blocks/GET_DATA',
-      getFiveNewestTransactions: 'transactions/GET_DATA'
+      getFiveNewestTransactions: 'transactions/GET_DATA',
+      getPrice: 'accounts/GET_PRICE',
+      getStatsAsset: 'network/GET_STATS'
     }),
     loadData () {
-      this.blockInterval = setInterval(() => {
+      this.getBlocks(true)
+      this.getTxs(true)
+      this.getPriceFunc(true)
+      this.getStatsFunc(true)
+    },
+    getBlocks (init = false) {
+      if (this.allowCallApiBlocks) {
+        this.allowCallApiBlocks = false
         this.getFiveNewestBlocks({
           offset: 0,
           size: 5
         }).then(() => {
+          this.allowCallApiBlocks = true
           this.loadedBlock = true
+          if (init) {
+            clearInterval(this.TxInterval)
+            this.blockInterval = setInterval(() => {
+              this.getBlocks()
+            }, process.env.REAL_TIME_DELAY_MS)
+          }
         }).catch((error) => {
+          this.allowCallApiBlocks = true
           // eslint-disable-next-line no-console
           console.log('error getFiveNewestBlocks', error)
           this.loadedBlock = true
         })
-      }, process.env.REAL_TIME_DELAY_MS)
-      this.TxInterval = setInterval(() => {
+      }
+    },
+    getTxs (init = false) {
+      if (this.allowCallApiTxs) {
+        this.allowCallApiTxs = false
         this.getFiveNewestTransactions({
           offset: 0,
           size: 5
         }).then(() => {
+          this.allowCallApiTxs = true
           this.loadedTx = true
+          if (init) {
+            clearInterval(this.TxInterval)
+            this.TxInterval = setInterval(() => {
+              this.getTxs()
+            }, process.env.REAL_TIME_DELAY_MS * 2.5)
+          }
         }).catch((error) => {
-        // eslint-disable-next-line no-console
+          this.allowCallApiTxs = true
+          // eslint-disable-next-line no-console
           console.log('error getFiveNewestBlocks', error)
           this.loadedTx = true
         })
-      }, process.env.REAL_TIME_DELAY_MS)
+      }
+    },
+    getPriceFunc (init = false) {
+      if (this.allowCallApiPrice) {
+        this.allowCallApiPrice = false
+        this.getPrice().then(() => {
+          this.allowCallApiPrice = true
+          if (init) {
+            clearInterval(this.PriceInterval)
+            this.PriceInterval = setInterval(() => {
+              this.getPriceFunc()
+            }, process.env.REAL_TIME_DELAY_MS * 15)
+          }
+        })
+      }
+    },
+    getStatsFunc (init = false) {
+      if (this.allowCallApiStats) {
+        this.allowCallApiStats = false
+        this.getStatsAsset().then(() => {
+          this.allowCallApiStats = true
+          this.changeCurrentTab(this.chart.current_tab)
+          if (init) {
+            clearInterval(this.StatsInterval)
+            this.StatsInterval = setInterval(() => {
+              this.getPriceFunc()
+            }, process.env.REAL_TIME_DELAY_MS * 15)
+          }
+        })
+      }
+    },
+    changeCurrentTab (tab) {
+      this.chart.current_tab = tab
+      if (tab === this.chart.price) {
+        this.fillDataForChart('price')
+      } else {
+        this.fillDataForChart('volume')
+      }
+    },
+    fillDataForChart (type = 'price') {
+      /* eslint-disable prefer-const */
+      let labels = []
+      let data = []
+      for (const item in this.stats_assets) {
+        const time = helper.convertTime(this.stats_assets[item].timestamp)
+        let price = 0
+        if (type === 'price') {
+          price = parseFloat(this.stats_assets[item].price).toFixed(2)
+        } else {
+          price = parseFloat(this.stats_assets[item].volume_24h).toFixed(2)
+        }
+        if (!labels.includes(time)) {
+          labels.push(time)
+          data.push(parseFloat(price))
+        }
+      }
+      eventBus.$emit('changeData', {
+        labels,
+        datasets: [
+          {
+            backgroundColor: 'rgba(28,92,246,0.3)',
+            borderColor: 'rgba(28,92,246,100)',
+            pointRadius: 0,
+            borderWidth: 3,
+            pointBorderColor: 'rgba(28,92,246,100)',
+            data
+          }
+        ]
+      })
     }
   }
 }

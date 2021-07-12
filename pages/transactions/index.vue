@@ -23,14 +23,14 @@
                         <thead>
                           <tr>
                             <th>Tx Hash</th>
-                            <th>Type</th>
-                            <th>Result</th>
+                            <th class="text-left">Type</th>
+                            <th class="text-center">Result</th>
                             <th>Amount</th>
                             <th class="text-center">
                               Fee
                             </th>
                             <th>Height</th>
-                            <th>Time</th>
+                            <th class="text-center">Time</th>
                           </tr>
                         </thead>
                         <tbody v-if="loaded">
@@ -40,8 +40,8 @@
                                 {{ tx.tx_hash | formatHash }}
                               </nuxt-link>
                             </td>
-                            <td><span class="box btn2">{{ tx.messages | getTypeTx }}</span></td>
-                            <td :class="!tx.status ? 'green' : 'red'">
+                            <td class="text-left"><span class="box btn2">{{ tx.messages | getTypeTx }}</span></td>
+                            <td :class="'text-center ' + (!tx.status ? 'green' : 'red')">
                               <span class="title">Result</span>
                               {{ !tx.status ? 'Success' : 'Failed' }}
                             </td>
@@ -65,7 +65,7 @@
                                 {{ tx.height }}
                               </nuxt-link>
                             </td>
-                            <td>
+                            <td class="text-center">
                               <span class="title">Time</span>
                               {{ tx.timestamp | getTime }} ago
                             </td>
@@ -117,23 +117,21 @@ export default {
   components: {
     headerData
   },
+  head: {
+    title: 'CCN - COSMOS Txs'
+  },
   data () {
     return {
       loaded: false,
-      TxInterval: null
+      TxInterval: null,
+      allowCallApi: true
     }
   },
   computed: {
     ...mapState('transactions', ['transactions'])
   },
   mounted () {
-    this.TxInterval = setInterval(() => {
-      this.getTxs({
-        size: 20
-      }).then(() => {
-        this.loaded = true
-      })
-    }, process.env.REAL_TIME_DELAY_MS)
+    this.getTxsFunc(true)
   },
   destroyed () {
     clearInterval(this.TxInterval)
@@ -141,7 +139,22 @@ export default {
   methods: {
     ...mapActions({
       getTxs: 'transactions/GET_DATA'
-    })
+    }),
+    getTxsFunc (init = false) {
+      if (this.allowCallApi) {
+        this.getTxs({
+          size: 20
+        }).then(() => {
+          this.loaded = true
+          if (init) {
+            clearInterval(this.TxInterval)
+            this.TxInterval = setInterval(() => {
+              this.getTxsFunc()
+            }, process.env.REAL_TIME_DELAY_MS * 2.5)
+          }
+        })
+      }
+    }
   }
 }
 </script>

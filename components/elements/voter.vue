@@ -9,7 +9,7 @@
             <th class="text-left">
               Tx Hash
             </th>
-            <th class="text-left">
+            <th class="text-center">
               Answer
             </th>
             <th class="text-left">
@@ -36,7 +36,7 @@
                 {{ voter.tx_hash | formatHash }}
               </nuxt-link>
             </td>
-            <td class="text-left">
+            <td class="text-center">
               <span class="title">Answer</span>
               <span>{{ voter.option | getOptions }}</span>
             </td>
@@ -71,7 +71,7 @@ import { eventBus } from '~/pages/proposals/_id.vue'
 export default {
   filters: {
     formatHash (value) {
-      return helper.formatHash(value, 8, 8)
+      return helper.formatHash(value, 6, 6)
     },
     getOptions (value) {
       return {

@@ -74,7 +74,7 @@
                         Memo
                       </div>
                       <div class="detail">
-                        {{ tx_detail.memo | formatNumber }}
+                        {{ tx_detail.memo }}
                       </div>
                     </li>
                   </ul>
@@ -83,47 +83,9 @@
             </div>
           </div>
         </div>
-        <div class="main-md-content transaction-detail-message">
-          <div class="cos-table-item">
-            <div class="cos-item-content">
-              <div class="cos-title">
-                <h3 class="title-cos">
-                  <span>MESSAGE: </span><span>{{ tx_detail.messages | getTypeTx }}</span>
-                </h3>
-              </div>
-              <ul class="list-owl-block">
-                <li>
-                  <ul class="list-infor-detail">
-                    <li>
-                      <div class="title">
-                        From Address
-                      </div>
-                      <div class="detail">
-                        {{ tx_detail.messages | getAddrTx('from') }}
-                      </div>
-                    </li>
-                    <li>
-                      <div class="title">
-                        To Address
-                      </div>
-                      <div class="detail">
-                        {{ tx_detail.messages | getAddrTx('to') }}
-                      </div>
-                    </li>
-                    <li>
-                      <div class="title">
-                        Amount
-                      </div>
-                      <div class="detail">
-                        {{ tx_detail.messages | getAmount }}ATOM
-                      </div>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
+        <type-tx
+          :tx="tx_detail"
+        />
       </div>
     </div>
   </div>
@@ -132,15 +94,13 @@
 import { mapState, mapActions } from 'vuex'
 import headerData from '@/components/header/Header.vue'
 import NotFound from '@/components/error/NotFound.vue'
+import typeTx from '~/components/elements/typeTx'
 import helper from '~/utils/helper'
 
 export default {
   filters: {
     formatNumber (value) {
       return helper.formatNumber(value)
-    },
-    getTypeTx (value) {
-      return helper.getTypeTx(value)
     },
     getTime (value) {
       return helper.formatTime(value)
@@ -151,20 +111,17 @@ export default {
     },
     formatTime (value) {
       return helper.convertTime(value)
-    },
-    getAddrTx (value, type) {
-      return helper.getAddrTx(value, type)
-    },
-    getAmount (value) {
-      return (helper.getAmount(value) / Math.pow(10, 6)).toFixed(6)
     }
   },
   components: {
     headerData,
-    NotFound
+    NotFound,
+    typeTx
   },
-  header: {
-    title: 'Transaction detail'
+  head () {
+    return {
+      title: 'COSMOS Tx ' + this.$route.params.address
+    }
   },
   data () {
     return {

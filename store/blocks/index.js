@@ -6,7 +6,8 @@ export const state = () => ({
   block_detail: {},
   block_txs: [],
   proposedBlocks: [],
-  lastProposedBlocks: [],
+  lastProposedBlocks: 0,
+  uptimes: [],
   powerEvents: [],
   delegations: [],
   paginateBlocks: {

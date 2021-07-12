@@ -8,7 +8,7 @@
         {{ info.block_height | formatNumber }}
       </div>
       <div class="sub-title">
-        Last {{ info.block_time | getTime }} ago
+        Last {{ info.timestamp | getTime }} ago
       </div>
     </div>
     <div class="status-items">
@@ -45,7 +45,11 @@
       </div>
     </div>
   </div>
-  <Skeleton v-else class="blocks-status no-tablet" />
+  <div v-else class="blocks-status no-tablet">
+    <div v-for="i in 4" :key="'status-items-'+i" class="status-items">
+      <Skeleton v-for="j in 3" :key="j" class="blocks-status no-tablet" />
+    </div>
+  </div>
 </template>
 <script>
 import { mapActions, mapState } from 'vuex'
@@ -66,15 +70,38 @@ export default {
   computed: {
     ...mapState('network', ['info', 'loaded', 'inflation'])
   },
+  data () {
+    return {
+      statusInterval: null,
+      callSuccessStatus: true
+    }
+  },
+  destroyed () {
+    clearInterval(this.statusInterval)
+  },
   mounted () {
-    this.getStatus()
+    this.getStatusFunc(true)
     this.getInflation()
   },
   methods: {
     ...mapActions({
       getStatus: 'network/GET_DATA',
       getInflation: 'network/GET_DATA_INFLATION'
-    })
+    }),
+    getStatusFunc (init = false) {
+      if (this.callSuccessStatus) {
+        this.callSuccessStatus = false
+        this.getStatus().then(() => {
+          this.callSuccessStatus = true
+          if (init) {
+            clearInterval(this.statusInterval)
+            this.statusInterval = setInterval(() => {
+              this.getStatusFunc()
+            }, process.env.REAL_TIME_DELAY_MS)
+          }
+        })
+      }
+    }
   }
 }
 </script>

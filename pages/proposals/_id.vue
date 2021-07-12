@@ -46,7 +46,7 @@
                         Initial Deposit
                       </div>
                       <div class="detail">
-                        1.000000 ATOM
+                        {{ initial_deposit | convertAmount(true) }}.{{ initial_deposit | convertAmount(false) }} ATOM
                       </div>
                     </li>
                     <li>
@@ -141,7 +141,7 @@
               <div class="total-atom">
                 Total ATOM
               </div>
-              <h3>{{ vote.length | convertAmount(true, true) }}.{{ vote.length | convertAmount(false, true) }}</h3>
+              <h3>{{ voteData.total | convertAmount(true) }}.{{ voteData.total | convertAmount(false) }}</h3>
               <div class="detail-chart">
                 <p>ATOM</p>
               </div>
@@ -156,7 +156,7 @@
                 />
               </div>
               <div class="note-chart">
-                <ul>
+                <ul v-if="proposal && proposal.tally">
                   <li>
                     <div class="color col-green">
                       <i class="fa fa-circle" aria-hidden="true" />
@@ -165,10 +165,10 @@
                       Yes
                     </div>
                     <div class="percent">
-                      {{ voteData.yes.length | getPercent(vote.length) }}%
+                      {{ proposal.tally.yes | getPercent(voteData.total) }}%
                     </div>
                     <div class="number">
-                      {{ voteData.yes.length | convertAmount(true, true) }}.{{ voteData.yes.length | convertAmount(false, true) }}
+                      {{ proposal.tally.yes | convertAmount(true) }}.{{ proposal.tally.yes | convertAmount(false) }}
                     </div>
                   </li>
                   <li>
@@ -179,10 +179,10 @@
                       No
                     </div>
                     <div class="percent">
-                      {{ voteData.no.length | getPercent(vote.length) }}%
+                      {{ proposal.tally.no | getPercent(voteData.total) }}%
                     </div>
                     <div class="number">
-                      {{ voteData.no.length | convertAmount(true, true) }}.{{ voteData.no.length | convertAmount(false, true) }}
+                      {{ proposal.tally.no | convertAmount(true) }}.{{ proposal.tally.no | convertAmount(false) }}
                     </div>
                   </li>
                   <li>
@@ -193,10 +193,10 @@
                       No With Veto
                     </div>
                     <div class="percent">
-                      {{ voteData.no_with_veto.length | getPercent(vote.length) }}%
+                      {{ proposal.tally.no_with_veto | getPercent(voteData.total) }}%
                     </div>
                     <div class="number">
-                      {{ voteData.no_with_veto.length | convertAmount(true, true) }}.{{ voteData.no_with_veto.length | convertAmount(false, true) }}
+                      {{ proposal.tally.no_with_veto | convertAmount(true) }}.{{ proposal.tally.no_with_veto | convertAmount(false) }}
                     </div>
                   </li>
                   <li>
@@ -207,10 +207,10 @@
                       Abstain
                     </div>
                     <div class="percent">
-                      {{ voteData.abstain.length | getPercent(vote.length) }}%
+                      {{ proposal.tally.abstain | getPercent(voteData.total) }}%
                     </div>
                     <div class="number">
-                      {{ voteData.abstain.length | convertAmount(true, true) }}.{{ voteData.abstain.length | convertAmount(false, true) }}
+                      {{ proposal.tally.abstain | convertAmount(true) }}.{{ proposal.tally.abstain | convertAmount(false) }}
                     </div>
                   </li>
                 </ul>
@@ -371,7 +371,7 @@ export const eventBus2 = new Vue()
 export default {
   filters: {
     formatHash (value) {
-      return helper.formatHash(value, 8, 8)
+      return helper.formatHash(value, 6, 6)
     },
     getStatusProposal (value) {
       return helper.getTypeProposal(value)
@@ -390,8 +390,8 @@ export default {
         return decimal[1]
       }
     },
-    convertAmount (value, isInt, notDevice = false) {
-      value = notDevice ? value : value / Math.pow(10, 6)
+    convertAmount (value, isInt) {
+      value = value / Math.pow(10, 6)
 
       if (isInt) {
         return helper.formatNumber(parseInt(value))
@@ -418,8 +418,10 @@ export default {
     EmptyTable,
     Doughnut
   },
-  header: {
-    title: 'Proposal detail'
+  head () {
+    return {
+      title: 'COSMOS Proposal#' + this.$route.params.id
+    }
   },
   data () {
     return {
@@ -452,7 +454,8 @@ export default {
         no: [],
         no_with_veto: [],
         abstain: [],
-        current: 1
+        current: 1,
+        total: 0
       },
       tabVoter: {
         all: 1,
@@ -469,7 +472,8 @@ export default {
         optionPaginate: {
           chunk: 5
         }
-      }
+      },
+      initial_deposit: 0
     }
   },
   computed: {
@@ -512,7 +516,40 @@ export default {
       this.getProposalDetail({
         proposal_id: id
       }).then((proposalDetail) => {
+        console.log('proposalDetail = ', proposalDetail)
         this.loaded.proposal_detail = true
+        const yes = parseFloat(proposalDetail.tally.yes)
+        const no = parseFloat(proposalDetail.tally.no)
+        const noWithVeto = parseFloat(proposalDetail.tally.no_with_veto)
+        const abstain = parseFloat(proposalDetail.tally.abstain)
+        this.voteData.total = yes + no + noWithVeto + abstain
+
+        if (this.voteData.total > 0) {
+          this.data = {
+            labels: [
+              'Yes',
+              'No',
+              'No With Veto',
+              'Abstain'
+            ],
+            datasets: [{
+              data: [
+                yes / Math.pow(10, 6),
+                no / Math.pow(10, 6),
+                noWithVeto / Math.pow(10, 6),
+                abstain / Math.pow(10, 6)
+              ],
+              backgroundColor: [
+                '#65A246',
+                '#F0142F',
+                '#F99600',
+                '#57B8FF'
+              ],
+              hoverOffset: 1
+            }]
+          }
+          eventBus2.$emit('changeData', this.data)
+        }
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.log('error when proposal detail: ', error)
@@ -522,7 +559,9 @@ export default {
       this.getDeposit({
         proposal_id: id
       }).then((deposit) => {
-        console.log('deposit = ', deposit)
+        if (deposit.length) {
+          this.initial_deposit = deposit[0].amount
+        }
         this.loaded.deposit = true
       }).catch((error) => {
         // eslint-disable-next-line no-console
@@ -552,32 +591,6 @@ export default {
           }
         }
         this.loaded.vote = true
-        if (vote.length) {
-          this.data = {
-            labels: [
-              'Yes',
-              'No',
-              'No With Veto',
-              'Abstain'
-            ],
-            datasets: [{
-              data: [
-                this.voteData.yes.length,
-                this.voteData.no.length,
-                this.voteData.no_with_veto.length,
-                this.voteData.abstain.length
-              ],
-              backgroundColor: [
-                '#65A246',
-                '#F0142F',
-                '#F99600',
-                '#57B8FF'
-              ],
-              hoverOffset: 1
-            }]
-          }
-        }
-        eventBus2.$emit('changeData', this.data)
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.log('error when get vote: ', error)

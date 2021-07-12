@@ -13,6 +13,9 @@ const mutations = {
   },
   SET_INFLATION_INFO (state, data) {
     state.inflation = data
+  },
+  SET_STATS_ASSETS (state, data) {
+    state.stats_assets = data.reverse()
   }
 }
 

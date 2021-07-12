@@ -36,7 +36,7 @@
                   <span>Dashboard</span>
                 </nuxt-link>
               </li>
-              <li :class="isActiveMenu('validators')">
+              <li :class="isActiveMenu('validators') || isActiveMenu('account')">
                 <nuxt-link to="/validators" class="item-menu">
                   <div class="icon">
                     <img class="icon-black" src="/assets/images/icon/icon2.png" alt="demo">

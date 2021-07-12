@@ -12,7 +12,7 @@
             <header-data />
           </div>
         </div>
-        <chart-el />
+        <chart-el :proposals="proposals" />
         <div class="main-md-content delegated-missed">
           <div class="cos-table-item table-proposal">
             <div class="cos-item-content">
@@ -112,6 +112,9 @@ export default {
     return {
       loaded: false
     }
+  },
+  head: {
+    title: 'CCN - COSMOS Proposals'
   },
   computed: {
     ...mapState('proposals', ['proposals'])

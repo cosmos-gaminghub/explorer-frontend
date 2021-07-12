@@ -16,7 +16,9 @@ const mutations = {
   },
   SET_PROPOSED_BLOCKS (state, data) {
     state.paginateBlocks.before = data[data.length - 1] ? data[data.length - 1].height : 0
-    state.paginateBlocks.totalRecords = (data[0]) ? data[0].total_records : 0
+    if (data[0] && data[0].total_records) {
+      state.paginateBlocks.totalRecords = data[0].total_records
+    }
     let indexBlock = (state.paginateBlocks.currentPage - 1) * state.paginateBlocks.size
     let i = 0
     for (; i < data.length; i++) {
@@ -26,24 +28,20 @@ const mutations = {
     state.paginateBlocks.currentPage++
     state.proposedBlocks = state.proposedBlocks.concat(data)
   },
-  SET_LAST_PROPOSED_BLOCKS (state, data) {
-    let i = 0
-    let item
-    for (item in data) {
-      state.lastProposedBlocks[i] = {
-        height: data[item].height
-      }
-      i++
-    }
-  },
   SET_UPTIMES (state, data) {
-    const _blocsArr = state.lastProposedBlocks
-    if (_blocsArr.length >= 100) { _blocsArr.pop() }
-    state.lastProposedBlocks = [{ height: data.last_height }].concat(_blocsArr)
+    if (data) {
+      state.lastProposedBlocks = data.last_height
+      state.uptimes = []
+      for (const uptime in data.uptime) {
+        state.uptimes.push(data.uptime[uptime].height)
+      }
+    }
   },
   SET_POWER_EVENT (state, data) {
     state.paginateTx.before = data[data.length - 1] ? data[data.length - 1].height : 0
-    state.paginateTx.totalRecords = (data[0]) ? data[0].total_records : 0
+    if (data[0] && data[0].total_records) {
+      state.paginateTx.totalRecords = data[0].total_records
+    }
     let indexEvent = (state.paginateTx.currentPage - 1) * state.paginateTx.size
     let i = 0
     for (i in data) {

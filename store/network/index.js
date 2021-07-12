@@ -5,7 +5,8 @@ export const state = () => ({
   info: {},
   inflation: 0,
   bondedTokens: 0,
-  loaded: false
+  loaded: false,
+  stats_assets: {}
 })
 
 export default {
