@@ -19,15 +19,15 @@
               <empty-table v-if="loaded && !proposals.length" :obj-name="'PROPOSALS'" />
               <div v-else class="cos-table-list">
                 <div class="table-responsive">
-                  <table class="table table-striped table-bordered table-hover text-left">
+                  <table class="table table-striped table-bordered table-hover text-left table-proposals-page">
                     <thead>
                       <tr>
                         <th>#ID</th>
                         <th>Title</th>
-                        <th>Status</th>
-                        <th>Voting Start</th>
-                        <th>Summit time</th>
-                        <th>Total Deposit</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Voting Start</th>
+                        <th class="text-center">Summit time</th>
+                        <th class="text-center">Total Deposit</th>
                       </tr>
                     </thead>
                     <tbody v-if="loaded">
@@ -38,21 +38,21 @@
                             {{ proposal.content.title }}
                           </a>
                         </td>
-                        <td>
+                        <td class="text-center">
                           <span class="title">Status</span>
                           <div :class="'box blue_line ' + proposal.status">
                             {{ proposal.status | getTypeProposal }}
                           </div>
                         </td>
-                        <td>
+                        <td class="text-center">
                           <span class="title">Voting Start</span>
                           {{ proposal.voting_start | convertTime }}
                         </td>
-                        <td>
+                        <td class="text-center">
                           <span class="title">Summit time</span>
                           {{ proposal.submit_time | convertTime }}
                         </td>
-                        <td>
+                        <td class="text-center">
                           <span class="title">Total Deposit</span>
                           <span>{{ proposal.total_deposit | getTotalDeposit(true) }}.{{ proposal.total_deposit | getTotalDeposit(false) }} ATOM</span>
                         </td>

@@ -8,7 +8,11 @@
           </div>
           <div class="content-proposals">
             <div class="left">
-              <h4>{{ proposal.content ? proposal.content.title : '' }}</h4>
+              <h4>
+                <nuxt-link v-if="proposal.content" :to="'/proposals/'+proposal.id" class="not-class-link">
+                  {{ proposal.content.title }}
+                </nuxt-link>
+              </h4>
               <div class="list-time">
                 <div class="item">
                   <div class="name">
@@ -107,9 +111,8 @@ export default {
     filteredRow () {
       return this.proposals.filter((row, index) => {
         const from = 0
-        const to = 5
+        const to = 4
         if (index >= from && index < to) {
-          console.log('row = ', row)
           return true
         }
         return false

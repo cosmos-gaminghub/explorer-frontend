@@ -28,7 +28,13 @@
                 <div class="validator-info-title">
                   <div class="validator-info-avatar">
                     <div class="validator-avatar">
-                      <img :src="validator.operator_address | avatarValidator" onError="this.onerror=null;this.src='https://www.mintscan.io/static/media/validator_none.83868b17.svg'" :alt="validator.moniker">
+                      <img
+                        v-if="validator.operator_address"
+                        :src="'https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/moniker/cosmoshub/' + validator.operator_address + '.png'"
+                        onload="console.log('loaded')"
+                        onError="console.log('Error');this.onerror=null;this.src='https://www.mintscan.io/static/media/validator_none.83868b17.svg'"
+                        :alt="validator.moniker"
+                      >
                     </div>
                   </div>
                   <div class="validator-info-status">
@@ -134,7 +140,8 @@
                       <span class="title-total">Total :</span>{{ paginateBlocks.totalRecords | formatNumber }} blocks
                     </div>
                   </div>
-                  <div v-if="proposedBlocks.length" class="cos-table-list">
+                  <empty-table v-if="loaded.blocks && !proposedBlocks.length" :obj-name="'Proposed Blocks'" />
+                  <div v-else class="cos-table-list">
                     <div class="table-responsive">
                       <table class="table table-striped table-bordered table-hover text-center">
                         <thead>
@@ -179,7 +186,7 @@
                         </tbody>
                         <tbody v-else>
                           <tr v-for="i in [1, 2, 3, 4, 5]" :key="i">
-                            <td colspan="4">
+                            <td colspan="4" class="td-skeleton">
                               <Skeleton />
                             </td>
                           </tr>
@@ -198,7 +205,6 @@
                       </div>
                     </div>
                   </div>
-                  <empty-table v-else :obj-name="'Proposed Blocks'" />
                 </div>
               </div>
             </div>
@@ -350,9 +356,6 @@ import helper from '~/utils/helper'
 
 export default {
   filters: {
-    avatarValidator (value) {
-      return helper.getAvatarValidator(value)
-    },
     getStatus (value, heightBlock, validator) {
       if (!helper.isActiveValidator(validator)) { return 'Inactive' }
       return (value && value.includes(heightBlock)) ? 'Inactive' : 'Active'

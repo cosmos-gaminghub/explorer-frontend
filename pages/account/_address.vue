@@ -280,14 +280,14 @@
                       <thead>
                         <tr>
                           <th>Tx Hash</th>
-                          <th class="text-center">Type</th>
+                          <th>Type</th>
                           <th class="text-center">Result</th>
                           <th>Amount</th>
                           <th>
                             Fee
                           </th>
                           <th class="text-center">Height</th>
-                          <th>Time</th>
+                          <th class="text-center">Time</th>
                         </tr>
                       </thead>
                       <tbody v-if="loaded.txs">
@@ -297,7 +297,7 @@
                               {{ tx.tx_hash | formatHash }}
                             </nuxt-link>
                           </td>
-                          <td class="text-center"><span class="box btn2">{{ tx.messages | getTypeTx }}</span></td>
+                          <td><span class="box btn2">{{ tx.type_tx_convert }}</span></td>
                           <td :class="'text-center ' + (!tx.status ? 'green' : 'red')">
                             <span class="title">Result</span>
                             {{ !tx.status ? 'Success' : 'Failed' }}
@@ -306,11 +306,15 @@
                             <span class="title">Amount</span>
                             {{ tx.total_amount | convertNumber(true) }}.{{ tx.total_amount | convertNumber(false) }} ATOM
                           </td>
-                          <td v-else>
+                          <td v-else-if="tx.messages && JSON.parse(tx.messages) && JSON.parse(tx.messages).length > 1">
                             <span class="title">Amount</span>
                             <nuxt-link :to="'/transactions/'+tx.tx_hash">
                               More
                             </nuxt-link>
+                          </td>
+                          <td v-else>
+                            <span class="title">Amount</span>
+                            -
                           </td>
                           <td>
                             <span class="title">Free</span>
@@ -465,12 +469,9 @@ export default {
     getRewardByAddress (value, rewards) {
       return helper.getRewardByAddress(rewards, value)
     },
-    getTypeTx (value) {
-      return helper.getTypeTx(value)
-    },
     getFeeTx (value) {
       const totalAmount = helper.getFeeTx(value)
-      return totalAmount / Math.pow(10, 6)
+      return (totalAmount / Math.pow(10, 6)).toFixed(6)
     },
     getTime (value) {
       return helper.formatTime(value)
@@ -576,8 +577,7 @@ export default {
       },
       unbondingDataConver: [],
       redelegationsDataConver: [],
-      current_price: 1,
-      validatorsConvert: []
+      current_price: 1
     }
   },
   computed: {
@@ -657,65 +657,59 @@ export default {
     getData (accountAddress) {
       this.accAddress = accountAddress
 
-      this.getAllValidators().then((validators) => {
-        this.loaded.validators = true
-        this.validatorsConvert = helper.convertValidators(validators)
-
-        this.getUnbonding({
-          acc_address: accountAddress
-        }).then((unbondings) => {
-          this.loaded.unbonding = true
-          this.dataChart.unbondings = helper.getTotalUnbondings(unbondings)
-          this.getTotalAtom()
-          let i = 0
-          for (; i < unbondings.length; i++) {
-            if (!unbondings[i].entries) { continue }
-            let j = 0
-            for (; j < unbondings[i].entries.length; j++) {
-              const item = unbondings[i].entries[j]
-              this.unbondingDataConver.push({
-                validator_address: unbondings[i].validator_address,
-                validator: this.validatorsConvert[unbondings[i].validator_address],
-                height: item.creation_height,
-                amount: parseFloat(item.balance),
-                time: item.completion_time
-              })
-            }
+      this.getUnbonding({
+        acc_address: accountAddress
+      }).then((unbondings) => {
+        this.loaded.unbonding = true
+        this.dataChart.unbondings = helper.getTotalUnbondings(unbondings)
+        this.getTotalAtom()
+        let i = 0
+        for (; i < unbondings.length; i++) {
+          if (!unbondings[i].entries) { continue }
+          let j = 0
+          for (; j < unbondings[i].entries.length; j++) {
+            const item = unbondings[i].entries[j]
+            this.unbondingDataConver.push({
+              validator_address: unbondings[i].validator_address,
+              validator: unbondings[i].moniker,
+              height: item.creation_height,
+              amount: parseFloat(item.balance),
+              time: item.completion_time
+            })
           }
-        }).catch((error) => {
-          // eslint-disable-next-line no-console
-          console.log('error when get unbondings: ', error)
-          this.loaded.unbondings = true
-        })
+        }
+      }).catch((error) => {
+        // eslint-disable-next-line no-console
+        this.loaded.unbonding = true
+        console.log('error when get unbondings: ', error, this.loaded.unbonding)
+      })
 
-        this.getRedelegations({
-          acc_address: accountAddress
-        }).then((redelegations) => {
-          this.loaded.redelegations = true
-          let i = 0
-          for (; i < redelegations.length; i++) {
-            if (!redelegations[i].entries) { continue }
-            let j = 0
-            for (; j < redelegations[i].entries.length; j++) {
-              const item = redelegations[i].entries[j]
-              const info = redelegations[i].redelegation
-              console.log(info, item)
-              this.redelegationsDataConver.push({
-                validator_src_moniker: this.validatorsConvert[info.validator_src_address],
-                validator_src_address: info.validator_src_address,
-                validator_dst_moniker: this.validatorsConvert[info.validator_dst_address],
-                validator_dst_address: info.validator_dst_address,
-                height: item.redelegation_entry.creation_height,
-                amount: parseFloat(item.balance),
-                time: item.redelegation_entry.completion_time
-              })
-            }
+      this.getRedelegations({
+        acc_address: accountAddress
+      }).then((redelegations) => {
+        this.loaded.redelegations = true
+        let i = 0
+        for (; i < redelegations.length; i++) {
+          if (!redelegations[i].entries) { continue }
+          let j = 0
+          for (; j < redelegations[i].entries.length; j++) {
+            const item = redelegations[i].entries[j]
+            const info = redelegations[i].redelegation
+            this.redelegationsDataConver.push({
+              validator_src_moniker: info.moniker_src,
+              validator_src_address: info.validator_src_address,
+              validator_dst_moniker: info.moniker_dst,
+              validator_dst_address: info.validator_dst_address,
+              height: item.redelegation_entry.creation_height,
+              amount: parseFloat(item.balance),
+              time: item.redelegation_entry.completion_time
+            })
           }
-        }).catch((error) => {
-          // eslint-disable-next-line no-console
-          console.log('error when get redelegations: ', error)
-          this.loaded.redelegations = true
-        })
+        }
+      }).catch((error) => {
+        // eslint-disable-next-line no-console
+        console.log('error when get redelegations: ', error)
+        this.loaded.redelegations = true
       })
 
       this.getRewards({

@@ -93,6 +93,8 @@ const api = {
             delegator_address,
             validator_dst_address,
             validator_src_address,
+            moniker_src,
+            moniker_dst,
             entries {
               creation_height,
               completion_time,
@@ -242,6 +244,7 @@ const api = {
         unbonding_responses {
           delegator_address,
           validator_address,
+          moniker,
           entries {
             creation_height,
             completion_time,
@@ -295,6 +298,7 @@ const api = {
     query GET_PROPOSAL_DETAIL_QUERY ($proposal_id: Int!) {
       proposal_detail (proposal_id: $proposal_id) {
         id,
+        moniker,
         total_deposit {
           denom,
           amount
@@ -317,9 +321,14 @@ const api = {
             key,
             value,
             subspace
+          },
+          amount {
+            denom,
+            amount
           }
         },
-        proposer
+        proposer,
+        deposit_end_time
       }
     }`,
   GET_DEPOSIT_QUERY: gql`

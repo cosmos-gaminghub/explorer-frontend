@@ -27,6 +27,7 @@ ready(() => {
 			mobi_overlay.classList.remove("show");
 			menu_section.style.left = "-300px";
 			html.classList.remove("disable-scroll");
+			dropdown.classList.remove("open");
 		});
 	}
 	document.querySelector(".dropdown-toggle").addEventListener("click", (e) => { 

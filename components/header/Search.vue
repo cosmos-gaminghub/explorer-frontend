@@ -11,6 +11,7 @@
                 type="text"
                 placeholder="Search by Address, Block Height, TxHash…"
                 @keyup="checkBeforeSearch($event)"
+                @change="checkBeforeSearch($event)"
                 @keydown="checkBeforeSearch($event)"
               >
               <i class="fa fa-search" aria-hidden="true" />

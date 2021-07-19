@@ -84,14 +84,14 @@
                       <span>Transactions</span>
                     </h3>
                   </div>
-                  <empty-table v-if="loaded_block_txs && !block_txs.length" :obj-name="'Proposed Transactions'" />
+                  <empty-table v-if="loaded_block_txs && !block_txs.length" :obj-name="'Txs'" />
                   <div v-else class="cos-table-list">
                     <div class="table-responsive">
-                      <table class="table table-striped table-bordered table-hover text-left">
+                      <table class="table table-striped table-bordered table-hover text-left tbl-block-txs">
                         <thead>
                           <tr>
                             <th>Tx Hash</th>
-                            <th class="text-center">Type</th>
+                            <th>Type</th>
                             <th class="text-center">
                               Result
                             </th>
@@ -114,7 +114,7 @@
                                 {{ tx.tx_hash | getHash }}
                               </nuxt-link>
                             </td>
-                            <td class="text-center"><span class="box btn2">{{ tx.messages | getTypeTx }}</span></td>
+                            <td><span class="box btn2">{{ tx.type_tx_convert }}</span></td>
                             <td :class="'text-center ' + (!tx.status ? 'green' : 'red')">
                               <span class="title">Result</span>
                               {{ !tx.status ? 'Success' : 'Failed' }}
@@ -123,11 +123,15 @@
                               <span class="title">Amount</span>
                               {{ tx.total_amount | convertNumber(true) }}.{{ tx.total_amount | convertNumber(false) }} ATOM
                             </td>
-                            <td v-else>
+                            <td v-else-if="tx.messages && JSON.parse(tx.messages) && JSON.parse(tx.messages).length > 1" class="text-right">
                               <span class="title">Amount</span>
                               <nuxt-link :to="'/transactions/'+tx.tx_hash">
                                 More
                               </nuxt-link>
+                            </td>
+                            <td v-else class="text-right">
+                              <span class="title">Amount</span>
+                              -
                             </td>
                             <td>
                               <span class="title">Free</span>
@@ -194,9 +198,6 @@ export default {
     },
     getStatusTx (value) {
       return value ? 'Success' : 'Failed'
-    },
-    getTypeTx (value) {
-      return helper.getTypeTx(value)
     },
     getFeeTx (value) {
       const totalAmount = helper.getFeeTx(value)
@@ -279,14 +280,18 @@ export default {
       getBlockTxs: 'blocks/GET_BLOCK_TXS'
     }),
     goToPrev () {
-      this.loaded = false
-      clearInterval(this.blockInterval)
-      this.$router.replace('/blocks/' + (parseInt(this.$route.params.height) - 1))
+      if (this.loaded) {
+        this.loaded = false
+        clearInterval(this.blockInterval)
+        this.$router.replace('/blocks/' + (parseInt(this.$route.params.height) - 1))
+      }
     },
     goToNext () {
-      this.loaded = false
-      clearInterval(this.blockInterval)
-      this.$router.replace('/blocks/' + (parseInt(this.$route.params.height) + 1))
+      if (this.loaded) {
+        this.loaded = false
+        clearInterval(this.blockInterval)
+        this.$router.replace('/blocks/' + (parseInt(this.$route.params.height) + 1))
+      }
     },
     getBlock (height, init = false) {
       if (this.allowCallApi) {

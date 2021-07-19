@@ -11,6 +11,9 @@ const mutations = {
     state.info = data
     state.loaded = true
   },
+  SET_LOADED_TRUE (state) {
+    state.loaded = true
+  },
   SET_INFLATION_INFO (state, data) {
     state.inflation = data
   },

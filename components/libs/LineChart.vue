@@ -42,11 +42,9 @@ export default {
             },
             ticks: {
               callback: (value, index, values) => {
-                let hour = (new Date(value)).getHours()
-                let minutes = (new Date(value)).getMinutes()
-                if (hour < 10) { hour = '0' + hour }
-                if (minutes < 10) { minutes = '0' + minutes }
-                return [hour, minutes].join(':')
+                value = value.split(' ')
+                value = value[1].split(':')
+                return [value[0], value[1]].join(':')
               }
             }
           }]

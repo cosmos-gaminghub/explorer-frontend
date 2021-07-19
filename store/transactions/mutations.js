@@ -2,19 +2,14 @@ import helper from '~/utils/helper'
 
 const mutations = {
   SET_TRANSACTIONS (state, data) {
-    let i = 0
-    for (; i < data.length; i++) {
-      data[i].total_amount = helper.getAmount(data[i].messages)
-    }
-    state.transactions = data
+    state.transactions = helper.convertValueTxs(data)
   },
   SET_TRANSACTION_DETAIL (state, data) {
-    if (data) {
-      data.messagesObj = JSON.parse(data.messages)
-      data.logsObj = JSON.parse(data.logs)
-    }
-    console.log('tx_detail = ', data)
     state.tx_detail = data
+    state.tx_detail.columns = helper.getColumnFromMsgTx(data.messages, data.logs, state.tx_detail.timestamp)
+  },
+  SET_EMPTY_TX (state) {
+    state.tx_detail = {}
   }
 }
 

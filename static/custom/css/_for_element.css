@@ -1,6 +1,13 @@
+.cnt-qr-code .content-qr-code {
+  height: 128px;
+  width: 128px;
+}
 .VuePagination .VuePagination__pagination-item-prev-page.VuePagination__pagination-item-prev-chunk,
 .VuePagination .VuePagination__pagination-item-next-page.VuePagination__pagination-item-next-chunk  {
     display: none;
+}
+.pagination-wrapper .pagination a:hover {
+  background: transparent;
 }
 .VuePagination .page-item.active .page-link {
     background-color: transparent;
@@ -200,7 +207,7 @@ td.td-skeleton > span {
   display:block;
 }
 
-.list-owl-block .list-infor-detail li:nth-child(3) div.detail {
+.block-detail-content .list-owl-block .list-infor-detail li:nth-child(3) div.detail {
   text-transform: uppercase;
 }
 
@@ -217,6 +224,7 @@ td.td-skeleton > span {
   font-size: 13.6px;
   font-weight: 400;
   line-height: 1.5;
+  word-break: break-word;
 }
 
 .main-body-content .cos-validator-detail .validator-detail-content .validate-title-top .validator-info-title .validator-info-avatar .validator-avatar img {
@@ -236,6 +244,39 @@ table.table-validators tbody tr td {
 .table-responsive table.table-validators tbody tr td:nth-child(5),
 .table-responsive table.table-validators table tbody tr td:nth-child(6) {
   vertical-align: middle;
+}
+
+.proposals-detail .list-owl-block .list-infor-detail li .detail {
+  word-break: break-word;
+}
+
+.list-proposals .content-proposals a.btn-status-proposal {
+  cursor: default;
+}
+
+.list-proposals .content-proposals .left .not-class-link {
+  color: #212529;
+}
+
+.list-owl-block .list-infor-detail li .title.title-unset,
+.list-owl-block .list-infor-detail li .title.title-detail-proposal {
+  align-items: unset;
+}
+
+.page-transactions-address .list-owl-block .list-infor-detail li:not(:last-child) .title {
+  word-break: break-word;
+}
+
+.percent.red {
+  color: #ec3124 !important;
+}
+
+.block-detail-content table.tbl-block-txs a.box.btn1.nuxt-link-exact-active.nuxt-link-active:hover {
+  color: #fff;
+}
+
+.validator-moniker.display-none {
+  display: none;
 }
 
 @media (max-width: 1024px) {

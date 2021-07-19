@@ -8,11 +8,7 @@ const mutations = {
     state.block_detail = data
   },
   SET_BLOCK_TXS (state, data) {
-    let i = 0
-    for (; i < data.length; i++) {
-      data[i].total_amount = helper.getAmount(data[i].messages)
-    }
-    state.block_txs = data
+    state.block_txs = helper.convertValueTxs(data)
   },
   SET_PROPOSED_BLOCKS (state, data) {
     state.paginateBlocks.before = data[data.length - 1] ? data[data.length - 1].height : 0

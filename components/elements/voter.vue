@@ -2,14 +2,14 @@
   <empty-table v-if="loaded && !data.length" :obj-name="'Votes'" />
   <div v-else class="cos-table-list">
     <div class="table-responsive">
-      <table class="table table-striped table-bordered table-hover">
+      <table class="table table-striped table-bordered table-hover table-votes">
         <thead>
           <tr>
             <th>Voter</th>
             <th class="text-left">
               Tx Hash
             </th>
-            <th class="text-center">
+            <th class="text-left">
               Answer
             </th>
             <th class="text-left">
@@ -36,7 +36,7 @@
                 {{ voter.tx_hash | formatHash }}
               </nuxt-link>
             </td>
-            <td class="text-center">
+            <td class="text-left">
               <span class="title">Answer</span>
               <span>{{ voter.option | getOptions }}</span>
             </td>

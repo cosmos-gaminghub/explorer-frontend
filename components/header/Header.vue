@@ -52,7 +52,7 @@
   </div>
 </template>
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import helper from '~/utils/helper'
 
 export default {
@@ -88,11 +88,23 @@ export default {
       getStatus: 'network/GET_DATA',
       getInflation: 'network/GET_DATA_INFLATION'
     }),
+    ...mapMutations({
+      setLoadedError: 'network/SET_LOADED_TRUE'
+    }),
     getStatusFunc (init = false) {
       if (this.callSuccessStatus) {
         this.callSuccessStatus = false
         this.getStatus().then(() => {
           this.callSuccessStatus = true
+          if (init) {
+            clearInterval(this.statusInterval)
+            this.statusInterval = setInterval(() => {
+              this.getStatusFunc()
+            }, process.env.REAL_TIME_DELAY_MS)
+          }
+        }).catch((error) => {
+          console.log('error when getStatusFunc: ', error)
+          this.setLoadedError()
           if (init) {
             clearInterval(this.statusInterval)
             this.statusInterval = setInterval(() => {

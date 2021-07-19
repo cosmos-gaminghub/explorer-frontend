@@ -27,7 +27,6 @@ export default {
               const attr = events[i].Attributes
               for (; j < attr.length; j++) {
                 if (attr[j].Key === 'amount') {
-                  console.log('attr = ', events, i, attr, j)
                   const splitAmount = attr[j].Value.split('uatom')
                   amount = splitAmount ? parseFloat(splitAmount[0]) : 0
                   out = true

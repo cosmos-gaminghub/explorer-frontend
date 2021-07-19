@@ -20,7 +20,7 @@
                   </div>
                   <div class="sub-title">
                     Block Time {{ (info && info.block_time) ? ((info.block_time / Math.pow(10, 9)).toFixed(3)) : 0 }}ms
-                  </div><span v-if="price.percent_change_24h" class="percent">{{ parseFloat(price.percent_change_24h).toFixed(2) }}%</span>
+                  </div><span v-if="price.percent_change_24h" :class="'percent' + (parseFloat(price.percent_change_24h) < 0 ? ' red' : '')">{{ parseFloat(price.percent_change_24h).toFixed(2) }}%</span>
                 </div>
                 <div class="list-item-infor">
                   <div class="item">
@@ -146,7 +146,7 @@
                             </nuxt-link>
                           </td>
                           <td class="text-left">
-                            <a class="box btn2" href="#">{{ tx.messages | getTypeTx }}</a>
+                            <span class="box btn2">{{ tx.type_tx_convert }}</span>
                           </td>
                           <td class="text-left">
                             <span class="title">Height</span>
@@ -198,9 +198,6 @@ export default {
     getTime (value) {
       return value ? (helper.formatTime(value) + ' ago') : ''
     },
-    getTypeTx (value) {
-      return helper.getTypeTx(value)
-    },
     convertNumber (value, isInt) {
       const total = parseFloat(value)
       if (isInt) {
@@ -219,8 +216,8 @@ export default {
     return {
       loadedBlock: false,
       loadedTx: false,
-      blockInterval: null,
-      TxInterval: null,
+      blockIntervalDashboard: null,
+      TxIntervalDashboard: null,
       PriceInterval: null,
       StatsInterval: null,
       allowCallApiBlocks: true,
@@ -244,13 +241,18 @@ export default {
     ...mapState('network', ['info', 'stats_assets'])
   },
   mounted () {
+    if (localStorage.getItem('TxInterval')) {
+      window.clearInterval(localStorage.getItem('TxInterval'))
+      localStorage.removeItem('TxInterval')
+    }
+    if (localStorage.getItem('blockIntervalDashboard')) {
+      window.clearInterval(localStorage.getItem('blockIntervalDashboard'))
+      localStorage.removeItem('blockIntervalDashboard')
+    }
     this.loadData()
   },
-  destroyed () {
-    clearInterval(this.blockInterval)
-    clearInterval(this.TxInterval)
-    clearInterval(this.PriceInterval)
-    clearInterval(this.StatsInterval)
+  beforeDestroy () {
+    this.clearAllFunc()
   },
   methods: {
     ...mapActions({
@@ -260,6 +262,7 @@ export default {
       getStatsAsset: 'network/GET_STATS'
     }),
     loadData () {
+      this.clearAllFunc()
       this.getBlocks(true)
       this.getTxs(true)
       this.getPriceFunc(true)
@@ -275,10 +278,11 @@ export default {
           this.allowCallApiBlocks = true
           this.loadedBlock = true
           if (init) {
-            clearInterval(this.TxInterval)
-            this.blockInterval = setInterval(() => {
+            clearInterval(this.blockIntervalDashboard)
+            this.blockIntervalDashboard = setInterval(() => {
               this.getBlocks()
             }, process.env.REAL_TIME_DELAY_MS)
+            localStorage.setItem('blockIntervalDashboard', this.blockIntervalDashboard)
           }
         }).catch((error) => {
           this.allowCallApiBlocks = true
@@ -298,10 +302,11 @@ export default {
           this.allowCallApiTxs = true
           this.loadedTx = true
           if (init) {
-            clearInterval(this.TxInterval)
-            this.TxInterval = setInterval(() => {
+            clearInterval(this.TxIntervalDashboard)
+            this.TxIntervalDashboard = setInterval(() => {
               this.getTxs()
             }, process.env.REAL_TIME_DELAY_MS * 2.5)
+            localStorage.setItem('TxIntervalDashboard', this.TxIntervalDashboard)
           }
         }).catch((error) => {
           this.allowCallApiTxs = true
@@ -378,6 +383,12 @@ export default {
           }
         ]
       })
+    },
+    clearAllFunc () {
+      clearInterval(this.blockIntervalDashboard)
+      clearInterval(this.TxIntervalDashboard)
+      clearInterval(this.PriceInterval)
+      clearInterval(this.StatsInterval)
     }
   }
 }

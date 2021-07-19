@@ -1,5 +1,6 @@
 <template>
-  <div v-if="proposal" class="page-content">
+  <not-found v-if="loaded.proposal_detail && loaded.not_found" :obj-name="'Proposal with id ' + id + ' was'"></not-found>
+  <div v-else class="page-content">
     <div class="main-body-content">
       <div class="cos-notice custom-page-title cos-proposals-detail">
         <div class="row">
@@ -38,7 +39,9 @@
                         Proposer
                       </div>
                       <div class="detail">
-                        {{ proposal.proposer }}
+                        <a :href="'/account/'+proposal.proposer">
+                          {{ proposal.moniker || proposal.proposer }}
+                        </a>
                       </div>
                     </li>
                     <li>
@@ -46,7 +49,7 @@
                         Initial Deposit
                       </div>
                       <div class="detail">
-                        {{ initial_deposit | convertAmount(true) }}.{{ initial_deposit | convertAmount(false) }} ATOM
+                        {{ initialDeposit | convertAmount(true) }}.{{ initialDeposit | convertAmount(false) }} ATOM
                       </div>
                     </li>
                     <li>
@@ -54,7 +57,7 @@
                         Total Deposit
                       </div>
                       <div class="detail">
-                        {{ proposal.total_deposit | getTotalDeposit(true) }}.{{ proposal.total_deposit | getTotalDeposit(false) }} ATOM
+                        {{ proposal.total_deposit | getTotalFromArr(true) }}.{{ proposal.total_deposit | getTotalFromArr(false) }} ATOM
                       </div>
                     </li>
                     <li>
@@ -94,27 +97,25 @@
                         Deposit End Time
                       </div>
                       <div class="detail">
-                        2021-05-20 22:24:15
+                        {{ proposal.deposit_end_time | convertTime }}
                       </div>
                     </li>
                     <li>
-                      <div class="title">
+                      <div class="title title-detail-proposal">
                         Details
                       </div>
-                      <div class="detail">
-                        {{ proposal.content ? proposal.content.description : '' }}
-                      </div>
+                      <div class="detail" v-html="detectUrl" />
                     </li>
-                    <li>
+                    <li v-if="proposal.content && proposal.content.changes && proposal.content.changes.length">
                       <div class="title">
-                        Parameter <br>Changes
+                        Parameter Changes
                       </div>
                       <div v-if="proposal.content" class="detail">
-                        <div v-for="change in proposal.content.changes" :key="change.key">
+                        <div v-for="(change, index) in proposal.content.changes" :key="'params_'+index">
                           <span>{{ change.key }}</span>
                           <span>:</span>
                           <span v-if="change.value">
-                            <span v-if="JSON.parse(change.value)">
+                            <span v-if="typeof JSON.parse(change.value) == 'object'">
                               <div v-for="(value, index) in JSON.parse(change.value)" :key="index">
                                 <span v-if="typeof value == 'string'">{{ index }}: {{ value }}</span>
                                 <span v-else-if="value">
@@ -124,9 +125,18 @@
                                 </span>
                               </div>
                             </span>
+                            <span v-else-if="change.key.search('Rate') >= 0">{{ (parseFloat(JSON.parse(change.value)) * Math.pow(10, 2)).toFixed(2) }}%</span>
                             <span v-else>{{ change.value }}</span>
                           </span>
                         </div>
+                      </div>
+                    </li>
+                    <li v-if="proposal.content && proposal.content.amount && proposal.content.amount.length">
+                      <div class="title">
+                        Request Amount
+                      </div>
+                      <div class="detail">
+                        {{ proposal.content.amount | getTotalFromArr(true) }}.{{ proposal.content.amount | getTotalFromArr(false) }} ATOM
                       </div>
                     </li>
                   </ul>
@@ -292,7 +302,7 @@
           <empty-table v-if="loaded.deposit && !deposit.length" :obj-name="'Depositors'" />
           <div v-else class="cos-table-list">
             <div class="table-responsive">
-              <table class="table table-striped table-bordered table-hover">
+              <table class="table table-striped table-bordered table-hover table-depositor">
                 <thead>
                   <tr>
                     <th>Depositors</th>
@@ -357,6 +367,7 @@
   </div>
 </template>
 <script>
+/* eslint-disable prefer-const */
 import { mapState, mapActions } from 'vuex'
 import headerData from '@/components/header/Header.vue'
 import voterTable from '@/components/elements/voter.vue'
@@ -364,6 +375,7 @@ import Vue from 'vue'
 import Doughnut from '@/components/libs/DoughnutChart.vue'
 import EmptyTable from '~/components/error/EmptyTable.vue'
 import helper from '~/utils/helper'
+import NotFound from '~/components/error/NotFound'
 
 export const eventBus = new Vue()
 export const eventBus2 = new Vue()
@@ -378,9 +390,12 @@ export default {
     },
     getTypeProposal (value) {
       value = value.split('.')
-      return value[value.length - 1]
+      if (value[value.length - 1]) {
+        value = value[value.length - 1].split('Proposal')
+      }
+      return (value && value[0]) ? value[0] : ''
     },
-    getTotalDeposit (value, isInt) {
+    getTotalFromArr (value, isInt) {
       const total = helper.calculateValueFromArr(value) / Math.pow(10, 6)
 
       if (isInt) {
@@ -413,21 +428,17 @@ export default {
     }
   },
   components: {
+    NotFound,
     headerData,
     voterTable,
     EmptyTable,
     Doughnut
   },
-  head () {
-    return {
-      title: 'COSMOS Proposal#' + this.$route.params.id
-    }
-  },
   data () {
     return {
       data: {
         labels: [
-          'None'
+          'Empty'
         ],
         datasets: [{
           data: [100],
@@ -447,7 +458,8 @@ export default {
       loaded: {
         proposal_detail: false,
         vote: false,
-        deposit: false
+        deposit: false,
+        not_found: false
       },
       voteData: {
         yes: [],
@@ -472,8 +484,12 @@ export default {
         optionPaginate: {
           chunk: 5
         }
-      },
-      initial_deposit: 0
+      }
+    }
+  },
+  head () {
+    return {
+      title: 'COSMOS Proposal#' + this.$route.params.id
     }
   },
   computed: {
@@ -487,6 +503,37 @@ export default {
         }
         return false
       })
+    },
+    initialDeposit () {
+      let value = 0
+      if (this.deposit && this.proposal) {
+        for (const item in this.deposit) {
+          if (this.deposit[item].depositor === this.proposal.proposer) {
+            value += this.deposit[item].amountConv
+          }
+        }
+      }
+      return value
+    },
+    detectUrl () {
+      if (this.proposal && this.proposal.content && this.proposal.content.description) {
+        let desc = this.proposal.content.description
+        let cosmosContent = ''
+        if (desc.search('<> Cosmos') >= 0) {
+          desc = desc.split('<> Cosmos')
+          if (desc.length > 1) {
+            cosmosContent = '<cosmos ' + desc[1] + '></cosmos>'
+            desc = desc[0]
+          }
+        }
+        return desc.replaceAll(/(https?:\/\/)?[\w\-~]+(\.[\w\-~]+)+(\/[\w\-~@:%]*)*(#[\w-]*)?(\?[^\s]*)?/gi, function (url) {
+          return '<a href="' + url + '">' + url + '</a>'
+        }).replaceAll('\\n', function (rs) {
+          return '<br>'
+        }) + cosmosContent
+      }
+
+      return ''
     }
   },
   watch: {
@@ -516,7 +563,6 @@ export default {
       this.getProposalDetail({
         proposal_id: id
       }).then((proposalDetail) => {
-        console.log('proposalDetail = ', proposalDetail)
         this.loaded.proposal_detail = true
         const yes = parseFloat(proposalDetail.tally.yes)
         const no = parseFloat(proposalDetail.tally.no)
@@ -553,15 +599,13 @@ export default {
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.log('error when proposal detail: ', error)
+        this.loaded.not_found = true
         this.loaded.proposal_detail = true
       })
 
       this.getDeposit({
         proposal_id: id
       }).then((deposit) => {
-        if (deposit.length) {
-          this.initial_deposit = deposit[0].amount
-        }
         this.loaded.deposit = true
       }).catch((error) => {
         // eslint-disable-next-line no-console

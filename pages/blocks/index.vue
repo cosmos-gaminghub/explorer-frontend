@@ -118,6 +118,11 @@ export default {
     ...mapState('blocks', ['blocks'])
   },
   mounted () {
+    if (localStorage.getItem('blockIntervalDashboard')) {
+      window.clearInterval(localStorage.getItem('blockIntervalDashboard'))
+      localStorage.removeItem('blockIntervalDashboard')
+    }
+    clearInterval(this.blockInterval)
     this.getBlocksFunc(true)
   },
   destroyed () {
@@ -141,6 +146,7 @@ export default {
             this.blockInterval = setInterval(() => {
               this.getBlocksFunc()
             }, process.env.REAL_TIME_DELAY_MS)
+            localStorage.setItem('blockInterval', this.blockInterval)
           }
         })
       }

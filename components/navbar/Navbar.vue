@@ -17,7 +17,7 @@
               <img src="/assets/images/icon/atom.png" alt="index" width="15px"><span>Cosmos</span><span class="caret" />
             </button>
             <ul class="dropdown-menu">
-              <li><a href="#"> <img src="/assets/images/icon/atom.png" alt="index" width="15px"><span>Cosmos</span></a></li>
+<!--              <li><a href="#"> <img src="/assets/images/icon/atom.png" alt="index" width="18px"><span>Cosmos</span></a></li>-->
             </ul>
           </div>
         </div>

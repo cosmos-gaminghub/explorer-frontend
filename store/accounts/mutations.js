@@ -8,10 +8,7 @@ const mutations = {
     state.available = data
   },
   SET_TRANSACTIONS (state, data) {
-    for (const i in data) {
-      data[i].total_amount = helper.getAmount(data[i].messages)
-    }
-    state.txs = data
+    state.txs = helper.convertValueTxs(data)
   },
   SET_COMMISSIONS (state, data) {
     state.commissions = data

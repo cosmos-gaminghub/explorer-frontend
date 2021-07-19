@@ -39,7 +39,7 @@
         <td class="text-left">
           <nuxt-link :to="'/validators/'+validator.operator_address" class="acount-snow">
             <div :class="'va_avatar' + (validator.jailed ? ' inactive' : ' active')">
-              <img :src="validator.operator_address | avatarValidator" onError="this.onerror=null;this.src='https://www.mintscan.io/static/media/validator_none.83868b17.svg'" alt="Title">
+              <img v-if="validator.operator_address" :src="'https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/moniker/cosmoshub/' + validator.operator_address + '.png'" onload="console.log('loaded')" onError="console.log('Error');this.onerror=null;this.src='https://www.mintscan.io/static/media/validator_none.83868b17.svg'" alt="Title">
             </div>
             <span class="va_name">{{ validator.moniker }}</span>
           </nuxt-link>
@@ -95,9 +95,6 @@ export default {
     },
     getTime (value) {
       return helper.formatTime(value)
-    },
-    avatarValidator (value) {
-      return helper.getAvatarValidator(value)
     },
     getPercent (value) {
       return (value ? (value * 100).toFixed(2) : 0.00) + '%'

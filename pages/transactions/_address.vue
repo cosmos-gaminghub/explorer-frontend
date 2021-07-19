@@ -83,18 +83,37 @@
             </div>
           </div>
         </div>
-        <type-tx
-          :tx="tx_detail"
-        />
+        <div class="main-md-content transaction-detail-message">
+          <div v-if="tx_detail" class="cos-table-item">
+            <div v-for="(typeTx, index) in convertTxColumns" :key="index" class="cos-item-content">
+              <div class="cos-title">
+                <h3 class="title-cos">
+                  <span>MESSAGES: </span><span>{{ typeTx.type }}</span>
+                </h3>
+              </div>
+              <ul v-if="typeTx.columns" class="list-owl-block">
+                <li>
+                  <ul class="list-infor-detail">
+                    <li v-for="(column, keyColumn) in typeTx.columns" :key="'key_' + keyColumn">
+                      <div class="title title-unset">
+                        {{ column.title }}
+                      </div>
+                      <div class="detail" v-html="column.details" />
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 import headerData from '@/components/header/Header.vue'
 import NotFound from '@/components/error/NotFound.vue'
-import typeTx from '~/components/elements/typeTx'
 import helper from '~/utils/helper'
 
 export default {
@@ -115,22 +134,47 @@ export default {
   },
   components: {
     headerData,
-    NotFound,
-    typeTx
+    NotFound
+  },
+  data () {
+    return {
+      loaded: false,
+      notFound: false,
+      validatorsConv: []
+    }
   },
   head () {
     return {
       title: 'COSMOS Tx ' + this.$route.params.address
     }
   },
-  data () {
-    return {
-      loaded: false,
-      notFound: false
-    }
-  },
   computed: {
-    ...mapState('transactions', ['tx_detail'])
+    ...mapState('transactions', ['tx_detail']),
+    ...mapState('validators', []),
+    convertTxColumns () {
+      if (this.tx_detail) {
+        const columns = this.tx_detail.columns
+        const htmlCh = '<p class="validator-moniker display-none">'
+        for (const key in columns) {
+          for (const dKey in columns[key].columns) {
+            const detail = columns[key].columns[dKey]
+            detail.details = detail.details.toString()
+            if (detail.details.search(htmlCh) > 0) {
+              let arr = detail.details.split(htmlCh)
+              arr = arr[1].split('</p>')
+              const addr = arr[0]
+              if (this.validatorsConv[addr]) {
+                columns[key].columns[dKey].details = detail.details.replace(htmlCh + addr, '<p>(' + this.validatorsConv[addr] + ')')
+              }
+            }
+          }
+        }
+
+        return columns
+      }
+
+      return []
+    }
   },
   watch: {
     $route () {
@@ -140,6 +184,7 @@ export default {
     }
   },
   mounted () {
+    this.setEmptyTx()
     if (this.$route.params.address) {
       this.loadData(this.$route.params.address)
     }
@@ -151,7 +196,11 @@ export default {
   },
   methods: {
     ...mapActions({
-      getTransactionDetail: 'transactions/GET_TRANSACTION_DETAIL'
+      getTransactionDetail: 'transactions/GET_TRANSACTION_DETAIL',
+      getValidators: 'validators/GET_DATA'
+    }),
+    ...mapMutations({
+      setEmptyTx: 'transactions/SET_EMPTY_TX'
     }),
     // eslint-disable-next-line camelcase
     loadData (tx_hash) {
@@ -165,6 +214,10 @@ export default {
         console.log('eror load tx detail: ', error)
         this.loaded = true
         this.notFound = true
+      })
+
+      this.getValidators().then((validators) => {
+        this.validatorsConv = helper.convertValidators(validators)
       })
     }
   }

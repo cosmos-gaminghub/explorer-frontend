@@ -24,7 +24,7 @@ const actions = {
       client.cache.data.clear()
       client.query({
         query: api.GET_TRANSACTION_DETAIL_QUERY,
-        variables: params
+        variables: { tx_hash: params.tx_hash }
       }).then((response) => {
         if (!response.data.tx_detail.tx_hash) {
           reject(response)

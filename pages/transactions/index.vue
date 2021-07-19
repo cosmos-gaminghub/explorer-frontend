@@ -24,13 +24,11 @@
                           <tr>
                             <th>Tx Hash</th>
                             <th class="text-left">Type</th>
-                            <th class="text-center">Result</th>
-                            <th>Amount</th>
-                            <th class="text-center">
-                              Fee
-                            </th>
-                            <th>Height</th>
-                            <th class="text-center">Time</th>
+                            <th class="text-left">Result</th>
+                            <th class="text-right">Amount</th>
+                            <th class="text-right">Fee</th>
+                            <th class="text-right">Height</th>
+                            <th class="text-right">Time</th>
                           </tr>
                         </thead>
                         <tbody v-if="loaded">
@@ -40,32 +38,36 @@
                                 {{ tx.tx_hash | formatHash }}
                               </nuxt-link>
                             </td>
-                            <td class="text-left"><span class="box btn2">{{ tx.messages | getTypeTx }}</span></td>
-                            <td :class="'text-center ' + (!tx.status ? 'green' : 'red')">
+                            <td class="text-left"><span class="box btn2">{{ tx.type_tx_convert }}</span></td>
+                            <td :class="'text-left ' + (!tx.status ? 'green' : 'red')">
                               <span class="title">Result</span>
                               {{ !tx.status ? 'Success' : 'Failed' }}
                             </td>
-                            <td v-if="tx.total_amount != null">
+                            <td v-if="tx.total_amount != null" class="text-right">
                               <span class="title">Amount</span>
                               {{ tx.total_amount | formatAmount }} ATOM
                             </td>
-                            <td v-else>
+                            <td v-else-if="tx.messages && JSON.parse(tx.messages) && JSON.parse(tx.messages).length > 1" class="text-right">
                               <span class="title">Amount</span>
                               <nuxt-link :to="'/transactions/'+tx.tx_hash">
                                 More
                               </nuxt-link>
                             </td>
-                            <td class="text-center">
+                            <td v-else class="text-right">
+                              <span class="title">Amount</span>
+                              -
+                            </td>
+                            <td class="text-right">
                               <span class="title">Free</span>
                               {{ tx.fee | getFeeTx }} ATOM
                             </td>
-                            <td>
+                            <td class="text-right">
                               <span class="title">Height</span>
                               <nuxt-link class="box btn1" :to="'/blocks/' + tx.height">
                                 {{ tx.height }}
                               </nuxt-link>
                             </td>
-                            <td class="text-center">
+                            <td class="text-right">
                               <span class="title">Time</span>
                               {{ tx.timestamp | getTime }} ago
                             </td>
@@ -100,9 +102,6 @@ export default {
     formatHash (value) {
       return helper.formatHash(value, 6, 6)
     },
-    getTypeTx (value) {
-      return helper.getTypeTx(value)
-    },
     getFeeTx (value) {
       const totalAmount = helper.getFeeTx(value)
       return (totalAmount / Math.pow(10, 6)).toFixed(6)
@@ -131,6 +130,11 @@ export default {
     ...mapState('transactions', ['transactions'])
   },
   mounted () {
+    if (localStorage.getItem('TxIntervalDashboard')) {
+      window.clearInterval(localStorage.getItem('TxIntervalDashboard'))
+      localStorage.removeItem('TxIntervalDashboard')
+    }
+    clearInterval(this.TxInterval)
     this.getTxsFunc(true)
   },
   destroyed () {
@@ -151,6 +155,7 @@ export default {
             this.TxInterval = setInterval(() => {
               this.getTxsFunc()
             }, process.env.REAL_TIME_DELAY_MS * 2.5)
+            localStorage.setItem('TxInterval', this.TxInterval)
           }
         })
       }
