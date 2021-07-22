@@ -262,6 +262,7 @@ export default {
     }
   },
   mounted () {
+    helper.clearInterval(this.$nuxt.$route.name)
     if (this.$route.params.height) {
       this.getBlock(this.$route.params.height, true)
     }
@@ -280,20 +281,28 @@ export default {
       getBlockTxs: 'blocks/GET_BLOCK_TXS'
     }),
     goToPrev () {
-      if (this.loaded) {
+      if (this.loaded && this.loaded_block_txs) {
         this.loaded = false
+        this.loaded_block_txs = false
         clearInterval(this.blockInterval)
+        helper.clearInterval(this.$nuxt.$route.name)
         this.$router.replace('/blocks/' + (parseInt(this.$route.params.height) - 1))
       }
     },
     goToNext () {
-      if (this.loaded) {
+      if (this.loaded && this.loaded_block_txs) {
         this.loaded = false
+        this.loaded_block_txs = false
         clearInterval(this.blockInterval)
+        helper.clearInterval(this.$nuxt.$route.name)
         this.$router.replace('/blocks/' + (parseInt(this.$route.params.height) + 1))
       }
     },
     getBlock (height, init = false) {
+      if (!this.$nuxt.$route.name.includes('blocks-height')) {
+        helper.clearInterval(this.$nuxt.$route.name)
+        return false
+      }
       if (this.allowCallApi) {
         this.allowCallApi = false
         this.getBlockDetail({
@@ -311,6 +320,7 @@ export default {
               this.blockInterval = setInterval(() => {
                 this.getBlock(height)
               }, process.env.REAL_TIME_DELAY_MS * 2)
+              localStorage.setItem('blockDetailInterval', this.blockInterval)
             }
           })
         }).catch((error) => {
@@ -319,6 +329,7 @@ export default {
           this.allowCallApi = true
           this.loaded = true
           this.notFound = true
+          this.loaded_block_txs = true
         })
       }
     }

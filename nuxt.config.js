@@ -6,7 +6,7 @@ module.exports = {
   ssr: true,
 
   // Target: https://go.nuxtjs.dev/config-target
-  target: 'server',
+  // target: 'static',
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -38,6 +38,7 @@ module.exports = {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/i18n.js',
+    '~/plugins/lazyLoad.js',
     {
       src: '@/plugins/axios',
       ssr: false

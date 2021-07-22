@@ -279,6 +279,18 @@ table.table-validators tbody tr td {
   display: none;
 }
 
+.log-for-tx-type-failed {
+  padding: 8px 18px;
+  border-radius: 10px;
+  background-color: #ffedef;
+  font-family: "Open Sans";
+  font-size: 13px;
+  font-weight: 400;
+  color: #ff2745;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
 @media (max-width: 1024px) {
     .cos-table-item .cos-item-content table.table-home-block tbody tr td.td-skeleton {
         width: 100%;
@@ -292,4 +304,13 @@ table.table-validators tbody tr td {
         color: #0058FF;
         background-color: #F6F2FF;
     }
+}
+
+@media (max-width: 600px) {
+  .page-content .custom-page-title .blocks-status {
+    display: none;
+  }
+  .page-content.page-dashboard .custom-page-title .blocks-status {
+    display: table;
+  }
 }

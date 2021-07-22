@@ -19,6 +19,7 @@
               <ul class="list-owl-block">
                 <li>
                   <ul class="list-infor-detail">
+                    <p v-if="tx_detail && tx_detail.status && tx_detail.raw_log" class="log-for-tx-type-failed">{{ tx_detail.raw_log }}</p>
                     <li>
                       <div class="title">
                         TxHash

@@ -1,5 +1,5 @@
 <template>
-  <div class="page-content">
+  <div class="page-content page-dashboard">
     <div class="main-body-content">
       <div class="cos-notice custom-page-title">
         <div class="row">
@@ -241,14 +241,7 @@ export default {
     ...mapState('network', ['info', 'stats_assets'])
   },
   mounted () {
-    if (localStorage.getItem('TxInterval')) {
-      window.clearInterval(localStorage.getItem('TxInterval'))
-      localStorage.removeItem('TxInterval')
-    }
-    if (localStorage.getItem('blockIntervalDashboard')) {
-      window.clearInterval(localStorage.getItem('blockIntervalDashboard'))
-      localStorage.removeItem('blockIntervalDashboard')
-    }
+    helper.clearInterval(this.$nuxt.$route.name)
     this.loadData()
   },
   beforeDestroy () {
@@ -269,6 +262,10 @@ export default {
       this.getStatsFunc(true)
     },
     getBlocks (init = false) {
+      if (!this.$nuxt.$route.name.includes('dashboard')) {
+        helper.clearInterval(this.$nuxt.$route.name)
+        return false
+      }
       if (this.allowCallApiBlocks) {
         this.allowCallApiBlocks = false
         this.getFiveNewestBlocks({
@@ -293,6 +290,10 @@ export default {
       }
     },
     getTxs (init = false) {
+      if (!this.$nuxt.$route.name.includes('dashboard')) {
+        helper.clearInterval(this.$nuxt.$route.name)
+        return false
+      }
       if (this.allowCallApiTxs) {
         this.allowCallApiTxs = false
         this.getFiveNewestTransactions({

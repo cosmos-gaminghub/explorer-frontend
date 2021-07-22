@@ -130,10 +130,7 @@ export default {
     ...mapState('transactions', ['transactions'])
   },
   mounted () {
-    if (localStorage.getItem('TxIntervalDashboard')) {
-      window.clearInterval(localStorage.getItem('TxIntervalDashboard'))
-      localStorage.removeItem('TxIntervalDashboard')
-    }
+    helper.clearInterval(this.$nuxt.$route.name)
     clearInterval(this.TxInterval)
     this.getTxsFunc(true)
   },
@@ -145,6 +142,10 @@ export default {
       getTxs: 'transactions/GET_DATA'
     }),
     getTxsFunc (init = false) {
+      if (!this.$nuxt.$route.name.includes('transactions')) {
+        helper.clearInterval(this.$nuxt.$route.name)
+        return false
+      }
       if (this.allowCallApi) {
         this.getTxs({
           size: 20

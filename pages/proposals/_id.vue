@@ -139,6 +139,17 @@
                         {{ proposal.content.amount | getTotalFromArr(true) }}.{{ proposal.content.amount | getTotalFromArr(false) }} ATOM
                       </div>
                     </li>
+                    <li v-if="proposal.content && proposal.content.plan">
+                      <div class="title">
+                        Software Upgrade
+                      </div>
+                      <div v-if="proposal.content.plan" class="detail">
+                        <div v-for="(item, index) in proposal.content.plan" :key="'software'+index">
+                          <span v-if="['name', 'time', 'height', 'info', 'upgraded_client_state'].includes(index)">{{ index }}: </span>
+                          <span v-if="['name', 'time', 'height', 'info', 'upgraded_client_state'].includes(index)">{{ item }}</span>
+                        </div>
+                      </div>
+                    </li>
                   </ul>
                 </li>
               </ul>

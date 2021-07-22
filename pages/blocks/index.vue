@@ -118,10 +118,7 @@ export default {
     ...mapState('blocks', ['blocks'])
   },
   mounted () {
-    if (localStorage.getItem('blockIntervalDashboard')) {
-      window.clearInterval(localStorage.getItem('blockIntervalDashboard'))
-      localStorage.removeItem('blockIntervalDashboard')
-    }
+    helper.clearInterval(this.$nuxt.$route.name)
     clearInterval(this.blockInterval)
     this.getBlocksFunc(true)
   },
@@ -133,6 +130,10 @@ export default {
       getBlocks: 'blocks/GET_DATA'
     }),
     getBlocksFunc (init = false) {
+      if (!this.$nuxt.$route.name.includes('blocks') || this.$nuxt.$route.name.includes('blocks-height')) {
+        helper.clearInterval(this.$nuxt.$route.name)
+        return false
+      }
       if (this.allowCallApi) {
         this.allowCallApi = false
         this.getBlocks({

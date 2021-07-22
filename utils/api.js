@@ -191,6 +191,7 @@ const api = {
         memo,
         gas_used,
         gas_wanted,
+        raw_log
       }
     }`,
   GET_NETWORK_STATUS_QUERY: gql`
@@ -325,6 +326,13 @@ const api = {
           amount {
             denom,
             amount
+          },
+          plan {
+            name,
+            time,
+            height,
+            info,
+            upgraded_client_state
           }
         },
         proposer,
@@ -350,7 +358,8 @@ const api = {
         voter,
         option,
         tx_hash,
-        time
+        time,
+        moniker
       }
     }`,
   GET_PRICE_QUERY: gql`

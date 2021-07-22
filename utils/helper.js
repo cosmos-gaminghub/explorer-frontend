@@ -262,16 +262,18 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null) => {
     if (type['@type'] === '/ibc.core.channel.v1.MsgRecvPacket') {
       if (logs && JSON.parse(logs)) {
         const logsObj = JSON.parse(logs)
-        for (const kEvent in logsObj[key].Events) {
-          const event = logsObj[key].Events[kEvent]
-          if (event.Type === 'recv_packet') {
-            for (const kAttr in event.Attributes) {
-              const attr = event.Attributes[kAttr]
-              if (attr.Key === 'packet_data' && attr.Value) {
-                const valueObj = JSON.parse(attr.Value)
-                if (valueObj) {
-                  for (const voKey in valueObj) {
-                    type[voKey] = valueObj[voKey]
+        if (logsObj[key] && logsObj[key].Events) {
+          for (const kEvent in logsObj[key].Events) {
+            const event = logsObj[key].Events[kEvent]
+            if (event.Type === 'recv_packet') {
+              for (const kAttr in event.Attributes) {
+                const attr = event.Attributes[kAttr]
+                if (attr.Key === 'packet_data' && attr.Value) {
+                  const valueObj = JSON.parse(attr.Value)
+                  if (valueObj) {
+                    for (const voKey in valueObj) {
+                      type[voKey] = valueObj[voKey]
+                    }
                   }
                 }
               }
@@ -695,6 +697,38 @@ const convertValueTxs = (data) => {
 
   return data
 }
+
+const clearInterval = (type = 'all') => {
+  if (!type.includes('dasboard')) {
+    if (localStorage.getItem('TxIntervalDashboard')) {
+      window.clearInterval(localStorage.getItem('TxIntervalDashboard'))
+      localStorage.removeItem('TxIntervalDashboard')
+    }
+    if (localStorage.getItem('blockIntervalDashboard')) {
+      window.clearInterval(localStorage.getItem('blockIntervalDashboard'))
+      localStorage.removeItem('blockIntervalDashboard')
+    }
+  }
+  if (!type.includes('blocks-height')) {
+    if (localStorage.getItem('blockDetailInterval')) {
+      window.clearInterval(localStorage.getItem('blockDetailInterval'))
+      localStorage.removeItem('blockDetailInterval')
+    }
+  }
+  if (!type.includes('blocks') || type.includes('blocks-height')) {
+    if (localStorage.getItem('blockInterval')) {
+      window.clearInterval(localStorage.getItem('blockInterval'))
+      localStorage.removeItem('blockInterval')
+    }
+  }
+  if (!type.includes('transactions')) {
+    if (localStorage.getItem('TxInterval')) {
+      window.clearInterval(localStorage.getItem('TxInterval'))
+      localStorage.removeItem('TxInterval')
+    }
+  }
+}
+
 export default {
-  convertValueTxs, getColumnFromMsgTx, getTypeTxFromStr, convertValidators, getTotalUnbondings, calculateValueFromArr, getTypeProposal, getRewardByAddress, getTotalRewards, formatTime, formatNumber, cumulativeShare, totalSupplyTokens, isActiveValidator, formatHash, calcutatDelegations, convertTime, getAddrTx, getFeeTx, getAmount
+  clearInterval, convertValueTxs, getColumnFromMsgTx, getTypeTxFromStr, convertValidators, getTotalUnbondings, calculateValueFromArr, getTypeProposal, getRewardByAddress, getTotalRewards, formatTime, formatNumber, cumulativeShare, totalSupplyTokens, isActiveValidator, formatHash, calcutatDelegations, convertTime, getAddrTx, getFeeTx, getAmount
 }

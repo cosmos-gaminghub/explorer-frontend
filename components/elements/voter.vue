@@ -27,7 +27,10 @@
         <tbody v-else>
           <tr v-for="voter in filteredVote" :key="voter.tx_hash">
             <td>
-              <a lass="box btn1" :href="'/account/'+voter.voter">
+              <a v-if="voter.moniker" class="box btn1" :href="'/account/'+voter.voter">
+                {{ voter.moniker }}
+              </a>
+              <a v-else class="box btn1" :href="'/account/'+voter.voter">
                 {{ voter.voter | formatHash }}
               </a>
             </td>
