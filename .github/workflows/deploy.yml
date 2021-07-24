@@ -12,6 +12,8 @@ jobs:
         uses: actions/checkout@master
       - name: Install Dependencies
         run: yarn
+      - name: Create .env file
+        run: echo "${{ secrets.ENV_PROD }}" > .env
       - name: Build
         run: yarn generate
       - name: Archive Production Artifact
