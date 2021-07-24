@@ -90,7 +90,7 @@ export default {
     }
   },
   head: {
-    title: 'CCN - COSMOS Validators'
+    title: 'GAME Explorer - Validators'
   },
   computed: {
     ...mapState('validators', ['validators', 'tokens', 'calculatedCumulativeShare', 'loaded']),

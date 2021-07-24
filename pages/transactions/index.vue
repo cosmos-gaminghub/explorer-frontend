@@ -120,7 +120,7 @@ export default {
     headerData
   },
   head: {
-    title: 'CCN - COSMOS Txs'
+    title: 'GAME Explorer - Txs'
   },
   data () {
     return {

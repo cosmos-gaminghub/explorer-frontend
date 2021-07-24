@@ -236,7 +236,7 @@ export default {
     }
   },
   head: {
-    title: 'CCN - COSMOS Explorer by COSMOSTATION'
+    title: 'GAME Explorer - Dashboard'
   },
   computed: {
     ...mapState('blocks', ['blocks']),

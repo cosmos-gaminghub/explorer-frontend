@@ -108,7 +108,7 @@ export default {
     headerData
   },
   head: {
-    title: 'CCN - COSMOS Blocks'
+    title: 'GAME Explorer - Blocks'
   },
   data () {
     return {

@@ -114,7 +114,7 @@ export default {
     }
   },
   head: {
-    title: 'CCN - COSMOS Proposals'
+    title: 'GAME Explorer - Proposals'
   },
   computed: {
     ...mapState('proposals', ['proposals'])
