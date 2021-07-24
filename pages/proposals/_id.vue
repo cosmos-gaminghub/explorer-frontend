@@ -1,12 +1,12 @@
 <template>
   <not-found v-if="loaded.proposal_detail && loaded.not_found" :obj-name="'Proposal with id ' + id + ' was'"></not-found>
-  <div v-else class="page-content">
+  <div v-else class="page-content header-smaller">
     <div class="main-body-content">
       <div class="cos-notice custom-page-title cos-proposals-detail">
         <div class="row">
           <div class="col-lg-4 col-md-12 col-sm-12">
             <h2 class="page-title">
-              PROPOSAL DETAILS
+              Proposal details
             </h2>
             <div class="name-item">
               <div class="number">
@@ -39,9 +39,9 @@
                         Proposer
                       </div>
                       <div class="detail">
-                        <a :href="'/account/'+proposal.proposer">
+                        <nuxt-link :to="'/account/'+proposal.proposer">
                           {{ proposal.moniker || proposal.proposer }}
-                        </a>
+                        </nuxt-link>
                       </div>
                     </li>
                     <li>
@@ -167,10 +167,10 @@
                 <p>ATOM</p>
               </div>
             </div>
-            <div class="content-chart">
+            <div v-if="proposal && proposal.tally && parseInt(proposal.id) === parseInt($route.params.id)" class="content-chart">
               <div class="images">
                 <doughnut
-                  :data="data"
+                  :data="renderData"
                   :options="options"
                   :height="196"
                   :width="192"
@@ -389,7 +389,6 @@ import helper from '~/utils/helper'
 import NotFound from '~/components/error/NotFound'
 
 export const eventBus = new Vue()
-export const eventBus2 = new Vue()
 
 export default {
   filters: {
@@ -452,7 +451,7 @@ export default {
           'Empty'
         ],
         datasets: [{
-          data: [100],
+          data: [],
           backgroundColor: [
             '#B8BDC6'
           ],
@@ -545,17 +544,44 @@ export default {
       }
 
       return ''
+    },
+    renderData () {
+      return {
+        labels: [
+          'Yes',
+          'No',
+          'No With Veto',
+          'Abstain'
+        ],
+        datasets: [{
+          data: [
+            this.proposal.tally.yes / Math.pow(10, 6),
+            this.proposal.tally.no / Math.pow(10, 6),
+            this.proposal.tally.noWithVeto / Math.pow(10, 6),
+            this.proposal.tally.abstain / Math.pow(10, 6)
+          ],
+          backgroundColor: [
+            '#65A246',
+            '#F0142F',
+            '#F99600',
+            '#57B8FF'
+          ],
+          hoverOffset: 1
+        }]
+      }
     }
   },
   watch: {
     $route () {
       if (this.$route.params.id) {
+        this.$store.commit('proposals/SET_EMPTY')
         this.getData(this.$route.params.id)
       }
     }
   },
   mounted () {
     if (this.$route.params.id) {
+      this.$store.commit('proposals/SET_EMPTY')
       this.getData(this.$route.params.id)
     }
   },
@@ -580,33 +606,6 @@ export default {
         const noWithVeto = parseFloat(proposalDetail.tally.no_with_veto)
         const abstain = parseFloat(proposalDetail.tally.abstain)
         this.voteData.total = yes + no + noWithVeto + abstain
-
-        if (this.voteData.total > 0) {
-          this.data = {
-            labels: [
-              'Yes',
-              'No',
-              'No With Veto',
-              'Abstain'
-            ],
-            datasets: [{
-              data: [
-                yes / Math.pow(10, 6),
-                no / Math.pow(10, 6),
-                noWithVeto / Math.pow(10, 6),
-                abstain / Math.pow(10, 6)
-              ],
-              backgroundColor: [
-                '#65A246',
-                '#F0142F',
-                '#F99600',
-                '#57B8FF'
-              ],
-              hoverOffset: 1
-            }]
-          }
-          eventBus2.$emit('changeData', this.data)
-        }
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.log('error when proposal detail: ', error)

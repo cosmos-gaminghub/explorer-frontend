@@ -11,6 +11,7 @@ const actions = {
         commit('SET_VALIDATORS', response.data.validators)
         resolve(response.data.validators)
       }).catch((error) => {
+        commit('SET_LOADED_TRUE', error)
         reject(error)
       })
     })

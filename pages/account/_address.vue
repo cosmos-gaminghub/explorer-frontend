@@ -1,5 +1,5 @@
 <template>
-  <div class="page-content">
+  <div class="page-content header-smaller">
     <div class="main-body-content">
       <div class="cos-notice custom-page-title cos-acount-detail">
         <div class="row">
@@ -44,9 +44,9 @@
                 </div>
               </div>
               <div class="content-chart">
-                <div class="images">
+                <div v-if="loaded.available && loaded.delegations && loaded.unbonding && loaded.rewards && loaded.commissions" class="images">
                   <doughnut
-                    :data="data"
+                    :data="renderDataChart"
                     :options="options"
                     :height="196"
                     :width="192"
@@ -440,15 +440,12 @@
   </div>
 </template>
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 import headerData from '@/components/header/Header.vue'
-import Doughnut from '@/components/libs/DoughnutChart.vue'
-import Vue from 'vue'
+import Doughnut from '@/components/libs/DoughnutChartAcc.vue'
 import VueQr from 'vue-qr'
 import helper from '~/utils/helper'
 import EmptyTable from '~/components/error/EmptyTable.vue'
-
-export const eventBus = new Vue()
 
 export default {
   filters: {
@@ -623,6 +620,41 @@ export default {
         }
         return false
       })
+    },
+    renderDataChart () {
+      console.log('skdsksks data = ', [
+        (helper.calculateValueFromArr(this.available) / Math.pow(10, 6)).toFixed(6),
+        (helper.calculateValueFromArr(this.delegations) / Math.pow(10, 6)).toFixed(6),
+        (helper.getTotalUnbondings(this.unbondings) / Math.pow(10, 6)).toFixed(6),
+        (helper.getTotalRewards(this.rewards) / Math.pow(10, 6)).toFixed(6),
+        (helper.calculateValueFromArr(this.commissions) / Math.pow(10, 6)).toFixed(6)
+      ])
+      return {
+        labels: [
+          'available',
+          'delegations',
+          'unbondings',
+          'rewards',
+          'commissions'
+        ],
+        datasets: [{
+          data: [
+            (helper.calculateValueFromArr(this.available) / Math.pow(10, 6)).toFixed(6),
+            (helper.calculateValueFromArr(this.delegations) / Math.pow(10, 6)).toFixed(6),
+            (helper.getTotalUnbondings(this.unbondings) / Math.pow(10, 6)).toFixed(6),
+            (helper.getTotalRewards(this.rewards) / Math.pow(10, 6)).toFixed(6),
+            (helper.calculateValueFromArr(this.commissions) / Math.pow(10, 6)).toFixed(6)
+          ],
+          backgroundColor: [
+            '#0058FF',
+            '#669AFF',
+            '#99BCFF',
+            '#E5EEFF',
+            '#B8BDC6'
+          ],
+          hoverOffset: 1
+        }]
+      }
     }
   },
   watch: {
@@ -633,6 +665,7 @@ export default {
     }
   },
   mounted () {
+    this.setEmpty()
     if (this.$route.params.address) {
       this.getData(this.$route.params.address)
     }
@@ -653,6 +686,9 @@ export default {
       getAllValidators: 'validators/GET_DATA',
       getPrice: 'accounts/GET_PRICE',
       getRedelegations: 'accounts/GET_REDELEGATIONS'
+    }),
+    ...mapMutations({
+      setEmpty: 'accounts/SET_EMPTY'
     }),
     getData (accountAddress) {
       this.accAddress = accountAddress
@@ -791,24 +827,6 @@ export default {
     getTotalAtom () {
       this.dataChart.totalAtom = this.dataChart.rewards + this.dataChart.available + this.dataChart.commissions + this.dataChart.delegations + this.dataChart.unbondings
       this.dataChart.totalUsd = this.dataChart.totalAtom * parseFloat(this.current_price)
-      this.data.datasets = [{
-        data: [
-          (this.dataChart.available / Math.pow(10, 6)).toFixed(6),
-          (this.dataChart.delegations / Math.pow(10, 6)).toFixed(6),
-          (this.dataChart.unbondings / Math.pow(10, 6)).toFixed(6),
-          (this.dataChart.rewards / Math.pow(10, 6)).toFixed(6),
-          (this.dataChart.commissions / Math.pow(10, 6)).toFixed(6)
-        ],
-        backgroundColor: [
-          '#0058FF',
-          '#669AFF',
-          '#99BCFF',
-          '#E5EEFF',
-          '#B8BDC6'
-        ],
-        hoverOffset: 1
-      }]
-      eventBus.$emit('changeData', this.data)
     }
   }
 }

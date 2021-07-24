@@ -1,5 +1,5 @@
 <template>
-  <div class="page-content">
+  <div class="page-content header-smaller">
     <div class="main-body-content">
       <div class="cos-notice custom-page-title">
         <div class="row">
@@ -32,7 +32,8 @@
                   </button>
                 </div>
               </div>
-              <div class="cos-table-list md-full">
+              <empty-table v-if="loaded && !validators.origin.length" :obj-name="'Validators'" />
+              <div v-else class="cos-table-list md-full">
                 <div class="table-responsive">
                   <table-el
                     v-show="tab"
@@ -73,20 +74,23 @@ import headerData from '@/components/header/Header.vue'
 import tableEl from '@/components/elements/validator.vue'
 
 import Vue from 'vue'
+import EmptyTable from '~/components/error/EmptyTable'
 export const eventBus = new Vue()
 
 export default {
   components: {
-    headerData, tableEl
-  },
-  head: {
-    title: 'CCN - COSMOS Validators'
+    EmptyTable,
+    headerData,
+    tableEl
   },
   data () {
     return {
       tab: 1,
       searchValidatorMoniker: ''
     }
+  },
+  head: {
+    title: 'CCN - COSMOS Validators'
   },
   computed: {
     ...mapState('validators', ['validators', 'tokens', 'calculatedCumulativeShare', 'loaded']),

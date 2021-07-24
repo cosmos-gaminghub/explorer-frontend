@@ -30,7 +30,9 @@
         {{ info.bonded_token_percent }}%
       </div>
       <div class="sub-title">
-        {{ Math.round(info.bonded_tokens / Math.pow(10, 12)) }} M / {{ Math.round(info.total_supply / Math.pow(10, 12)) }} M
+        {{ Math.round(info.bonded_tokens / Math.pow(10, 12)) }} M / {{
+          Math.round(info.total_supply / Math.pow(10, 12))
+        }} M
       </div>
     </div>
     <div class="status-items">
@@ -44,11 +46,22 @@
         {{ $t('text.block.year') }}
       </div>
     </div>
+    <ul class="header-smaller">
+      <li><span>Height:</span>&nbsp;<span class="number">{{ info.block_height | formatNumber }}</span></li>
+      <li><span>Transaction:</span>&nbsp;<span class="number">{{ info.total_txs_num | formatNumber }}</span></li>
+      <li><span>Bonded:</span>&nbsp;<span class="number">{{ info.bonded_token_percent }}%</span></li>
+      <li><span>Inflation:</span>&nbsp;<span class="number">{{ inflation | getInflation }}%</span></li>
+    </ul>
   </div>
   <div v-else class="blocks-status no-tablet">
     <div v-for="i in 4" :key="'status-items-'+i" class="status-items">
       <Skeleton v-for="j in 3" :key="j" class="blocks-status no-tablet" />
     </div>
+    <ul class="header-smaller loading">
+      <li v-for="i in 4" :key="i">
+        <Skeleton />
+      </li>
+    </ul>
   </div>
 </template>
 <script>

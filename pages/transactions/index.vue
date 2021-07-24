@@ -1,5 +1,5 @@
 <template>
-  <div class="page-content">
+  <div class="page-content header-smaller">
     <div class="main-body-content">
       <div class="cos-notice custom-page-title">
         <div class="row">
@@ -17,7 +17,8 @@
             <div class="col-lg-12 col-md-12 col-sm-12">
               <div class="cos-table-item table-transactions">
                 <div class="cos-item-content md-full">
-                  <div class="cos-table-list">
+                  <empty-table v-if="loaded && !transactions.length" :obj-name="'Transactions'" />
+                  <div v-else class="cos-table-list">
                     <div class="table-responsive">
                       <table class="table table-striped table-bordered table-hover text-left">
                         <thead>
@@ -96,6 +97,7 @@
 import { mapState, mapActions } from 'vuex'
 import headerData from '@/components/header/Header.vue'
 import helper from '~/utils/helper'
+import EmptyTable from '~/components/error/EmptyTable'
 
 export default {
   filters: {
@@ -114,6 +116,7 @@ export default {
     }
   },
   components: {
+    EmptyTable,
     headerData
   },
   head: {
@@ -158,6 +161,8 @@ export default {
             }, process.env.REAL_TIME_DELAY_MS * 2.5)
             localStorage.setItem('TxInterval', this.TxInterval)
           }
+        }).catch(() => {
+          this.loaded = true
         })
       }
     }

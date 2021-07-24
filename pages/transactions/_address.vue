@@ -1,5 +1,5 @@
 <template>
-  <div class="page-content">
+  <div class="page-content header-smaller">
     <div class="main-body-content">
       <not-found v-if="notFound" :obj-name="'Transaction'" />
       <div v-else class="cos-notice custom-page-title cos-transaction-detail">

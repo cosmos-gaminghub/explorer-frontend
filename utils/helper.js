@@ -472,8 +472,8 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null) => {
 const accAddColumn = (address) => {
   const isValidator = !!/^(cosmosvaloper)[a-zA-Z0-9]{39}$/.test(address)
   const href = (isValidator ? '/validators/' : '/account/') + address
-  let html = '<a href="' + href + '">' + address + '</a>'
-  if (isValidator) { html = '<a href="' + href + '">' + address + '<p class="validator-moniker display-none">' + address + '</p></a>' }
+  let html = '<a href="' + href + '" target="_blank">' + address + '</a>'
+  if (isValidator) { html = '<a href="' + href + '" target="_blank">' + address + '<p class="validator-moniker display-none">' + address + '</p></a>' }
 
   return html
 }

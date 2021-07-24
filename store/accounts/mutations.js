@@ -18,6 +18,15 @@ const mutations = {
   },
   SET_PRICE (state, data) {
     state.price = data
+  },
+  SET_EMPTY (state) {
+    state.rewards = []
+    state.available = []
+    state.txs = []
+    state.commissions = []
+    state.unbonding = []
+    state.price = []
+    state.redelegations = {}
   }
 }
 

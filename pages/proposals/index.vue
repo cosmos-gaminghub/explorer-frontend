@@ -1,11 +1,11 @@
 <template>
-  <div class="page-content">
+  <div class="page-content header-smaller">
     <div class="main-body-content">
       <div class="cos-notice custom-page-title">
         <div class="row">
           <div class="col-lg-4 col-md-12 col-sm-12">
             <h2 class="page-title">
-              PROPOSALS
+              Proposals
             </h2>
           </div>
           <div class="col-lg-8 col-md-12 col-sm-12">
@@ -14,7 +14,7 @@
         </div>
         <chart-el :proposals="proposals" />
         <div class="main-md-content delegated-missed">
-          <div class="cos-table-item table-proposal">
+          <div :class="'cos-table-item table-proposal'+(loaded && !proposals.length ? 'no_proposal' : '')">
             <div class="cos-item-content">
               <empty-table v-if="loaded && !proposals.length" :obj-name="'PROPOSALS'" />
               <div v-else class="cos-table-list">
@@ -34,9 +34,9 @@
                       <tr v-for="proposal in proposals" :key="proposal.id">
                         <td><span class="number">#{{ proposal.id }}</span></td>
                         <td>
-                          <a :href="'/proposals/'+proposal.id">
+                          <nuxt-link :to="'/proposals/'+proposal.id">
                             {{ proposal.content.title }}
-                          </a>
+                          </nuxt-link>
                         </td>
                         <td class="text-center">
                           <span class="title">Status</span>

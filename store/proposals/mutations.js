@@ -53,6 +53,9 @@ const mutations = {
   },
   SET_VOTE (state, data) {
     state.vote = data
+  },
+  SET_EMPTY (state) {
+    state.proposal = {}
   }
 }
 

@@ -7,6 +7,7 @@ const mutations = {
     for (let i = 0; i < data.length; i++) {
       data[i].index = i
       data[i].uptime = 100 - data[i].uptime
+      data[i].width_cumulative_share = 0
 
       if (helper.isActiveValidator(data[i])) {
         state.validators.active.push(data[i])
@@ -36,6 +37,9 @@ const mutations = {
   },
   SET_EMPTY_VALIDATOR (state) {
     state.validator = {}
+  },
+  SET_LOADED_TRUE (state) {
+    state.loaded = true
   }
 }
 

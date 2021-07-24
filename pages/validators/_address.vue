@@ -1,5 +1,5 @@
 <template>
-  <div class="page-content">
+  <div class="page-content header-smaller">
     <div class="main-body-content">
       <not-found v-if="notFound" :obj-name="'Validator'" />
       <div v-else class="cos-notice custom-page-title cos-validator-detail">
@@ -58,9 +58,9 @@
                   </div>
                   <div class="validator-info-link">
                     <h4>Address</h4>
-                    <a :href="'/account/'+validator.acc_address">
+                    <nuxt-link :to="'/account/'+validator.acc_address">
                       {{ validator.acc_address }}
-                    </a>
+                    </nuxt-link>
                   </div>
                 </div>
               </div>
@@ -221,7 +221,7 @@
                       <span class="title-total">Last 100 Blocks</span>
                     </div>
                   </div>
-                  <div v-if="lastProposedBlocks" class="missed-content">
+                  <div v-if="lastProposedBlocks && lastProposedBlocks > 99" class="missed-content">
                     <a
                       v-for="height in 100"
                       :key="'block_' + (lastProposedBlocks - height + 1)"

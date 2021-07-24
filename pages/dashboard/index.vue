@@ -59,7 +59,8 @@
                     </nuxt-link>
                   </h3>
                 </div>
-                <div class="cos-table-list">
+                <empty-table v-if="loadedBlock && !blocks.length" :obj-name="'Blocks'" />
+                <div v-else class="cos-table-list">
                   <div class="table-responsive">
                     <table class="table table-striped table-bordered table-hover text-center table-home-block">
                       <thead>
@@ -121,7 +122,8 @@
                     </nuxt-link>
                   </h3>
                 </div>
-                <div class="cos-table-list">
+                <empty-table v-if="loadedTx && !transactions.length" :obj-name="'Txs'" />
+                <div v-else class="cos-table-list">
                   <div class="table-responsive">
                     <table class="table table-striped table-bordered table-hover tbl-transation-home">
                       <thead>
@@ -184,6 +186,7 @@ import headerData from '@/components/header/Header.vue'
 import helper from '@/utils/helper'
 import Vue from 'vue'
 import LineChart from '~/components/libs/LineChart'
+import EmptyTable from '~/components/error/EmptyTable'
 
 export const eventBus = new Vue()
 
@@ -209,6 +212,7 @@ export default {
     }
   },
   components: {
+    EmptyTable,
     headerData,
     LineChart
   },

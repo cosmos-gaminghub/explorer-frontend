@@ -1,7 +1,7 @@
 <template>
-  <div class="main-md-content delegated-missed">
+  <div v-if="proposals.length" class="main-md-content delegated-missed">
     <div class="scroll-proposals">
-      <ul v-if="proposals" class="list-proposals">
+      <ul class="list-proposals">
         <li v-for="proposal in filteredRow" :key="proposal.id">
           <div class="id">
             #{{ proposal.id }}
@@ -19,7 +19,9 @@
                     Proposer
                   </div>
                   <div class="cnt">
-                    <a :href="'/account/'+proposal.proposer">{{ proposal.proposer | formatHash }}</a>
+                    <nuxt-link :to="'/account/'+proposal.proposer">
+                      {{ proposal.proposer | formatHash }}
+                    </nuxt-link>
                   </div>
                 </div>
                 <div class="item">

@@ -66,7 +66,9 @@ module.exports = {
     // apollo
     '@nuxtjs/apollo',
     // https://axios.nuxtjs.org/
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    // bootstrap-vue
+    ['bootstrap-vue/nuxt', { css: false }]
   ],
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
