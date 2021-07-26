@@ -10,7 +10,7 @@
                 class="form-control"
                 type="text"
                 placeholder="Search by Address, Block Height, TxHash…"
-                @keyup="checkBeforeSearch($event)"
+                @keyup="checkBeforeSearch($event, true)"
                 @change="checkBeforeSearch($event)"
                 @keydown="checkBeforeSearch($event)"
               >
@@ -38,7 +38,7 @@ export default {
     }
   },
   methods: {
-    checkBeforeSearch () {
+    checkBeforeSearch (e, checkEnter = false) {
       if (!this.search) {
         this.textSearchButton = ''
         this.errorSearch = false
@@ -64,6 +64,7 @@ export default {
           this.textSearchButton = 'Search tx'
           this.errorSearch = false
         }
+        if (checkEnter && e.keyCode === 13 && !this.errorSearch) { this.goToAddress() }
       }
     },
     goToAddress () {
