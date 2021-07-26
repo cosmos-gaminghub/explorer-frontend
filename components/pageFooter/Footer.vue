@@ -7,38 +7,22 @@
             <div class="cnt">
               <h4>Abouts us</h4>
               <ul>
-                <li><a href="#">About</a></li>
-                <li> <a href="#">Advertise with us</a></li>
-                <li> <a href="#">Business Contacts</a></li>
+                <li> <a href="https://cosmosgaminghub.com">Home Page</a></li>
+                <li> <a href="https://docs.cosmosgaminghub.com">Document</a></li>
+                <li> <a href="https://whitepaper.cosmosgaminghub.com/en">White Paper EN</a></li>
+                <li> <a href="https://whitepaper.cosmosgaminghub.com/ja">White Paper JA</a></li>
+                <li> <a href="https://whitepaper.cosmosgaminghub.com/ch">White Paper CH</a></li>
               </ul>
             </div>
           </div>
           <div class="col-md-3">
             <div class="cnt">
-              <h4>Products</h4>
+              <h4>Community</h4>
               <ul>
-                <li><a href="#">DeFistation</a></li>
-                <li> <a href="#">Keystation</a></li>
-                <li> <a href="#">Web Wallet</a></li>
-                <li> <a href="#">Android Wallet</a></li>
-                <li> <a href="#">iOS Wallet</a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="cnt">
-              <h4>Support</h4>
-              <ul>
-                <li><a href="#">Feedback & Bug Report</a></li>
-                <li> <a href="#">Request Validator Logo Update</a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="cnt right">
-              <ul>
-                <li><a href="#"> <img src="/assets/images/icon/playstore.svg" alt="playstore"></a></li>
-                <li> <a href="#"><img src="/assets/images/icon/appstore.svg" alt="appstore"></a></li>
+                <li><a href="https://twitter.com/cosmosgaminghub">Twitter</a></li>
+                <li> <a href="https://t.me/CosmosGamingHub_EN">Telegram</a></li>
+                <li> <a href="https://github.com/cosmos-gaminghub">Github</a></li>
+                <li> <a href="https://medium.com/cosmosgaminghub">Medium</a></li>
               </ul>
             </div>
           </div>
