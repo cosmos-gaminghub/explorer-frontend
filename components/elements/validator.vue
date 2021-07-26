@@ -37,6 +37,7 @@
     :token="token"
     :items="filteredRow"
     :fields="fields_option"
+    :no-sort-reset="true"
     primary-key="operator_address"
     responsive="sm"
   >
