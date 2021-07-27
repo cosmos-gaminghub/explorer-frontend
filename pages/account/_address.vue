@@ -622,13 +622,6 @@ export default {
       })
     },
     renderDataChart () {
-      console.log('skdsksks data = ', [
-        (helper.calculateValueFromArr(this.available) / Math.pow(10, 6)).toFixed(6),
-        (helper.calculateValueFromArr(this.delegations) / Math.pow(10, 6)).toFixed(6),
-        (helper.getTotalUnbondings(this.unbondings) / Math.pow(10, 6)).toFixed(6),
-        (helper.getTotalRewards(this.rewards) / Math.pow(10, 6)).toFixed(6),
-        (helper.calculateValueFromArr(this.commissions) / Math.pow(10, 6)).toFixed(6)
-      ])
       return {
         labels: [
           'available',
