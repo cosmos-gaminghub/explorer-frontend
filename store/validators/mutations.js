@@ -3,6 +3,7 @@ import helper from '~/utils/helper'
 const mutations = {
   SET_VALIDATORS (state, data) {
     state.validators.origin = data
+    let totalBonedTokens = 0
 
     for (let i = 0; i < data.length; i++) {
       data[i].index = i
@@ -10,11 +11,13 @@ const mutations = {
       data[i].width_cumulative_share = 0
 
       if (helper.isActiveValidator(data[i])) {
+        totalBonedTokens += data[i].voting_power
         state.validators.active.push(data[i])
       } else {
         state.validators.inactive.push(data[i])
       }
     }
+    state.tokens = totalBonedTokens
     state.loaded = true
   },
   SET_CUMULATIVE_SHARE (state, data) {

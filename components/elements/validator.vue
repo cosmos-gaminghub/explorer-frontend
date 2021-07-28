@@ -120,7 +120,7 @@ export default {
     }
   },
   // eslint-disable-next-line vue/require-prop-types
-  props: ['validators', 'type', 'calculated', 'token', 'loaded', 'origin'],
+  props: ['validators', 'type', 'token', 'loaded', 'origin'],
   data () {
     return {
       searchValue: ''
