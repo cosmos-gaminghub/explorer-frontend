@@ -19,7 +19,9 @@ module.exports = {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/assets/images/logo/logo_m.png' },
-      { rel: 'stylesheet', type: 'text/css', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800&amp;display=swap' }
+      { rel: 'stylesheet', type: 'text/css', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800&amp;display=swap' },
+      { rel: 'stylesheet', href: 'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css' },
+      { rel: 'stylesheet', href: 'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' }
     ],
     script: [
       // { src: '/assets/js/jquery-3.3.1.min.js' },
@@ -30,9 +32,8 @@ module.exports = {
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
-    '~/static/assets/vendor/font-awesome/css/font-awesome.min.css',
     '~/static/assets/css/app.css',
-    '~/static/custom/css/_for_element.css'
+    '~/static/assets/css/_for_element.css'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
