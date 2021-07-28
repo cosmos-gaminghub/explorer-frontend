@@ -280,6 +280,14 @@ a {
     float: inherit;
     padding-top: 10px;
   }
+  .cos-table-item .cos-item-content table.table-votes tbody tr td:nth-child(2){
+    width: 50%;
+    text-align: right;
+  }
+  .cos-table-item .cos-item-content table.table-depositor tbody tr td:nth-child(2){
+    width: 50%;
+    text-align: right;
+  }
 }
 
 .sidebar-left {
@@ -1492,7 +1500,7 @@ table thead tr th,
     display: none;
   }
 
- 
+
 }
 
 .tablet {
@@ -1562,7 +1570,7 @@ table thead tr th,
 }
 
 @media (max-width: 600px) {
-  
+
   .page-content {
     padding-left: 5px;
     padding-right: 5px;
@@ -2093,24 +2101,24 @@ table.table-proposals-page tbody tr td:nth-child(2){
 .table-votes thead tr th:nth-child(1),
 .table-votes  tbody tr td:nth-child(1){
   width: 25%;
-} 
+}
 .table-votes thead tr th:nth-child(2),
 .table-votes  tbody tr td:nth-child(2){
   width: 25%;
-} 
+}
 .table-votes thead tr th:nth-child(3),
 .table-votes  tbody tr td:nth-child(3){
   width: 25%;
-} 
+}
 .table-votes thead tr th:nth-child(4),
 .table-votes  tbody tr td:nth-child(4){
   width: 25%;
-} 
+}
 @media (max-width: 1024px) {
   .validator-detail-content .status-validator {
     display: table;
   }
-  
+
   .page-content {
     padding: 0 ;
   }
@@ -2311,7 +2319,7 @@ table.table-proposals-page tbody tr td:nth-child(2){
   .sidebar-left .menu_section .side-menu li a span {
     display: block;
   }
-  
+
 }
 .block-detail-content {
   margin-bottom: 40px;
@@ -2769,8 +2777,8 @@ table.table-proposals-page tbody tr td:nth-child(2){
   .no-tablet {
     display: none;
   }
-  
-  
+
+
 }
 @media (max-width: 1024px) and (min-width: 769px) {
   .sidebar-left .menu_section .side-menu li.active a{
@@ -3185,7 +3193,7 @@ table.table-proposals-page tbody tr td:nth-child(2){
     -ms-flex-pack: justify;
     justify-content: space-between;
   }
-  
+
   table tbody tr td{
     padding-left: 20px!important;
     padding-right: 20px!important;
@@ -3258,11 +3266,11 @@ table.table-proposals-page tbody tr td:nth-child(2){
     margin-right: 0px!important;
   }
 
- 
+
   .sidebar-left .nav_title img{
     max-width: 100%;
   }
-  
+
   .tbl-transation-home thead tr th:nth-child(1),
   .tbl-transation-home tbody tr td:nth-child(1){
     width: auto;
