@@ -8,7 +8,6 @@ export const state = () => ({
     origin: []
   },
   tokens: 0,
-  calculatedCumulativeShare: false,
   loaded: false,
   validator: {}
 })
