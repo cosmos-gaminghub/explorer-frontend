@@ -65,7 +65,7 @@
     </template>
     <template #cell(width_cumulative_share)="row">
       <div v-if="type === 'active'" class="prog">
-        <div class="cum" :style="origin | getWidthCumulativeShare(row.item.index, token, row.item.rank)" />
+        <div class="cum" :style="origin | getWidthCumulativeShare(row.item.index, token, row.item.voting_power)" />
         <div class="fill" :style="row.item.voting_power | getWidthVotingWidth(token)" />
       </div>
       <div v-else class="prog">
@@ -110,8 +110,10 @@ export default {
     getWidthVotingWidth (value, token) {
       return 'width:' + (token ? ((value / token) * Math.pow(10, 2)).toFixed(2) : 0.00) + '%'
     },
-    getWidthCumulativeShare (value, index, token, rank) {
-      return 'width:' + helper.cumulativeShare(value, index, token, 'active') + '%'
+    getWidthCumulativeShare (value, index, token, votingPower) {
+      const percentVoting = (votingPower / token) * Math.pow(10, 2)
+      const percentCumulativeShare = helper.cumulativeShare(value, index, token, 'active')
+      return 'width:' + ((percentVoting > 0) ? (percentCumulativeShare - percentVoting) : percentCumulativeShare) + '%'
     },
     getCumulativeShare (value, index, token, type) {
       return helper.cumulativeShare(value, index, token, type)
