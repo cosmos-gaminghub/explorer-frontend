@@ -72,7 +72,7 @@
         <div class="cum" style="width: 0%" />
         <div class="fill" style="width: 0%" />
       </div>
-      <p class="value">
+      <p v-if="token" class="value">
         {{ origin | getCumulativeShare(row.item.index, token, type) }}%
       </p>
     </template>
