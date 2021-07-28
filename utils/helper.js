@@ -584,6 +584,7 @@ const formatNumber = (number) => {
 }
 
 const cumulativeShare = (validators, index, bondedTokens, type) => {
+  if (!bondedTokens) { return (0).toFixed(2) }
   let totalVotingPower = 0
   for (let i = 0; i < index + 1; i++) {
     totalVotingPower += validators[i].voting_power * Math.pow(10, 2)
