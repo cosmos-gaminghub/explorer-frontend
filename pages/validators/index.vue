@@ -42,7 +42,6 @@
                     :validators="validators.active"
                     :search="searchValidatorMoniker"
                     :type="'active'"
-                    :calculated="calculatedCumulativeShare"
                     :token="tokens"
                   />
                   <table-el
@@ -52,7 +51,6 @@
                     :validators="validators.inactive"
                     :search="searchValidatorMoniker"
                     :type="'inactive'"
-                    :calculated="calculatedCumulativeShare"
                     :token="tokens"
                   />
                 </div>
@@ -69,7 +67,7 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapMutations } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import headerData from '@/components/header/Header.vue'
 import tableEl from '@/components/elements/validator.vue'
 
@@ -93,8 +91,7 @@ export default {
     title: 'GAME Explorer - Validators'
   },
   computed: {
-    ...mapState('validators', ['validators', 'tokens', 'calculatedCumulativeShare', 'loaded']),
-    ...mapState('network', ['info', 'bondedTokens'])
+    ...mapState('validators', ['validators', 'tokens', 'loaded'])
   },
   watch: {
     searchValidatorMoniker (val) {
@@ -104,21 +101,10 @@ export default {
   mounted () {
     this.$store.commit('validators/SET_EMPTY_VALIDATORS')
     this.getValidators()
-    if (this.info) {
-      this.cumulativeShare(this.bondedTokens)
-    }
-    this.$store.subscribe((mutation, state) => {
-      if (mutation.type === 'network/SET_STATUS_INFO' && this.info) {
-        this.cumulativeShare(this.bondedTokens)
-      }
-    })
   },
   methods: {
     ...mapActions({
       getValidators: 'validators/GET_DATA'
-    }),
-    ...mapMutations({
-      cumulativeShare: 'validators/SET_CUMULATIVE_SHARE'
     }),
     changeTab (status) {
       this.tab = status
