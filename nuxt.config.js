@@ -14,8 +14,8 @@ module.exports = {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
-      { hid: 'description', name: 'description', content: 'CCN Game Explorer' },
-      { hid: 'author', name: 'author', content: 'Paditech CCN' }
+      { hid: 'description', name: 'description', content: 'Game Explorer' },
+      { hid: 'author', name: 'author', content: 'Cosmos Gaming Hub' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/assets/images/logo/logo_m.png' },
