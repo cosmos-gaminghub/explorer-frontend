@@ -69,7 +69,14 @@ module.exports = {
     // https://axios.nuxtjs.org/
     '@nuxtjs/axios',
     // bootstrap-vue
-    ['bootstrap-vue/nuxt', { css: false }]
+    ['bootstrap-vue/nuxt', { css: false }],
+    // google analytics
+    ['@nuxtjs/google-gtag',
+      {
+        id: 'G-9522YTVQF0',
+        debug: true // Enable to track in dev mode.
+      }
+    ]
   ],
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
