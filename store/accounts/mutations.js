@@ -8,8 +8,7 @@ const mutations = {
     state.available = data
   },
   SET_TRANSACTIONS (state, data) {
-    console.log('before : ', state.txs_paginations.before, data)
-    if (data) {
+    if (data.length) {
       state.txs_paginations.before = data[data.length - 1].height
     } else {
       state.txs_paginations.is_empty = true
