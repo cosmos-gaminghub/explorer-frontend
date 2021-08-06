@@ -37,10 +37,10 @@
                 <div class="total-atom">
                   Total ATOM
                 </div>
-                <h3>{{ dataChart.totalAtom | convertNumber(true) }}.{{ dataChart.totalAtom | convertNumber(false) }}</h3>
+                <h3>{{ dataChart.totalAtom | convertNumber(true, false) }}.{{ dataChart.totalAtom | convertNumber(false, false) }}</h3>
                 <div class="detail-chart">
                   <p>${{ current_price.toFixed(2) }} / ATOM</p>
-                  <p>${{ dataChart.totalUsd | convertNumber(true) }}.{{ dataChart.totalUsd | convertNumber(false) }}</p>
+                  <p>${{ dataChart.totalUsd | convertNumber(true, false) }}.{{ dataChart.totalUsd | convertNumber(false, false) }}</p>
                 </div>
               </div>
               <div class="content-chart">
@@ -65,7 +65,7 @@
                         {{ dataChart.available | getPercent(dataChart.totalAtom) }}%
                       </div>
                       <div class="number">
-                        {{ dataChart.available | convertNumber(true) }}.{{ dataChart.available | convertNumber(false) }}
+                        {{ dataChart.available | convertNumber(true, false) }}.{{ dataChart.available | convertNumber(false, false) }}
                       </div>
                     </li>
                     <li>
@@ -79,7 +79,7 @@
                         {{ dataChart.delegations | getPercent(dataChart.totalAtom) }}%
                       </div>
                       <div class="number">
-                        {{ dataChart.delegations | convertNumber(true) }}.{{ dataChart.delegations | convertNumber(false) }}
+                        {{ dataChart.delegations | convertNumber(true, false) }}.{{ dataChart.delegations | convertNumber(false, false) }}
                       </div>
                     </li>
                     <li>
@@ -93,7 +93,7 @@
                         {{ dataChart.unbondings | getPercent(dataChart.totalAtom) }}%
                       </div>
                       <div class="number">
-                        {{ dataChart.unbondings | convertNumber(true) }}.{{ dataChart.unbondings | convertNumber(false) }}
+                        {{ dataChart.unbondings | convertNumber(true, false) }}.{{ dataChart.unbondings | convertNumber(false, false) }}
                       </div>
                     </li>
                     <li>
@@ -107,7 +107,7 @@
                         {{ dataChart.rewards | getPercent(dataChart.totalAtom) }}%
                       </div>
                       <div class="number">
-                        {{ dataChart.rewards | convertNumber(true) }}.{{ dataChart.rewards | convertNumber(false) }}
+                        {{ dataChart.rewards | convertNumber(true, false) }}.{{ dataChart.rewards | convertNumber(false, false) }}
                       </div>
                     </li>
                     <li>
@@ -121,7 +121,7 @@
                         {{ dataChart.commissions | getPercent(dataChart.totalAtom) }}%
                       </div>
                       <div class="number">
-                        {{ dataChart.commissions | convertNumber(true) }}.{{ dataChart.commissions | convertNumber(false) }}
+                        {{ dataChart.commissions | convertNumber(true, false) }}.{{ dataChart.commissions | convertNumber(false, false) }}
                       </div>
                     </li>
                   </ul>
@@ -143,38 +143,38 @@
                   <div class="table-responsive">
                     <table class="table table-striped table-bordered table-hover text-left table-delegation-account">
                       <thead>
-                        <tr>
-                          <th>Address</th>
-                          <th class="text-center">
-                            Amount
-                          </th>
-                          <th class="text-center">
-                            Shares
-                          </th>
-                        </tr>
+                      <tr>
+                        <th>Address</th>
+                        <th class="text-center">
+                          Amount
+                        </th>
+                        <th class="text-center">
+                          Shares
+                        </th>
+                      </tr>
                       </thead>
                       <tbody v-if="loaded.delegations">
-                        <tr v-for="(delegation, index) in filteredRowDelegations" :key="index">
-                          <td>
-                            <nuxt-link :to="'/validators/'+delegation.validator_address">
-                              {{ delegation.moniker }}
-                            </nuxt-link>
-                          </td>
-                          <td class="text-center">
-                            {{ delegation.amount | convertNumber(true) }}.{{ delegation.amount | convertNumber(false) }} ATOM
-                          </td>
-                          <td class="text-center">
-                            <span class="title">Shares</span>
-                            {{ delegation.validator_address | getRewardByAddress(rewards) }} ATOM
-                          </td>
-                        </tr>
+                      <tr v-for="(delegation, index) in filteredRowDelegations" :key="index">
+                        <td>
+                          <nuxt-link :to="'/validators/'+delegation.validator_address">
+                            {{ delegation.moniker }}
+                          </nuxt-link>
+                        </td>
+                        <td class="text-center">
+                          {{ delegation.amount | convertNumber(true) }}.{{ delegation.amount | convertNumber(false) }} ATOM
+                        </td>
+                        <td class="text-center">
+                          <span class="title">Shares</span>
+                          {{ delegation.validator_address | getRewardByAddress(rewards) }} ATOM
+                        </td>
+                      </tr>
                       </tbody>
                       <tbody v-else>
-                        <tr v-for="i in 5" :key="i">
-                          <td colspan="3" class="td-skeleton">
-                            <Skeleton />
-                          </td>
-                        </tr>
+                      <tr v-for="i in 5" :key="i">
+                        <td colspan="3" class="td-skeleton">
+                          <Skeleton />
+                        </td>
+                      </tr>
                       </tbody>
                     </table>
                   </div>
@@ -203,49 +203,49 @@
                   <div class="table-responsive">
                     <table class="table table-striped table-bordered table-hover">
                       <thead>
-                        <tr>
-                          <th>Validator</th>
-                          <th class="text-center">
-                            Height
-                          </th>
-                          <th class="text-center">
-                            Amount
-                          </th>
-                          <th class="text-right">
-                            Completion Time
-                          </th>
-                        </tr>
+                      <tr>
+                        <th>Validator</th>
+                        <th class="text-center">
+                          Height
+                        </th>
+                        <th class="text-center">
+                          Amount
+                        </th>
+                        <th class="text-right">
+                          Completion Time
+                        </th>
+                      </tr>
                       </thead>
                       <tbody v-if="loaded.unbonding">
-                        <tr v-for="(unbonding, index) in filteredRowUnbondings" :key="index">
-                          <td>
-                            <nuxt-link :to="'/validators/' + unbonding.validator_address">
-                              {{ unbonding.validator }}
-                            </nuxt-link>
-                          </td>
-                          <td class="text-center">
-                            <span>{{ unbonding.height }}</span>
-                          </td>
-                          <td class="text-center">
-                            <span class="title">Amount</span>
-                            <span>{{ unbonding.amount | convertNumber(true) }}.{{ unbonding.amount | convertNumber(false) }} ATOM</span>
-                          </td>
-                          <td class="text-right">
-                            <span class="title">Completion Time</span>
-                            <div class="time-unbon">
-                              <p class="cos-note">
-                                {{ unbonding.time | convertTime }}
-                              </p><span class="remain">({{ unbonding.time | getTime }} remaining)</span>
-                            </div>
-                          </td>
-                        </tr>
+                      <tr v-for="(unbonding, index) in filteredRowUnbondings" :key="index">
+                        <td>
+                          <nuxt-link :to="'/validators/' + unbonding.validator_address">
+                            {{ unbonding.validator }}
+                          </nuxt-link>
+                        </td>
+                        <td class="text-center">
+                          <span>{{ unbonding.height }}</span>
+                        </td>
+                        <td class="text-center">
+                          <span class="title">Amount</span>
+                          <span>{{ unbonding.amount | convertNumber(true) }}.{{ unbonding.amount | convertNumber(false) }} ATOM</span>
+                        </td>
+                        <td class="text-right">
+                          <span class="title">Completion Time</span>
+                          <div class="time-unbon">
+                            <p class="cos-note">
+                              {{ unbonding.time | convertTime }}
+                            </p><span class="remain">({{ unbonding.time | getTime }} remaining)</span>
+                          </div>
+                        </td>
+                      </tr>
                       </tbody>
                       <tbody v-else>
-                        <tr v-for="i in 5" :key="i">
-                          <td colspan="4" class="td-skeleton">
-                            <Skeleton />
-                          </td>
-                        </tr>
+                      <tr v-for="i in 5" :key="i">
+                        <td colspan="4" class="td-skeleton">
+                          <Skeleton />
+                        </td>
+                      </tr>
                       </tbody>
                     </table>
                   </div>
@@ -278,66 +278,66 @@
                   <div class="table-responsive">
                     <table class="table table-striped table-bordered table-hover text-left">
                       <thead>
-                        <tr>
-                          <th>Tx Hash</th>
-                          <th>Type</th>
-                          <th class="text-center">Result</th>
-                          <th>Amount</th>
-                          <th>
-                            Fee
-                          </th>
-                          <th class="text-center">Height</th>
-                          <th class="text-center">Time</th>
-                        </tr>
+                      <tr>
+                        <th>Tx Hash</th>
+                        <th>Type</th>
+                        <th class="text-center">Result</th>
+                        <th>Amount</th>
+                        <th>
+                          Fee
+                        </th>
+                        <th class="text-center">Height</th>
+                        <th class="text-center">Time</th>
+                      </tr>
                       </thead>
                       <tbody v-if="loaded.txs">
-                        <tr v-for="tx in filteredRowTxs" :key="tx.tx_hash">
-                          <td>
-                            <nuxt-link class="box btn1" :to="'/transactions/' + tx.tx_hash">
-                              {{ tx.tx_hash | formatHash }}
-                            </nuxt-link>
-                          </td>
-                          <td><span class="box btn2">{{ tx.type_tx_convert }}</span></td>
-                          <td :class="'text-center ' + (!tx.status ? 'green' : 'red')">
-                            <span class="title">Result</span>
-                            {{ !tx.status ? 'Success' : 'Failed' }}
-                          </td>
-                          <td v-if="tx.total_amount !== null">
-                            <span class="title">Amount</span>
-                            {{ tx.total_amount | convertNumber(true) }}.{{ tx.total_amount | convertNumber(false) }} ATOM
-                          </td>
-                          <td v-else-if="tx.messages && JSON.parse(tx.messages) && JSON.parse(tx.messages).length > 1">
-                            <span class="title">Amount</span>
-                            <nuxt-link :to="'/transactions/'+tx.tx_hash">
-                              More
-                            </nuxt-link>
-                          </td>
-                          <td v-else>
-                            <span class="title">Amount</span>
-                            -
-                          </td>
-                          <td>
-                            <span class="title">Free</span>
-                            {{ tx.fee | getFeeTx }} ATOM
-                          </td>
-                          <td class="text-center">
-                            <span class="title">Height</span>
-                            <nuxt-link class="box btn1" :to="'/blocks/' + tx.height">
-                              {{ tx.height }}
-                            </nuxt-link>
-                          </td>
-                          <td class="text-center">
-                            <span class="title">Time</span>
-                            {{ tx.timestamp | getTime }} ago
-                          </td>
-                        </tr>
+                      <tr v-for="tx in filteredRowTxs" :key="tx.tx_hash">
+                        <td>
+                          <nuxt-link class="box btn1" :to="'/transactions/' + tx.tx_hash">
+                            {{ tx.tx_hash | formatHash }}
+                          </nuxt-link>
+                        </td>
+                        <td><span class="box btn2">{{ tx.type_tx_convert }}</span></td>
+                        <td :class="'text-center ' + (!tx.status ? 'green' : 'red')">
+                          <span class="title">Result</span>
+                          {{ !tx.status ? 'Success' : 'Failed' }}
+                        </td>
+                        <td v-if="tx.total_amount !== null">
+                          <span class="title">Amount</span>
+                          {{ tx.total_amount | convertNumber(true) }}.{{ tx.total_amount | convertNumber(false) }} ATOM
+                        </td>
+                        <td v-else-if="tx.messages && JSON.parse(tx.messages) && JSON.parse(tx.messages).length > 1">
+                          <span class="title">Amount</span>
+                          <nuxt-link :to="'/transactions/'+tx.tx_hash">
+                            More
+                          </nuxt-link>
+                        </td>
+                        <td v-else>
+                          <span class="title">Amount</span>
+                          -
+                        </td>
+                        <td>
+                          <span class="title">Free</span>
+                          {{ tx.fee | getFeeTx }} ATOM
+                        </td>
+                        <td class="text-center">
+                          <span class="title">Height</span>
+                          <nuxt-link class="box btn1" :to="'/blocks/' + tx.height">
+                            {{ tx.height }}
+                          </nuxt-link>
+                        </td>
+                        <td class="text-center">
+                          <span class="title">Time</span>
+                          {{ tx.timestamp | getTime }} ago
+                        </td>
+                      </tr>
                       </tbody>
                       <tbody v-else>
-                        <tr v-for="i in 5" :key="i">
-                          <td colspan="7" class="td-skeleton">
-                            <Skeleton />
-                          </td>
-                        </tr>
+                      <tr v-for="i in 5" :key="i">
+                        <td colspan="7" class="td-skeleton">
+                          <Skeleton />
+                        </td>
+                      </tr>
                       </tbody>
                     </table>
                   </div>
@@ -373,50 +373,50 @@
                   <div class="table-responsive">
                     <table class="table table-striped table-bordered table-hover text-left">
                       <thead>
-                        <tr>
-                          <th>From</th>
-                          <th class="text-left">To</th>
-                          <th class="text-left">Height</th>
-                          <th>Amount</th>
-                          <th class="text-right">Time</th>
-                        </tr>
+                      <tr>
+                        <th>From</th>
+                        <th class="text-left">To</th>
+                        <th class="text-left">Height</th>
+                        <th>Amount</th>
+                        <th class="text-right">Time</th>
+                      </tr>
                       </thead>
                       <tbody v-if="loaded.redelegations">
-                        <tr v-for="(item, index) in filteredRowRedelegations" :key="'redelegation_'+index">
-                          <td>
-                            <nuxt-link class="box btn1" :to="'/validators/' + item.validator_src_address">
-                              {{ item.validator_src_moniker }}
-                            </nuxt-link>
-                          </td>
-                          <td class="text-left">
-                            <span class="title">To</span>
-                            <nuxt-link class="box btn1" :to="'/validators/' + item.validator_dst_address">
-                              {{ item.validator_dst_moniker }}
-                            </nuxt-link>
-                          </td>
-                          <td class="text-center">
-                            <span class="title">Height</span>
-                            <nuxt-link class="box btn1" :to="'/blocks/' + 1">
-                              {{ item.height }}
-                            </nuxt-link>
-                          </td>
-                          <td class="text-left">
-                            <span class="title">Amount</span>
-                            {{ item.amount | convertNumber(true) }}.{{ item.amount | convertNumber(false) }} ATOM
-                          </td>
-                          <td class="text-right">
-                            <span class="title">Time</span>
-                            <p>{{ item.time | convertTime }}</p>
-                            <p>({{ item.time | getTime }} remaining)</p>
-                          </td>
-                        </tr>
+                      <tr v-for="(item, index) in filteredRowRedelegations" :key="'redelegation_'+index">
+                        <td>
+                          <nuxt-link class="box btn1" :to="'/validators/' + item.validator_src_address">
+                            {{ item.validator_src_moniker }}
+                          </nuxt-link>
+                        </td>
+                        <td class="text-left">
+                          <span class="title">To</span>
+                          <nuxt-link class="box btn1" :to="'/validators/' + item.validator_dst_address">
+                            {{ item.validator_dst_moniker }}
+                          </nuxt-link>
+                        </td>
+                        <td class="text-center">
+                          <span class="title">Height</span>
+                          <nuxt-link class="box btn1" :to="'/blocks/' + 1">
+                            {{ item.height }}
+                          </nuxt-link>
+                        </td>
+                        <td class="text-left">
+                          <span class="title">Amount</span>
+                          {{ item.amount | convertNumber(true) }}.{{ item.amount | convertNumber(false) }} ATOM
+                        </td>
+                        <td class="text-right">
+                          <span class="title">Time</span>
+                          <p>{{ item.time | convertTime }}</p>
+                          <p>({{ item.time | getTime }} remaining)</p>
+                        </td>
+                      </tr>
                       </tbody>
                       <tbody v-else>
-                        <tr v-for="i in 5" :key="i">
-                          <td colspan="7" class="td-skeleton">
-                            <Skeleton />
-                          </td>
-                        </tr>
+                      <tr v-for="i in 5" :key="i">
+                        <td colspan="7" class="td-skeleton">
+                          <Skeleton />
+                        </td>
+                      </tr>
                       </tbody>
                     </table>
                   </div>
@@ -476,8 +476,9 @@ export default {
     convertTime (value) {
       return helper.convertTime(value)
     },
-    convertNumber (value, isInt) {
-      const total = parseFloat(value) / Math.pow(10, 6)
+    convertNumber (value, isInt, isDevice = true) {
+      let total = parseFloat(value)
+      if (isDevice) { total /= Math.pow(10, 6) }
       if (isInt) {
         return helper.formatNumber(parseInt(total))
       } else {
@@ -486,7 +487,7 @@ export default {
       }
     },
     getPercent (value, total) {
-      const percent = (total) ? (value / total) * Math.pow(10, 2) : 0
+      const percent = total ? (value / total) * Math.pow(10, 2) : 0
 
       return percent.toFixed(2)
     }
@@ -781,7 +782,7 @@ export default {
         acc_address: accountAddress
       }).then((delegations) => {
         this.loaded.delegations = true
-        this.dataChart.delegations = helper.calculateValueFromArr(delegations)
+        this.dataChart.delegations = helper.calculateValueFromArr(delegations) / Math.pow(10, 6)
         this.getTotalAtom()
       }).catch((error) => {
         // eslint-disable-next-line no-console
