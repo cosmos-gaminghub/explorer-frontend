@@ -8,7 +8,12 @@ export const state = () => ({
   commissions: [],
   unbonding: [],
   price: [],
-  redelegations: {}
+  redelegations: {},
+  txs_paginations: {
+    before: 0,
+    size: 50,
+    is_empty: false
+  }
 })
 
 export default {

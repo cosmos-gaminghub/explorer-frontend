@@ -8,7 +8,13 @@ const mutations = {
     state.available = data
   },
   SET_TRANSACTIONS (state, data) {
-    state.txs = helper.convertValueTxs(data)
+    console.log('before : ', state.txs_paginations.before, data)
+    if (data) {
+      state.txs_paginations.before = data[data.length - 1].height
+    } else {
+      state.txs_paginations.is_empty = true
+    }
+    state.txs = state.txs.concat(helper.convertValueTxs(data))
   },
   SET_COMMISSIONS (state, data) {
     state.commissions = data
