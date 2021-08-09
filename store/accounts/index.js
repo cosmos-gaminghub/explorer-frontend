@@ -3,6 +3,7 @@ import mutations from './mutations'
 
 export const state = () => ({
   rewards: [],
+  is_validator: false,
   available: [],
   txs: [],
   commissions: [],
