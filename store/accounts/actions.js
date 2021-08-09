@@ -13,6 +13,24 @@ const actions = {
         commit('SET_REWARDS', response.data.rewards.rewards)
         resolve(response.data.rewards.rewards)
       }).catch((error) => {
+        commit('SET_REWARDS', [])
+        reject(error)
+      })
+    })
+  },
+  // eslint-disable-next-line require-await
+  async GET_ACCOUNT_DETAIL ({ commit }, params) {
+    return new Promise((resolve, reject) => {
+      const client = this.app.apolloProvider.defaultClient
+      client.cache.data.clear()
+      client.query({
+        query: api.GET_ACCOUNT_DETAIL_QUERY,
+        variables: params
+      }).then((response) => {
+        commit('SET_ACC_DETAIL', response.data.account_detail)
+        resolve(response.data.account_detail.is_validator)
+      }).catch((error) => {
+        commit('SET_ACC_DETAIL', { is_validator: false })
         reject(error)
       })
     })
@@ -29,6 +47,7 @@ const actions = {
         commit('SET_COMMISSIONS', response.data.commission.commission.commission)
         resolve(response.data.commission.commission.commission)
       }).catch((error) => {
+        commit('SET_COMMISSIONS', [])
         reject(error)
       })
     })
@@ -45,6 +64,7 @@ const actions = {
         commit('SET_UNBONDING', response.data.unbonding.unbonding_responses)
         resolve(response.data.unbonding.unbonding_responses)
       }).catch((error) => {
+        commit('SET_UNBONDING', [])
         reject(error)
       })
     })
@@ -61,6 +81,7 @@ const actions = {
         commit('SET_AVAILABLE', response.data.balances.balances)
         resolve(response.data.balances.balances)
       }).catch((error) => {
+        commit('SET_AVAILABLE', [])
         reject(error)
       })
     })
@@ -77,6 +98,7 @@ const actions = {
         commit('SET_TRANSACTIONS', response.data.account_transactions)
         resolve()
       }).catch((error) => {
+        commit('SET_TRANSACTIONS', [])
         reject(error)
       })
     })
@@ -92,6 +114,7 @@ const actions = {
       }).then((response) => {
         resolve(response.data.redelegations.redelegation_responses)
       }).catch((error) => {
+        resolve([])
         reject(error)
       })
     })

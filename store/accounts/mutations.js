@@ -4,6 +4,9 @@ const mutations = {
   SET_REWARDS (state, data) {
     state.rewards = data
   },
+  SET_ACC_DETAIL (state, data) {
+    state.is_validator = data.is_validator
+  },
   SET_AVAILABLE (state, data) {
     state.available = data
   },
