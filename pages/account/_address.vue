@@ -648,11 +648,11 @@ export default {
         ],
         datasets: [{
           data: [
-            (helper.calculateValueFromArr(this.available) / Math.pow(10, 6)).toFixed(6),
+            (helper.calculateValueFromArr(this.available)).toFixed(6),
             (helper.calculateValueFromArr(this.delegations) / Math.pow(10, 6)).toFixed(6),
-            (helper.getTotalUnbondings(this.unbondings) / Math.pow(10, 6)).toFixed(6),
-            (helper.getTotalRewards(this.rewards) / Math.pow(10, 6)).toFixed(6),
-            (helper.calculateValueFromArr(this.commissions) / Math.pow(10, 6)).toFixed(6)
+            (helper.getTotalUnbondings(this.unbondings)).toFixed(6),
+            (helper.getTotalRewards(this.rewards)).toFixed(6),
+            (helper.calculateValueFromArr(this.commissions)).toFixed(6)
           ],
           backgroundColor: [
             '#0058FF',
