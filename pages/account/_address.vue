@@ -37,10 +37,10 @@
                 <div class="total-atom">
                   Total ATOM
                 </div>
-                <h3>{{ dataChart.totalAtom | convertNumber(true) }}.{{ dataChart.totalAtom | convertNumber(false) }}</h3>
+                <h3>{{ dataChart.totalAtom | convertNumber(true, false) }}.{{ dataChart.totalAtom | convertNumber(false, false) }}</h3>
                 <div class="detail-chart">
                   <p>${{ current_price.toFixed(2) }} / ATOM</p>
-                  <p>${{ dataChart.totalUsd | convertNumber(true) }}.{{ dataChart.totalUsd | convertNumber(false) }}</p>
+                  <p>${{ dataChart.totalUsd | convertNumber(true, false) }}.{{ dataChart.totalUsd | convertNumber(false, false) }}</p>
                 </div>
               </div>
               <div class="content-chart">
@@ -65,7 +65,7 @@
                         {{ dataChart.available | getPercent(dataChart.totalAtom) }}%
                       </div>
                       <div class="number">
-                        {{ dataChart.available | convertNumber(true) }}.{{ dataChart.available | convertNumber(false) }}
+                        {{ dataChart.available | convertNumber(true, false) }}.{{ dataChart.available | convertNumber(false, false) }}
                       </div>
                     </li>
                     <li>
@@ -79,7 +79,7 @@
                         {{ dataChart.delegations | getPercent(dataChart.totalAtom) }}%
                       </div>
                       <div class="number">
-                        {{ dataChart.delegations | convertNumber(true) }}.{{ dataChart.delegations | convertNumber(false) }}
+                        {{ dataChart.delegations | convertNumber(true, false) }}.{{ dataChart.delegations | convertNumber(false, false) }}
                       </div>
                     </li>
                     <li>
@@ -93,7 +93,7 @@
                         {{ dataChart.unbondings | getPercent(dataChart.totalAtom) }}%
                       </div>
                       <div class="number">
-                        {{ dataChart.unbondings | convertNumber(true) }}.{{ dataChart.unbondings | convertNumber(false) }}
+                        {{ dataChart.unbondings | convertNumber(true, false) }}.{{ dataChart.unbondings | convertNumber(false, false) }}
                       </div>
                     </li>
                     <li>
@@ -107,7 +107,7 @@
                         {{ dataChart.rewards | getPercent(dataChart.totalAtom) }}%
                       </div>
                       <div class="number">
-                        {{ dataChart.rewards | convertNumber(true) }}.{{ dataChart.rewards | convertNumber(false) }}
+                        {{ dataChart.rewards | convertNumber(true, false) }}.{{ dataChart.rewards | convertNumber(false, false) }}
                       </div>
                     </li>
                     <li>
@@ -121,7 +121,7 @@
                         {{ dataChart.commissions | getPercent(dataChart.totalAtom) }}%
                       </div>
                       <div class="number">
-                        {{ dataChart.commissions | convertNumber(true) }}.{{ dataChart.commissions | convertNumber(false) }}
+                        {{ dataChart.commissions | convertNumber(true, false) }}.{{ dataChart.commissions | convertNumber(false, false) }}
                       </div>
                     </li>
                   </ul>
@@ -281,13 +281,19 @@
                         <tr>
                           <th>Tx Hash</th>
                           <th>Type</th>
-                          <th class="text-center">Result</th>
+                          <th class="text-center">
+                            Result
+                          </th>
                           <th>Amount</th>
                           <th>
                             Fee
                           </th>
-                          <th class="text-center">Height</th>
-                          <th class="text-center">Time</th>
+                          <th class="text-center">
+                            Height
+                          </th>
+                          <th class="text-center">
+                            Time
+                          </th>
                         </tr>
                       </thead>
                       <tbody v-if="loaded.txs">
@@ -375,10 +381,16 @@
                       <thead>
                         <tr>
                           <th>From</th>
-                          <th class="text-left">To</th>
-                          <th class="text-left">Height</th>
+                          <th class="text-left">
+                            To
+                          </th>
+                          <th class="text-left">
+                            Height
+                          </th>
                           <th>Amount</th>
-                          <th class="text-right">Time</th>
+                          <th class="text-right">
+                            Time
+                          </th>
                         </tr>
                       </thead>
                       <tbody v-if="loaded.redelegations">
@@ -476,8 +488,9 @@ export default {
     convertTime (value) {
       return helper.convertTime(value)
     },
-    convertNumber (value, isInt) {
-      const total = parseFloat(value) / Math.pow(10, 6)
+    convertNumber (value, isInt, isDevice = true) {
+      let total = parseFloat(value)
+      if (isDevice) { total /= Math.pow(10, 6) }
       if (isInt) {
         return helper.formatNumber(parseInt(total))
       } else {
@@ -486,7 +499,7 @@ export default {
       }
     },
     getPercent (value, total) {
-      const percent = (total) ? (value / total) * Math.pow(10, 2) : 0
+      const percent = total ? (value / total) * Math.pow(10, 2) : 0
 
       return percent.toFixed(2)
     }
@@ -496,11 +509,6 @@ export default {
     EmptyTable,
     Doughnut,
     VueQr
-  },
-  head () {
-    return {
-      title: 'COSMOS Account - ' + this.$route.params.address
-    }
   },
   data () {
     return {
@@ -577,8 +585,13 @@ export default {
       current_price: 1
     }
   },
+  head () {
+    return {
+      title: 'COSMOS Account - ' + this.$route.params.address
+    }
+  },
   computed: {
-    ...mapState('accounts', ['rewards', 'available', 'txs', 'commissions', 'unbonding', 'price']),
+    ...mapState('accounts', ['rewards', 'available', 'txs', 'commissions', 'unbonding', 'price', 'txs_paginations']),
     ...mapState('blocks', ['delegations']),
     ...mapState('validators', ['validators']),
     filteredRowDelegations () {
@@ -602,6 +615,9 @@ export default {
       })
     },
     filteredRowTxs () {
+      if (this.pagination.txs.per * this.pagination.txs.page >= this.txs.length && !this.txs_paginations.is_empty) {
+        this.getAccTransactions(this.$route.params.address)
+      }
       return this.txs.filter((row, index) => {
         const from = (this.pagination.txs.page - 1) * this.pagination.txs.per
         const to = from + this.pagination.txs.per
@@ -781,7 +797,7 @@ export default {
         acc_address: accountAddress
       }).then((delegations) => {
         this.loaded.delegations = true
-        this.dataChart.delegations = helper.calculateValueFromArr(delegations)
+        this.dataChart.delegations = helper.calculateValueFromArr(delegations) / Math.pow(10, 6)
         this.getTotalAtom()
       }).catch((error) => {
         // eslint-disable-next-line no-console
@@ -789,15 +805,7 @@ export default {
         this.loaded.delegations = true
       })
 
-      this.getTxs({
-        acc_address: accountAddress
-      }).then(() => {
-        this.loaded.txs = true
-      }).catch((error) => {
-        // eslint-disable-next-line no-console
-        console.log('error when getTxs: ', error)
-        this.loaded.txs = true
-      })
+      this.getAccTransactions(accountAddress)
 
       this.getPrice().then((price) => {
         if (price) {
@@ -820,6 +828,19 @@ export default {
     getTotalAtom () {
       this.dataChart.totalAtom = this.dataChart.rewards + this.dataChart.available + this.dataChart.commissions + this.dataChart.delegations + this.dataChart.unbondings
       this.dataChart.totalUsd = this.dataChart.totalAtom * parseFloat(this.current_price)
+    },
+    getAccTransactions (accountAddress) {
+      this.getTxs({
+        acc_address: accountAddress,
+        before: this.txs_paginations.before,
+        size: this.txs_paginations.size
+      }).then(() => {
+        this.loaded.txs = true
+      }).catch((error) => {
+        // eslint-disable-next-line no-console
+        console.log('error when getTxs: ', error)
+        this.loaded.txs = true
+      })
     }
   }
 }

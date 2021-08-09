@@ -164,8 +164,8 @@ const api = {
       }
     }`,
   GET_ACCOUNT_TRANSACTIONS_QUERY: gql`
-    query GET_ACCOUNT_TRANSACTIONS_QUERY ($acc_address: String!) {
-      account_transactions(acc_address:$acc_address) {
+    query GET_ACCOUNT_TRANSACTIONS_QUERY ($acc_address: String!, $before: Int!, $size: Int!) {
+      account_transactions(acc_address:$acc_address, before: $before, size: $size) {
         tx_hash,
         status,
         fee,

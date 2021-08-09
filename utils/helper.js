@@ -537,10 +537,10 @@ const calculateValueFromArr = (arr) => {
   let i = 0
   let total = 0
   for (; i < arr.length; i++) {
-    total += parseFloat(arr[i].amount)
+    total += (arr[i].denom === 'uatom') ? parseFloat(arr[i].amount) / Math.pow(10, 6) : parseFloat(arr[i].amount)
   }
 
-  return total
+  return Math.round(total * Math.pow(10, 6)) / Math.pow(10, 6)
 }
 
 const getTotalUnbondings = (arr) => {
@@ -558,7 +558,8 @@ const getTotalUnbondings = (arr) => {
     }
   }
 
-  return total
+  total /= Math.pow(10, 6)
+  return Math.round(total * Math.pow(10, 6)) / Math.pow(10, 6)
 }
 
 const getFeeTx = (fee) => {
@@ -631,12 +632,12 @@ const getTotalRewards = (rewards) => {
     if (rewards[i].reward) {
       let j = 0
       for (; j < rewards[i].reward.length; j++) {
-        total += parseFloat(rewards[i].reward[j].amount)
+        total += (rewards[i].reward[j].denom === 'uatom') ? parseFloat(rewards[i].reward[j].amount) / Math.pow(10, 6) : parseFloat(rewards[i].reward[j].amount)
       }
     }
   }
 
-  return total
+  return Math.round(total * Math.pow(10, 6)) / Math.pow(10, 6)
 }
 
 const getRewardByAddress = (rewards, address) => {
