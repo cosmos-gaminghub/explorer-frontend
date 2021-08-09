@@ -110,7 +110,7 @@
                         {{ dataChart.rewards | convertNumber(true, false) }}.{{ dataChart.rewards | convertNumber(false, false) }}
                       </div>
                     </li>
-                    <li>
+                    <li v-if="is_validator">
                       <div class="color col-05">
                         <i class="fa fa-circle" aria-hidden="true" />
                       </div>
@@ -591,7 +591,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('accounts', ['rewards', 'available', 'txs', 'commissions', 'unbonding', 'price', 'txs_paginations']),
+    ...mapState('accounts', ['rewards', 'available', 'txs', 'commissions', 'unbonding', 'price', 'txs_paginations', 'is_validator']),
     ...mapState('blocks', ['delegations']),
     ...mapState('validators', ['validators']),
     filteredRowDelegations () {
@@ -648,11 +648,11 @@ export default {
         ],
         datasets: [{
           data: [
-            (helper.calculateValueFromArr(this.available) / Math.pow(10, 6)).toFixed(6),
+            (helper.calculateValueFromArr(this.available)).toFixed(6),
             (helper.calculateValueFromArr(this.delegations) / Math.pow(10, 6)).toFixed(6),
-            (helper.getTotalUnbondings(this.unbondings) / Math.pow(10, 6)).toFixed(6),
-            (helper.getTotalRewards(this.rewards) / Math.pow(10, 6)).toFixed(6),
-            (helper.calculateValueFromArr(this.commissions) / Math.pow(10, 6)).toFixed(6)
+            (helper.getTotalUnbondings(this.unbondings)).toFixed(6),
+            (helper.getTotalRewards(this.rewards)).toFixed(6),
+            (helper.calculateValueFromArr(this.commissions)).toFixed(6)
           ],
           backgroundColor: [
             '#0058FF',
@@ -694,7 +694,8 @@ export default {
       getUnbonding: 'accounts/GET_UNBONDING',
       getAllValidators: 'validators/GET_DATA',
       getPrice: 'accounts/GET_PRICE',
-      getRedelegations: 'accounts/GET_REDELEGATIONS'
+      getRedelegations: 'accounts/GET_REDELEGATIONS',
+      getIsValidator: 'accounts/GET_ACCOUNT_DETAIL'
     }),
     ...mapMutations({
       setEmpty: 'accounts/SET_EMPTY'
@@ -764,15 +765,26 @@ export default {
         this.dataChart.rewards = helper.getTotalRewards(rewards)
         if (rewards.length > 0) {
           const addressValidator = rewards[0].validator_address
-          this.getCommissions({
-            operator_address: addressValidator
-          }).then((commissions) => {
+          this.getIsValidator({
+            acc_address: accountAddress
+          }).then((isValidator) => {
+            if (isValidator) {
+              this.getCommissions({
+                operator_address: addressValidator
+              }).then((commissions) => {
+                this.loaded.commissions = true
+                this.dataChart.commissions = helper.calculateValueFromArr(commissions)
+                this.getTotalAtom()
+              }).catch((error) => {
+                this.loaded.commissions = true
+                // eslint-disable-next-line no-console
+                console.log('error when get commission: ', error)
+              })
+            } else {
+              this.loaded.commissions = true
+            }
+          }).catch(() => {
             this.loaded.commissions = true
-            this.dataChart.commissions = helper.calculateValueFromArr(commissions)
-            this.getTotalAtom()
-          }).catch((error) => {
-            // eslint-disable-next-line no-console
-            console.log('error when get commission: ', error)
           })
         }
       }).catch((error) => {
