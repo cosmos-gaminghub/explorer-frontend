@@ -17,7 +17,7 @@
               <img src="/assets/images/icon/atom.png" alt="index" width="15px"><span>Cosmos</span><span class="caret" />
             </button>
             <ul class="dropdown-menu">
-<!--              <li><a href="#"> <img src="/assets/images/icon/atom.png" alt="index" width="18px"><span>Cosmos</span></a></li>-->
+              <li v-for="(network, index) in lst_network" :key="index"><a target="_blank" :href="network"> <img src="/assets/images/icon/atom.png" alt="index" width="18px"><span>{{ index }}</span></a></li>
             </ul>
           </div>
         </div>
@@ -86,6 +86,15 @@ export default {
       const currentRoute = this.$nuxt.$route.name
 
       return (currentRoute && currentRoute.includes(route)) ? 'active' : ''
+    }
+  },
+  computed: {
+    lst_network () {
+      if (process.env.LST_NETWORK && JSON.parse(process.env.LST_NETWORK)) {
+        console.log('JSON.parse(process.env.LST_NETWORK) = ', JSON.parse(process.env.LST_NETWORK))
+        return JSON.parse(process.env.LST_NETWORK)
+      }
+      return {}
     }
   }
 }
