@@ -20,7 +20,7 @@
             </button>
             <ul class="dropdown-menu">
               <li v-for="(network, index) in lst_network" :key="index">
-                <a target="_blank" :href="network.link"> <img :src="network.logo" alt="index" width="18px"><span>{{ network.name }}</span></a>
+                <a :href="network.link"> <img :src="network.logo" alt="index" width="18px"><span>{{ network.name }}</span></a>
               </li>
             </ul>
           </div>
