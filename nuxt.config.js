@@ -94,5 +94,20 @@ module.exports = {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-  }
+  },
+  // Configuration: list networks
+  networks: [
+    {
+      id: 1,
+      name: 'Cosmos',
+      link: '/',
+      logo: '/assets/images/icon/atom.png'
+    },
+    {
+      id: 2,
+      name: 'nibiru-2000',
+      link: 'https://nibiru-2000.game-explorer.io/',
+      logo: '/assets/images/icon/atom.png'
+    }
+  ]
 }
