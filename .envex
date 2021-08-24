@@ -4,4 +4,4 @@ APP_ENV=development
 
 REAL_TIME_DELAY_MS=2000
 API_URL="https://admin.ccn.paditech.com/api/v1"
-LST_NETWORK='{"NAME_NETWORK_1":"LINK_1","NAME_NETWORK_2":"LINK_2"}'
+NETWORK_ID=1
