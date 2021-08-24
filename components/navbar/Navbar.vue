@@ -95,7 +95,7 @@ export default {
     lst_network () {
       if (config.networks) {
         // eslint-disable-next-line prefer-const
-        let currentId = process.env.NETWORK_ID || 2
+        let currentId = process.env.NETWORK_ID || 1
         config.networks.forEach((item) => {
           if (item.id === parseInt(currentId)) {
             this.current_network = item
