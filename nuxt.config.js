@@ -100,7 +100,7 @@ module.exports = {
     {
       id: 1,
       name: 'Cosmos',
-      link: '/',
+      link: 'http://188.166.238.102:9900',
       logo: '/assets/images/icon/atom.png'
     },
     {
