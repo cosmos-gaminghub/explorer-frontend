@@ -107,7 +107,7 @@ module.exports = {
       id: 2,
       name: 'nibiru-2000',
       link: 'https://nibiru-2000.game-explorer.io/',
-      logo: '/assets/images/icon/atom.png'
+      logo: '/assets/images/icon/nibiru.png'
     }
   ]
 }
