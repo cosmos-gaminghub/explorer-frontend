@@ -3,5 +3,5 @@ PORT = 3000
 APP_ENV=development
 
 REAL_TIME_DELAY_MS=2000
-API_URL="https://admin.ccn.paditech.com/api/v1"
+API_URL="https://api.game-explorer.io/query"
 NETWORK_ID=1
