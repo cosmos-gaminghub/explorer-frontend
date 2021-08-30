@@ -16,12 +16,12 @@
                     href="javasctipt:void(0)"
                     @click.stop.prevent="copy"
                   >
-                    <i> <img src="/assets/images/icon/coppy.png" alt="atom"></i>Copy
+                    <i> <img src="/assets/images/icon/coppy.png" alt="copy"></i>Copy
                   </a>
                 </button>
                 <div class="cnt-qr-code">
                   <button class="qr-code">
-                    <i> <img src="/assets/images/icon/qr.png" alt="atom"></i>QR Code
+                    <i> <img src="/assets/images/icon/qr.png" alt="qrcode"></i>QR Code
                   </button>
                   <div class="content-qr-code">
                     <vue-qr :text="accAddress" />
@@ -35,11 +35,11 @@
             <div class="cnt-chart-acc">
               <div class="cnt-text">
                 <div class="total-atom">
-                  Total ATOM
+                  Total {{ current_denom }}
                 </div>
                 <h3>{{ dataChart.totalAtom | convertNumber(true, false) }}.{{ dataChart.totalAtom | convertNumber(false, false) }}</h3>
                 <div class="detail-chart">
-                  <p>${{ current_price.toFixed(2) }} / ATOM</p>
+                  <p>${{ current_price.toFixed(2) }} / {{ current_denom }}</p>
                   <p>${{ dataChart.totalUsd | convertNumber(true, false) }}.{{ dataChart.totalUsd | convertNumber(false, false) }}</p>
                 </div>
               </div>
@@ -161,11 +161,11 @@
                             </nuxt-link>
                           </td>
                           <td class="text-center">
-                            {{ delegation.amount | convertNumber(true) }}.{{ delegation.amount | convertNumber(false) }} ATOM
+                            {{ delegation.amount | convertNumber(true) }}.{{ delegation.amount | convertNumber(false) }} {{ current_denom }}
                           </td>
                           <td class="text-center">
                             <span class="title">Shares</span>
-                            {{ delegation.validator_address | getRewardByAddress(rewards) }} ATOM
+                            {{ delegation.validator_address | getRewardByAddress(rewards) }} {{ current_denom }}
                           </td>
                         </tr>
                       </tbody>
@@ -228,7 +228,7 @@
                           </td>
                           <td class="text-center">
                             <span class="title">Amount</span>
-                            <span>{{ unbonding.amount | convertNumber(true) }}.{{ unbonding.amount | convertNumber(false) }} ATOM</span>
+                            <span>{{ unbonding.amount | convertNumber(true) }}.{{ unbonding.amount | convertNumber(false) }} {{ current_denom }}</span>
                           </td>
                           <td class="text-right">
                             <span class="title">Completion Time</span>
@@ -310,7 +310,7 @@
                           </td>
                           <td v-if="tx.total_amount !== null">
                             <span class="title">Amount</span>
-                            {{ tx.total_amount | convertNumber(true) }}.{{ tx.total_amount | convertNumber(false) }} ATOM
+                            {{ tx.total_amount | convertNumber(true) }}.{{ tx.total_amount | convertNumber(false) }} {{ current_denom }}
                           </td>
                           <td v-else-if="tx.messages && JSON.parse(tx.messages) && JSON.parse(tx.messages).length > 1">
                             <span class="title">Amount</span>
@@ -324,7 +324,7 @@
                           </td>
                           <td>
                             <span class="title">Free</span>
-                            {{ tx.fee | getFeeTx }} ATOM
+                            {{ tx.fee | getFeeTx }} {{ current_denom }}
                           </td>
                           <td class="text-center">
                             <span class="title">Height</span>
@@ -414,7 +414,7 @@
                           </td>
                           <td class="text-left">
                             <span class="title">Amount</span>
-                            {{ item.amount | convertNumber(true) }}.{{ item.amount | convertNumber(false) }} ATOM
+                            {{ item.amount | convertNumber(true) }}.{{ item.amount | convertNumber(false) }} {{ current_denom }}
                           </td>
                           <td class="text-right">
                             <span class="title">Time</span>
@@ -664,6 +664,9 @@ export default {
           hoverOffset: 1
         }]
       }
+    },
+    current_denom () {
+      return this.$store.state.network.current_network ? this.$store.state.network.current_network.denom : 'ATOM'
     }
   },
   watch: {
@@ -675,6 +678,7 @@ export default {
   },
   mounted () {
     this.setEmpty()
+    this.$store.commit('network/SET_CURRENT_NETWORK')
     if (this.$route.params.address) {
       this.getData(this.$route.params.address)
     }

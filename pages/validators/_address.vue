@@ -89,7 +89,7 @@
                     {{ validator.voting_power | getPercentVotingPower(tokens) }}%
                   </div>
                   <div class="sub-title">
-                    ({{ validator.voting_power | getAmount(true) }}.<small>{{ validator.voting_power | getAmount(false) }}</small> ATOM)
+                    ({{ validator.voting_power | getAmount(true) }}.<small>{{ validator.voting_power | getAmount(false) }}</small> {{ current_denom }})
                   </div>
                 </div>
                 <div class="status-items">
@@ -105,7 +105,7 @@
                     Self Bonded
                   </div>
                   <div class="number">
-                    {{ delegations | getAmount(true, true) }}.<small>{{ delegations | getAmount(false, true) }}</small> ATOM ( {{ delegations | getPercentSelfBoned(validator.voting_power) }})
+                    {{ delegations | getAmount(true, true) }}.<small>{{ delegations | getAmount(false, true) }}</small> {{ current_denom }} ( {{ delegations | getPercentSelfBoned(validator.voting_power) }})
                   </div>
                 </div>
                 <div class="status-items">
@@ -457,6 +457,9 @@ export default {
         }
         return false
       })
+    },
+    current_denom () {
+      return this.$store.state.network.current_network ? this.$store.state.network.current_network.denom : 'ATOM'
     }
   },
   watch: {
@@ -468,6 +471,7 @@ export default {
     }
   },
   mounted () {
+    this.$store.commit('network/SET_CURRENT_NETWORK')
     this.emptyOldData()
 
     if (this.$route.params.address) {

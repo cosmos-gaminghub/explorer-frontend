@@ -1,3 +1,4 @@
+import config from '@/nuxt.config'
 import actions from './actions'
 import mutations from './mutations'
 
@@ -6,7 +7,9 @@ export const state = () => ({
   inflation: 0,
   bondedTokens: 0,
   loaded: false,
-  stats_assets: {}
+  stats_assets: {},
+  lst_networks: config.networks,
+  current_network: {}
 })
 
 export default {

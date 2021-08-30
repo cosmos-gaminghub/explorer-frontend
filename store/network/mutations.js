@@ -19,6 +19,15 @@ const mutations = {
   },
   SET_STATS_ASSETS (state, data) {
     state.stats_assets = data.reverse()
+  },
+  SET_CURRENT_NETWORK (state) {
+    // eslint-disable-next-line prefer-const
+    let currentId = process.env.NETWORK_ID || 1
+    state.lst_networks.forEach((item) => {
+      if (item.id === parseInt(currentId)) {
+        state.current_network = item
+      }
+    })
   }
 }
 

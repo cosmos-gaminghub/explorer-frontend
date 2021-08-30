@@ -161,7 +161,7 @@ const getTypeTxFromStr = (msg) => {
   return textType
 }
 
-const getColumnFromMsgTx = (msg, logs = '', timestamp = null) => {
+const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'ATOM') => {
   if (!msg || !JSON.parse(msg)) { return [] }
   msg = JSON.parse(msg)
 
@@ -323,7 +323,8 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null) => {
       const amount = calculateValueFromArr(type.initial_deposit) / Math.pow(10, 6)
       const decimal = (amount.toFixed(6).toString()).split('.')
       title = 'Initial Deposit'
-      details = [formatNumber(parseInt(amount)), decimal[1]].join('.') + ' ATOM'
+      // eslint-disable-next-line camelcase
+      details = `${[formatNumber(parseInt(amount)), decimal[1]].join('.')} ${current_denom}`
       arrColumnPerType.push({ title, details })
     }
 
@@ -343,7 +344,8 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null) => {
         } else {
           amount = parseFloat(amount)
         }
-        let unit = ' ATOM'
+        // eslint-disable-next-line camelcase
+        let unit = ` ${current_denom}`
         if (type.denom && type.denom !== 'uatom') {
           unit = ''
         } else {
@@ -407,12 +409,14 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null) => {
           const senderCoins = calculateValueFromArr(input.coins) / Math.pow(10, 6)
           const decimal1 = (parseFloat(senderCoins).toFixed(6).toString()).split('.')
           title = 'Senders'
-          details = accAddColumn(input.address) + '<span>(' + [formatNumber(parseInt(senderCoins)), decimal1[1]].join('.') + ' ATOM)</span>'
+          // eslint-disable-next-line camelcase
+          details = `${accAddColumn(input.address)}<span>(${[formatNumber(parseInt(senderCoins)), decimal1[1]].join('.')} ${current_denom})</span>`
           arrColumnPerType.push({ title, details })
           const receiversCoins = calculateValueFromArr(type.outputs[iptKey].coins) / Math.pow(10, 6)
           const decimal2 = (parseFloat(receiversCoins).toFixed(6).toString()).split('.')
           title = 'Receivers'
-          details = accAddColumn(type.outputs[iptKey].address) + '<span>(' + [formatNumber(parseInt(receiversCoins)), decimal2[1]].join('.') + ' ATOM)</span>'
+          // eslint-disable-next-line camelcase
+          details = `${accAddColumn(type.outputs[iptKey].address)}<span>(${[formatNumber(parseInt(receiversCoins)), decimal2[1]].join('.')} ${current_denom})</span>`
           arrColumnPerType.push({ title, details })
         }
       }
@@ -445,7 +449,8 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null) => {
       amount /= Math.pow(10, 6)
       const decimal = (amount.toFixed(6).toString()).split('.')
       title = arrTxNeedLogs[type['@type']].text
-      details = [formatNumber(parseInt(amount)), decimal[1]].join('.') + ' ATOM'
+      // eslint-disable-next-line camelcase
+      details = `${[formatNumber(parseInt(amount)), decimal[1]].join('.')} ${current_denom}`
       arrColumnPerType.push({ title, details })
     }
 

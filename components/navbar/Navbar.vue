@@ -84,27 +84,21 @@
   </div>
 </template>
 <script>
-import config from '@/nuxt.config'
 export default {
   data () {
     return {
-      current_network: {}
     }
   },
   computed: {
     lst_network () {
-      if (config.networks) {
-        // eslint-disable-next-line prefer-const
-        let currentId = process.env.NETWORK_ID || 1
-        config.networks.forEach((item) => {
-          if (item.id === parseInt(currentId)) {
-            this.current_network = item
-          }
-        })
-        return config.networks
-      }
-      return {}
+      return this.$store.state.network.lst_networks
+    },
+    current_network () {
+      return this.$store.state.network.current_network
     }
+  },
+  mounted () {
+    this.$store.commit('network/SET_CURRENT_NETWORK')
   },
   methods: {
     isActiveMenu (route) {
