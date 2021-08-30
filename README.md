@@ -34,7 +34,7 @@ server {
         listen [::]:80;
         root /var/www/explorer-frontend/dist;
         index index.html;
-        server_name cosmosgamingexplorer.com;
+        server_name game-explorer.io;
         location / {
                 try_files $uri $uri/ /index.html;
         }
@@ -43,7 +43,7 @@ server {
 server {
         listen 80;
         listen [::]:80;
-        server_name api.cosmosgamingexplorer.com;
+        server_name api.game-explorer.io;
         location / {
                 proxy_pass    http://localhost:8080;
         }
