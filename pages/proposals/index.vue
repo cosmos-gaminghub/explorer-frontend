@@ -54,7 +54,7 @@
                         </td>
                         <td class="text-center">
                           <span class="title">Total Deposit</span>
-                          <span>{{ proposal.total_deposit | getTotalDeposit(true) }}.{{ proposal.total_deposit | getTotalDeposit(false) }} ATOM</span>
+                          <span>{{ proposal.total_deposit | getTotalDeposit(true) }}.{{ proposal.total_deposit | getTotalDeposit(false) }} {{ current_denom }}</span>
                         </td>
                       </tr>
                     </tbody>
@@ -117,9 +117,13 @@ export default {
     title: 'GAME Explorer - Proposals'
   },
   computed: {
-    ...mapState('proposals', ['proposals'])
+    ...mapState('proposals', ['proposals']),
+    current_denom () {
+      return this.$store.state.network.current_network ? this.$store.state.network.current_network.denom : 'ATOM'
+    }
   },
   mounted () {
+    this.$store.commit('network/SET_CURRENT_NETWORK')
     this.getPproposals().then(() => {
       this.loaded = true
     }).catch((err) => {

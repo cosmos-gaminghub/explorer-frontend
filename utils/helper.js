@@ -109,20 +109,20 @@ const formatTime = (date) => {
   const days = Math.abs(now - dateConvert) / 86400000
 
   const year = days / 365
-  if (year >= 1) { return parseInt(year) + ' years' }
+  if (year >= 1) { return `${parseInt(year)} years` }
   const month = days / 30
-  if (month >= 1) { return parseInt(month) + ' months' }
+  if (month >= 1) { return `${parseInt(month)} months` }
 
-  if (days >= 1) { return parseInt(days) + ((days < 2) ? ' day' : ' days') }
+  if (days >= 1) { return `${parseInt(days)}${(days < 2) ? ' day' : ' days'}` }
 
   const hours = (days - parseInt(days)) * 24
-  if (hours >= 1) { return parseInt(hours) + 'h' }
+  if (hours >= 1) { return `${parseInt(hours)}h` }
 
   const minutes = (hours - parseInt(hours)) * 60
-  if (minutes >= 1) { return parseInt(minutes) + 'm' }
+  if (minutes >= 1) { return `${parseInt(minutes)}m` }
 
   const seconds = (minutes - parseInt(minutes)) * 60
-  return parseInt(seconds) + 's'
+  return `${parseInt(seconds)}s`
 }
 
 const convertTime = (date) => {
@@ -131,15 +131,15 @@ const convertTime = (date) => {
   const year = convertDate.getFullYear()
   let month = convertDate.getMonth() + 1
   let day = convertDate.getDate()
-  month = (month < 10) ? '0' + month : month
-  day = (day < 10) ? '0' + day : day
+  month = (month < 10) ? `0${month}` : month
+  day = (day < 10) ? `0${day}` : day
 
   let hour = convertDate.getHours()
   let minutes = convertDate.getMinutes()
   let seconds = Math.round(convertDate.getSeconds())
-  hour = (hour < 10) ? '0' + hour : hour
-  minutes = (minutes < 10) ? '0' + minutes : minutes
-  seconds = (seconds < 10) ? '0' + seconds : seconds
+  hour = (hour < 10) ? `0${hour}` : hour
+  minutes = (minutes < 10) ? `0${minutes}` : minutes
+  seconds = (seconds < 10) ? `0${seconds}` : seconds
 
   return [[year, month, day].join('-'), [hour, minutes, seconds].join(':')].join(' ')
 }
@@ -153,7 +153,7 @@ const getTypeTxFromStr = (msg) => {
     let before = ''
     if (textType.search('ibc') >= 0) { before = 'IBC' }
     return before + textType.replaceAll(/[A-Z]?/gi, function (str) {
-      if (str !== ' ' && str === str.toUpperCase()) { return ' ' + str }
+      if (str !== ' ' && str === str.toUpperCase()) { return ` ${str}` }
       return str
     })
   }
@@ -161,7 +161,7 @@ const getTypeTxFromStr = (msg) => {
   return textType
 }
 
-const getColumnFromMsgTx = (msg, logs = '', timestamp = null) => {
+const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'ATOM') => {
   if (!msg || !JSON.parse(msg)) { return [] }
   msg = JSON.parse(msg)
 
@@ -284,7 +284,7 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null) => {
     }
 
     if (type['@type'] === '/ibc.core.client.v1.MsgCreateClient') {
-      type.timestamp = timestamp ? (formatTime(timestamp) + ' ago (' + convertTime(timestamp) + ')') : ''
+      type.timestamp = timestamp ? (`${formatTime(timestamp)} ago (${convertTime(timestamp)})`) : ''
       if (logs && JSON.parse(logs)) {
         const logsObj = JSON.parse(logs)
         for (const kEvent in logsObj[key].Events) {
@@ -323,7 +323,8 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null) => {
       const amount = calculateValueFromArr(type.initial_deposit) / Math.pow(10, 6)
       const decimal = (amount.toFixed(6).toString()).split('.')
       title = 'Initial Deposit'
-      details = [formatNumber(parseInt(amount)), decimal[1]].join('.') + ' ATOM'
+      // eslint-disable-next-line camelcase
+      details = `${[formatNumber(parseInt(amount)), decimal[1]].join('.')} ${current_denom}`
       arrColumnPerType.push({ title, details })
     }
 
@@ -343,7 +344,8 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null) => {
         } else {
           amount = parseFloat(amount)
         }
-        let unit = ' ATOM'
+        // eslint-disable-next-line camelcase
+        let unit = ` ${current_denom}`
         if (type.denom && type.denom !== 'uatom') {
           unit = ''
         } else {
@@ -359,7 +361,7 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null) => {
           return ' '
         })
         title = title[0].toUpperCase() + title.substring(1)
-        details = ((parseFloat(type[kAttr]) * Math.pow(10, 2)).toFixed(2)) + '%'
+        details = `${(parseFloat(type[kAttr]) * Math.pow(10, 2)).toFixed(2)}%`
         arrColumnPerType.push({ title, details })
       } else if (arrText.includes(kAttr.toLowerCase())) {
         title = kAttr.replaceAll('_', function (str) {
@@ -407,12 +409,14 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null) => {
           const senderCoins = calculateValueFromArr(input.coins) / Math.pow(10, 6)
           const decimal1 = (parseFloat(senderCoins).toFixed(6).toString()).split('.')
           title = 'Senders'
-          details = accAddColumn(input.address) + '<span>(' + [formatNumber(parseInt(senderCoins)), decimal1[1]].join('.') + ' ATOM)</span>'
+          // eslint-disable-next-line camelcase
+          details = `${accAddColumn(input.address)}<span>(${[formatNumber(parseInt(senderCoins)), decimal1[1]].join('.')} ${current_denom})</span>`
           arrColumnPerType.push({ title, details })
           const receiversCoins = calculateValueFromArr(type.outputs[iptKey].coins) / Math.pow(10, 6)
           const decimal2 = (parseFloat(receiversCoins).toFixed(6).toString()).split('.')
           title = 'Receivers'
-          details = accAddColumn(type.outputs[iptKey].address) + '<span>(' + [formatNumber(parseInt(receiversCoins)), decimal2[1]].join('.') + ' ATOM)</span>'
+          // eslint-disable-next-line camelcase
+          details = `${accAddColumn(type.outputs[iptKey].address)}<span>(${[formatNumber(parseInt(receiversCoins)), decimal2[1]].join('.')} ${current_denom})</span>`
           arrColumnPerType.push({ title, details })
         }
       }
@@ -445,7 +449,8 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null) => {
       amount /= Math.pow(10, 6)
       const decimal = (amount.toFixed(6).toString()).split('.')
       title = arrTxNeedLogs[type['@type']].text
-      details = [formatNumber(parseInt(amount)), decimal[1]].join('.') + ' ATOM'
+      // eslint-disable-next-line camelcase
+      details = `${[formatNumber(parseInt(amount)), decimal[1]].join('.')} ${current_denom}`
       arrColumnPerType.push({ title, details })
     }
 
@@ -471,9 +476,9 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null) => {
 
 const accAddColumn = (address) => {
   const isValidator = !!/^(cosmosvaloper)[a-zA-Z0-9]{39}$/.test(address)
-  const href = (isValidator ? '/validators/' : '/account/') + address
-  let html = '<a href="' + href + '" target="_blank">' + address + '</a>'
-  if (isValidator) { html = '<a href="' + href + '" target="_blank">' + address + '<p class="validator-moniker display-none">' + address + '</p></a>' }
+  const href = `${isValidator ? '/validators/' : '/account/'}${address}`
+  let html = `<a href="${href}" target="_blank">${address}</a>`
+  if (isValidator) { html = `<a href="${href}" target="_blank">${address}<p class="validator-moniker display-none">${address}</p></a>` }
 
   return html
 }
@@ -612,7 +617,7 @@ const isActiveValidator = (validator) => {
 
 const formatHash = (value, startPos, endPos) => {
   if (!value) { return '' }
-  return value.substr(0, startPos) + '...' + value.substr(value.length - endPos, value.length - 1)
+  return `${value.substr(0, startPos)}...${value.substr(value.length - endPos, value.length - 1)}`
 }
 
 const calcutatDelegations = (delegations) => {
@@ -692,7 +697,7 @@ const convertValueTxs = (data) => {
     const strType = objMsg ? objMsg[0]['@type'] : ''
     let str = getTypeTxFromStr(strType)
     if (objMsg.length > 1) {
-      str += ' +' + (objMsg.length - 1)
+      str += ` +${objMsg.length - 1}`
     }
     data[i].type_tx_convert = str
   }

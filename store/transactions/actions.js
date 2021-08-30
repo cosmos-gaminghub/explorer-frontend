@@ -29,7 +29,10 @@ const actions = {
         if (!response.data.tx_detail.tx_hash) {
           reject(response)
         } else {
-          commit('SET_TRANSACTION_DETAIL', response.data.tx_detail)
+          // eslint-disable-next-line prefer-const
+          let data = response.data.tx_detail
+          data.current_denom = params.current_denom
+          commit('SET_TRANSACTION_DETAIL', data)
           resolve()
         }
       }, process.env.REAL_TIME_DELAY_MS)

@@ -59,7 +59,7 @@
                         Fee
                       </div>
                       <div class="detail">
-                        {{ tx_detail.fee | getFeeTx }} ATOM
+                        {{ tx_detail.fee | getFeeTx }} {{ current_denom }}
                       </div>
                     </li>
                     <li>
@@ -175,6 +175,9 @@ export default {
       }
 
       return []
+    },
+    current_denom () {
+      return this.$store.state.network.current_network ? this.$store.state.network.current_network.denom : 'ATOM'
     }
   },
   watch: {
@@ -186,6 +189,7 @@ export default {
   },
   mounted () {
     this.setEmptyTx()
+    this.$store.commit('network/SET_CURRENT_NETWORK')
     if (this.$route.params.address) {
       this.loadData(this.$route.params.address)
     }
@@ -206,7 +210,8 @@ export default {
     // eslint-disable-next-line camelcase
     loadData (tx_hash) {
       this.getTransactionDetail({
-        tx_hash
+        tx_hash,
+        current_denom: this.current_denom
       }).then(() => {
         this.loaded = true
         this.notFound = false

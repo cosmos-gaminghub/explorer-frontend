@@ -121,7 +121,7 @@
                             </td>
                             <td v-if="tx.total_amount !== null">
                               <span class="title">Amount</span>
-                              {{ tx.total_amount | convertNumber(true) }}.{{ tx.total_amount | convertNumber(false) }} ATOM
+                              {{ tx.total_amount | convertNumber(true) }}.{{ tx.total_amount | convertNumber(false) }} {{ current_denom }}
                             </td>
                             <td v-else-if="tx.messages && JSON.parse(tx.messages) && JSON.parse(tx.messages).length > 1" class="text-right">
                               <span class="title">Amount</span>
@@ -135,7 +135,7 @@
                             </td>
                             <td>
                               <span class="title">Free</span>
-                              {{ tx.fee | getFeeTx }} ATOM
+                              {{ tx.fee | getFeeTx }} {{ current_denom }}
                             </td>
                             <td class="text-center">
                               <span class="title">Height</span>
@@ -252,6 +252,9 @@ export default {
         }
         return false
       })
+    },
+    current_denom () {
+      return this.$store.state.network.current_network ? this.$store.state.network.current_network.denom : 'ATOM'
     }
   },
   watch: {
@@ -263,6 +266,7 @@ export default {
   },
   mounted () {
     helper.clearInterval(this.$nuxt.$route.name)
+    this.$store.commit('network/SET_CURRENT_NETWORK')
     if (this.$route.params.height) {
       this.getBlock(this.$route.params.height, true)
     }
