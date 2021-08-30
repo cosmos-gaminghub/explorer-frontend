@@ -6,7 +6,7 @@ const mutations = {
   },
   SET_TRANSACTION_DETAIL (state, data) {
     state.tx_detail = data
-    state.tx_detail.columns = helper.getColumnFromMsgTx(data.messages, data.logs, state.tx_detail.timestamp)
+    state.tx_detail.columns = helper.getColumnFromMsgTx(data.messages, data.logs, state.tx_detail.timestamp, data.current_denom)
   },
   SET_EMPTY_TX (state) {
     state.tx_detail = {}

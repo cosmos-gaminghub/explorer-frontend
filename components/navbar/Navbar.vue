@@ -13,11 +13,15 @@
         <div class="clearfix" />
         <div class="header-option-link select-option">
           <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-              <img src="/assets/images/icon/atom.png" alt="index" width="15px"><span>Cosmos</span><span class="caret" />
+            <button v-if="current_network && current_network.id" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+              <img :src="current_network.logo" alt="index" width="15px">
+              <span>{{ current_network.name }}</span>
+              <span class="caret" />
             </button>
             <ul class="dropdown-menu">
-<!--              <li><a href="#"> <img src="/assets/images/icon/atom.png" alt="index" width="18px"><span>Cosmos</span></a></li>-->
+              <li v-for="(network, index) in lst_network" :key="index">
+                <a :href="network.link"> <img :src="network.logo" alt="index" width="18px"><span>{{ network.name }}</span></a>
+              </li>
             </ul>
           </div>
         </div>
@@ -81,6 +85,21 @@
 </template>
 <script>
 export default {
+  data () {
+    return {
+    }
+  },
+  computed: {
+    lst_network () {
+      return this.$store.state.network.lst_networks
+    },
+    current_network () {
+      return this.$store.state.network.current_network
+    }
+  },
+  mounted () {
+    this.$store.commit('network/SET_CURRENT_NETWORK')
+  },
   methods: {
     isActiveMenu (route) {
       const currentRoute = this.$nuxt.$route.name

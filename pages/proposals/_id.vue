@@ -49,7 +49,7 @@
                         Initial Deposit
                       </div>
                       <div class="detail">
-                        {{ initialDeposit | convertAmount(true) }}.{{ initialDeposit | convertAmount(false) }} ATOM
+                        {{ initialDeposit | convertAmount(true) }}.{{ initialDeposit | convertAmount(false) }} {{ current_denom }}
                       </div>
                     </li>
                     <li>
@@ -57,7 +57,7 @@
                         Total Deposit
                       </div>
                       <div class="detail">
-                        {{ proposal.total_deposit | getTotalFromArr(true) }}.{{ proposal.total_deposit | getTotalFromArr(false) }} ATOM
+                        {{ proposal.total_deposit | getTotalFromArr(true) }}.{{ proposal.total_deposit | getTotalFromArr(false) }} {{ current_denom }}
                       </div>
                     </li>
                     <li>
@@ -120,7 +120,7 @@
                                 <span v-if="typeof value == 'string'">{{ index }}: {{ value }}</span>
                                 <span v-else-if="value">
                                   <div v-for="(item, indexChild) in value" :key="indexChild">
-                                    <span>{{ index }}: {{ item.amount | convertAmount(true) }}.{{ item.amount | convertAmount(false) }} ATOM</span>
+                                    <span>{{ index }}: {{ item.amount | convertAmount(true) }}.{{ item.amount | convertAmount(false) }} {{ current_denom }}</span>
                                   </div>
                                 </span>
                               </div>
@@ -136,7 +136,7 @@
                         Request Amount
                       </div>
                       <div class="detail">
-                        {{ proposal.content.amount | getTotalFromArr(true) }}.{{ proposal.content.amount | getTotalFromArr(false) }} ATOM
+                        {{ proposal.content.amount | getTotalFromArr(true) }}.{{ proposal.content.amount | getTotalFromArr(false) }} {{ current_denom }}
                       </div>
                     </li>
                     <li v-if="proposal.content && proposal.content.plan">
@@ -160,11 +160,11 @@
           <div class="cnt-chart-acc">
             <div class="cnt-text">
               <div class="total-atom">
-                Total ATOM
+                Total {{ current_denom }}
               </div>
               <h3>{{ voteData.total | convertAmount(true) }}.{{ voteData.total | convertAmount(false) }}</h3>
               <div class="detail-chart">
-                <p>ATOM</p>
+                <p>{{ current_denom }}</p>
               </div>
             </div>
             <div v-if="proposal && proposal.tally && parseInt(proposal.id) === parseInt($route.params.id)" class="content-chart">
@@ -349,7 +349,7 @@
                     </td>
                     <td class="text-left">
                       <span class="title">Amount</span>
-                      <span>{{ depositor.amountConv | convertAmount(true) }}.{{ depositor.amountConv | convertAmount(false) }} ATOM</span>
+                      <span>{{ depositor.amountConv | convertAmount(true) }}.{{ depositor.amountConv | convertAmount(false) }} {{ current_denom }}</span>
                     </td>
                     <td>
                       <span class="title">Time</span>
@@ -569,6 +569,9 @@ export default {
           hoverOffset: 1
         }]
       }
+    },
+    current_denom () {
+      return this.$store.state.network.current_network ? this.$store.state.network.current_network.denom : 'ATOM'
     }
   },
   watch: {
@@ -580,6 +583,7 @@ export default {
     }
   },
   mounted () {
+    this.$store.commit('network/SET_CURRENT_NETWORK')
     if (this.$route.params.id) {
       this.$store.commit('proposals/SET_EMPTY')
       this.getData(this.$route.params.id)

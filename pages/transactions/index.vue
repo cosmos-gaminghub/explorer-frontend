@@ -46,7 +46,7 @@
                             </td>
                             <td v-if="tx.total_amount != null" class="text-right">
                               <span class="title">Amount</span>
-                              {{ tx.total_amount | formatAmount }} ATOM
+                              {{ tx.total_amount | formatAmount }} {{ current_denom }}
                             </td>
                             <td v-else-if="tx.messages && JSON.parse(tx.messages) && JSON.parse(tx.messages).length > 1" class="text-right">
                               <span class="title">Amount</span>
@@ -60,7 +60,7 @@
                             </td>
                             <td class="text-right">
                               <span class="title">Free</span>
-                              {{ tx.fee | getFeeTx }} ATOM
+                              {{ tx.fee | getFeeTx }} {{ current_denom }}
                             </td>
                             <td class="text-right">
                               <span class="title">Height</span>
@@ -130,9 +130,13 @@ export default {
     }
   },
   computed: {
-    ...mapState('transactions', ['transactions'])
+    ...mapState('transactions', ['transactions']),
+    current_denom () {
+      return this.$store.state.network.current_network ? this.$store.state.network.current_network.denom : 'ATOM'
+    }
   },
   mounted () {
+    this.$store.commit('network/SET_CURRENT_NETWORK')
     helper.clearInterval(this.$nuxt.$route.name)
     clearInterval(this.TxInterval)
     this.getTxsFunc(true)
