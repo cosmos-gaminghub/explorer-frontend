@@ -12,7 +12,7 @@
                 <div class="title">
                   <div class="icon-title">
                     <div class="icon">
-                      <img src="/assets/images/icon/atom.png" alt="atom">
+                      <img :src="current_logo" alt="logo">
                     </div>
                     <h3 v-if="price.price">
                       {{ parseFloat(price.price).toFixed(2) }}
@@ -242,7 +242,10 @@ export default {
     ...mapState('blocks', ['blocks']),
     ...mapState('transactions', ['transactions']),
     ...mapState('accounts', ['price']),
-    ...mapState('network', ['info', 'stats_assets'])
+    ...mapState('network', ['info', 'stats_assets']),
+    current_logo () {
+      return this.$store.state.network.current_network ? this.$store.state.network.current_network.logo : '/assets/images/icon/atom.png'
+    }
   },
   mounted () {
     helper.clearInterval(this.$nuxt.$route.name)

@@ -20,7 +20,7 @@
               <h4>Community</h4>
               <ul>
                 <li><a href="https://twitter.com/cosmosgaminghub">Twitter</a></li>
-                <li> <a href="https://t.me/CosmosGamingHub_EN">Telegram</a></li>
+                <li> <a href="https://discord.com/invite/VfvTCP7Rm2">Discord</a></li>
                 <li> <a href="https://github.com/cosmos-gaminghub">Github</a></li>
                 <li> <a href="https://medium.com/cosmosgaminghub">Medium</a></li>
               </ul>
