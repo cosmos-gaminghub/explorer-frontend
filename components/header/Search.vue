@@ -46,12 +46,16 @@ export default {
         const value = this.search
         this.textSearchButton = ''
         this.errorSearch = true
+        const currentNetwork = this.$store.state.network.current_network
+        const prefix = currentNetwork ? currentNetwork.prefix : 'cosmos'
+        const preValidator = new RegExp(`(${prefix}valoper)[a-zA-Z0-9]{39}`)
+        const preAcc = new RegExp(`(${prefix})[a-zA-Z0-9]{39}`)
         /** check regex: account, validator, block, tx */
-        if (/^(cosmosvaloper)[a-zA-Z0-9]{39}$/.test(value)) {
+        if (preValidator.test(value)) {
           this.textSearchButton = 'Search validator'
           this.linkToSearch = '/validators/' + value
           this.errorSearch = false
-        } else if (/^(cosmos)[a-zA-Z0-9]{39}$/.test(value)) {
+        } else if (preAcc.test(value)) {
           this.textSearchButton = 'Search Account'
           this.linkToSearch = '/account/' + value
           this.errorSearch = false
