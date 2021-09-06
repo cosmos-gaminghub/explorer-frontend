@@ -602,9 +602,8 @@ const totalSupplyTokens = (data) => {
   let totalSupplyTokens = 0
 
   if (data && data.total_supply_tokens && data.total_supply_tokens.supply) {
-    for (let i = 0; i < data.total_supply_tokens.supply.length; i++) {
-      totalSupplyTokens += parseInt(data.total_supply_tokens.supply[i].amount)
-    }
+    const supplyTokens = data.total_supply_tokens.supply[data.total_supply_tokens.supply.length - 1]
+    totalSupplyTokens = supplyTokens.amount
   }
 
   return totalSupplyTokens
