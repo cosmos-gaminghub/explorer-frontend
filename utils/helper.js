@@ -14,6 +14,7 @@ const arrTypeDefined = {
   '/cosmos.gov.v1beta1.MsgSubmitProposal': 'Submit Proposal', /* DONE */
   '/cosmos.slashing.v1beta1.MsgUnjail': 'Unjail', /* DONE */
   '/cosmos.bank.v1beta1.MsgSend': 'Send', /* DONE */
+  '/cosmos.bank.v1beta1.MsgReceive': 'Receive', /* DONE */
   '/ibc.applications.transfer.v1.MsgTransfer': 'IBC Transfer', /* DONE Xong D6D0D2DD143DCCE7968693F11774F7BF9EEC91BBA59DCE764A3EECD28DC03B8A */
   '/ibc.core.client.v1.MsgUpdateClient': 'IBC Update Client', /* DONE Xong D65EB4038D1713D3F2EB80CF291AA4F3F118F8FC760EC9B3A149295E24F68DE8 */
   '/ibc.core.channel.v1.MsgChannelOpenTry': 'IBC Channel Open Try', /* DONE Xong D65EB4038D1713D3F2EB80CF291AA4F3F118F8FC760EC9B3A149295E24F68DE8 */
@@ -696,13 +697,17 @@ const convertValidators = (data) => {
   return dataConvert
 }
 
-const convertValueTxs = (data) => {
+const convertValueTxs = (data, accAddress = '') => {
   if (!data) { return [] }
 
   for (const i in data) {
     data[i].total_amount = getAmount(data[i].messages)
     const objMsg = JSON.parse(data[i].messages)
-    const strType = objMsg ? objMsg[0]['@type'] : ''
+    let strType = objMsg ? objMsg[0]['@type'] : ''
+    // eslint-disable-next-line eqeqeq
+    if (accAddress && strType === '/cosmos.bank.v1beta1.MsgSend' && objMsg[0].to_address && objMsg[0].to_address == accAddress) {
+      strType = '/cosmos.bank.v1beta1.MsgReceive'
+    }
     let str = getTypeTxFromStr(strType)
     if (objMsg.length > 1) {
       str += ' +' + (objMsg.length - 1)
