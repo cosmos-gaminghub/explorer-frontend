@@ -348,7 +348,8 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'A
         let unit = ` ${current_denom}`
         if (type.denom && type.denom !== 'uatom') {
           unit = ''
-        } else {
+          // eslint-disable-next-line camelcase
+        } else if (current_denom !== 'GAME') {
           amount = amount / Math.pow(10, 6)
         }
         const decimal = (amount.toFixed(6).toString()).split('.')
