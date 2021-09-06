@@ -320,14 +320,19 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
 
       for (const voKey in arrObjOpenTry) {
         const keyForCheck = arrObjOpenTry[voKey].title.toLowerCase()
+        if (type['@type'] === '/cosmos.staking.v1beta1.MsgEditValidator' && ['@type'].includes(keyForCheck)) {
+          continue
+        }
         if (arrKeyForAcc.includes(keyForCheck) || arrAmount.includes(keyForCheck) || arrText.includes(keyForCheck) || arrRate.includes(keyForCheck)) {
           type[arrObjOpenTry[voKey].title] = arrObjOpenTry[voKey].details
         } else {
+          if (keyForCheck === 'security_contact') {
+            arrObjOpenTry[voKey].title = 'Security content'
+          }
           arrColumnPerType.push(arrObjOpenTry[voKey])
         }
       }
     }
-    console.log('type = ', type)
 
     if (type.initial_deposit) {
       const amount = calculateValueFromArr(type.initial_deposit) / Math.pow(10, 6)
@@ -460,18 +465,18 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
     /** remove double key */
     // eslint-disable-next-line prefer-const
     let arrToRemove = []
-    const convArrColumnPerType = arrColumnPerType
+    let convArrColumnPerType = arrColumnPerType
     for (const rvKey in convArrColumnPerType) {
-      const titl = convArrColumnPerType[rvKey].title
-      if (arrToRemove[titl]) {
-        const pos = arrToRemove[titl]
-        arrColumnPerType.splice(pos, 1)
-      }
-      arrToRemove[titl] = rvKey
+      const titl = convArrColumnPerType[rvKey].title.toLowerCase()
+      arrToRemove[titl] = convArrColumnPerType[rvKey]
+    }
+    convArrColumnPerType = []
+    for (const rvKey in arrToRemove) {
+      convArrColumnPerType.push(arrToRemove[rvKey])
     }
     arrColumns.push({
       type: getTypeTxFromStr(type['@type']),
-      columns: arrColumnPerType
+      columns: convArrColumnPerType
     })
   }
   return arrColumns
