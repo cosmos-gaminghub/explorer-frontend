@@ -32,6 +32,7 @@ const actions = {
           // eslint-disable-next-line prefer-const
           let data = response.data.tx_detail
           data.current_denom = params.current_denom
+          data.current_prefix = params.current_prefix
           commit('SET_TRANSACTION_DETAIL', data)
           resolve()
         }

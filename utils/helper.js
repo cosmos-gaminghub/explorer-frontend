@@ -161,7 +161,16 @@ const getTypeTxFromStr = (msg) => {
   return textType
 }
 
-const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'ATOM') => {
+const getColumnFromMsgTx = (data, timestamp = null) => {
+  if (!data) { return [] }
+  let msg = data.messages
+  // eslint-disable-next-line prefer-const
+  let logs = data.logs || ''
+  // eslint-disable-next-line prefer-const
+  let currentDenom = data.current_denom || 'ATOM'
+  // eslint-disable-next-line prefer-const
+  let currentPrefix = data.current_prefix || 'cosmos'
+
   if (!msg || !JSON.parse(msg)) { return [] }
   msg = JSON.parse(msg)
 
@@ -318,13 +327,14 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'A
         }
       }
     }
+    console.log('type = ', type)
 
     if (type.initial_deposit) {
       const amount = calculateValueFromArr(type.initial_deposit) / Math.pow(10, 6)
       const decimal = (amount.toFixed(6).toString()).split('.')
       title = 'Initial Deposit'
       // eslint-disable-next-line camelcase
-      details = `${[formatNumber(parseInt(amount)), decimal[1]].join('.')} ${current_denom}`
+      details = `${[formatNumber(parseInt(amount)), decimal[1]].join('.')} ${currentDenom}`
       arrColumnPerType.push({ title, details })
     }
 
@@ -334,7 +344,7 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'A
           return ' '
         })
         title = title[0].toUpperCase() + title.substring(1)
-        details = accAddColumn(type[kAttr])
+        details = accAddColumn(type[kAttr], currentPrefix)
         arrColumnPerType.push({ title, details })
       } else if (arrAmount.includes(kAttr.toLowerCase())) {
         if (type[kAttr] === null) { continue }
@@ -342,19 +352,11 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'A
         if (typeof amount === 'object') {
           amount = calculateValueFromArr(amount)
         } else {
-          amount = parseFloat(amount)
-        }
-        // eslint-disable-next-line camelcase
-        let unit = ` ${current_denom}`
-        if (type.denom && type.denom !== 'uatom') {
-          unit = ''
-          // eslint-disable-next-line camelcase
-        } else if (current_denom !== 'GAME') {
-          amount = amount / Math.pow(10, 6)
+          amount = parseFloat(amount) / (type[kAttr].denom && ['uatom', 'game'].includes(type[kAttr].denom) ? Math.pow(10, 6) : 1)
         }
         const decimal = (amount.toFixed(6).toString()).split('.')
         title = 'Amount'
-        details = [formatNumber(parseInt(amount)), decimal[1]].join('.') + unit
+        details = [formatNumber(parseInt(amount)), decimal[1]].join('.') + ` ${currentDenom}`
         arrColumnPerType.push({ title, details })
       } else if (arrRate.includes(kAttr.toLowerCase())) {
         if (type[kAttr] === null) { continue }
@@ -411,13 +413,13 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'A
           const decimal1 = (parseFloat(senderCoins).toFixed(6).toString()).split('.')
           title = 'Senders'
           // eslint-disable-next-line camelcase
-          details = `${accAddColumn(input.address)}<span>(${[formatNumber(parseInt(senderCoins)), decimal1[1]].join('.')} ${current_denom})</span>`
+          details = `${accAddColumn(input.address, currentPrefix)}<span>(${[formatNumber(parseInt(senderCoins)), decimal1[1]].join('.')} ${currentDenom})</span>`
           arrColumnPerType.push({ title, details })
           const receiversCoins = calculateValueFromArr(type.outputs[iptKey].coins) / Math.pow(10, 6)
           const decimal2 = (parseFloat(receiversCoins).toFixed(6).toString()).split('.')
           title = 'Receivers'
           // eslint-disable-next-line camelcase
-          details = `${accAddColumn(type.outputs[iptKey].address)}<span>(${[formatNumber(parseInt(receiversCoins)), decimal2[1]].join('.')} ${current_denom})</span>`
+          details = `${accAddColumn(type.outputs[iptKey].address, currentPrefix)}<span>(${[formatNumber(parseInt(receiversCoins)), decimal2[1]].join('.')} ${currentDenom})</span>`
           arrColumnPerType.push({ title, details })
         }
       }
@@ -451,7 +453,7 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'A
       const decimal = (amount.toFixed(6).toString()).split('.')
       title = arrTxNeedLogs[type['@type']].text
       // eslint-disable-next-line camelcase
-      details = `${[formatNumber(parseInt(amount)), decimal[1]].join('.')} ${current_denom}`
+      details = `${[formatNumber(parseInt(amount)), decimal[1]].join('.')} ${currentDenom}`
       arrColumnPerType.push({ title, details })
     }
 
@@ -475,8 +477,9 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'A
   return arrColumns
 }
 
-const accAddColumn = (address) => {
-  const isValidator = !!/^(cosmosvaloper)[a-zA-Z0-9]{39}$/.test(address)
+const accAddColumn = (address, prefix) => {
+  const preValidator = new RegExp(`(${prefix}valoper)[a-zA-Z0-9]{39}`)
+  const isValidator = !!preValidator.test(address)
   const href = (isValidator ? '/validators/' : '/account/') + address
   let html = '<a href="' + href + '" target="_blank">' + address + '</a>'
   if (isValidator) { html = '<a href="' + href + '" target="_blank">' + address + '<p class="validator-moniker display-none">' + address + '</p></a>' }
