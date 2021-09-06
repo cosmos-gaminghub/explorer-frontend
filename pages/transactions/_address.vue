@@ -178,6 +178,9 @@ export default {
     },
     current_denom () {
       return this.$store.state.network.current_network ? this.$store.state.network.current_network.denom : 'ATOM'
+    },
+    current_prefix () {
+      return this.$store.state.network.current_network ? this.$store.state.network.current_network.prefix : 'cosmos'
     }
   },
   watch: {
@@ -211,7 +214,8 @@ export default {
     loadData (tx_hash) {
       this.getTransactionDetail({
         tx_hash,
-        current_denom: this.current_denom
+        current_denom: this.current_denom,
+        current_prefix: this.current_prefix
       }).then(() => {
         this.loaded = true
         this.notFound = false
