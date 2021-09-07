@@ -1,4 +1,5 @@
 import round from 'lodash/round'
+import typeMsg from '~/utils/typeMsg'
 
 const arrTypeDefined = {
   '/cosmos.bank.v1beta1.MsgMultiSend': 'Multi Send', /* DONE */
@@ -175,6 +176,8 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
   if (!msg || !JSON.parse(msg)) { return [] }
   msg = JSON.parse(msg)
 
+  let eventObj = {}
+
   const arrKeyForAcc = [
     'delegator_address',
     'validator_addr',
@@ -190,7 +193,7 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
     'proposer',
     'voter'
   ]
-  const arrAmount = ['token', 'amount', 'value', 'min_self_delegation']
+  const arrAmount = ['token', 'amount', 'value']
   const arrText = [
     'denom',
     'proposal_id',
@@ -200,7 +203,6 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
     'client_type',
     'timestamp'
   ]
-  const arrRate = ['commission_rate']
   const arrUnkownType = {
     '/ibc.core.connection.v1.MsgConnectionOpenInit': 'IBC Connection Open Init',
     '/ibc.core.channel.v1.MsgChannelOpenInit': 'IBC Channel Open Init',
@@ -263,6 +265,14 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
   // eslint-disable-next-line prefer-const
   let arrColumns = []
   for (const key in msg) {
+    if (logs && JSON.parse(logs)) {
+      eventObj = JSON.parse(logs)
+      if (eventObj[key] && eventObj[key].Events) {
+        eventObj = eventObj[key].Events
+      } else {
+        eventObj = {}
+      }
+    }
     // eslint-disable-next-line prefer-const
     let arrColumnPerType = []
     const type = msg[key]
@@ -270,20 +280,17 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
     let details = ''
 
     if (type['@type'] === '/ibc.core.channel.v1.MsgRecvPacket') {
-      if (logs && JSON.parse(logs)) {
-        const logsObj = JSON.parse(logs)
-        if (logsObj[key] && logsObj[key].Events) {
-          for (const kEvent in logsObj[key].Events) {
-            const event = logsObj[key].Events[kEvent]
-            if (event.Type === 'recv_packet') {
-              for (const kAttr in event.Attributes) {
-                const attr = event.Attributes[kAttr]
-                if (attr.Key === 'packet_data' && attr.Value) {
-                  const valueObj = JSON.parse(attr.Value)
-                  if (valueObj) {
-                    for (const voKey in valueObj) {
-                      type[voKey] = valueObj[voKey]
-                    }
+      if (eventObj) {
+        for (const kEvent in eventObj) {
+          const event = eventObj[kEvent]
+          if (event.Type === 'recv_packet') {
+            for (const kAttr in event.Attributes) {
+              const attr = event.Attributes[kAttr]
+              if (attr.Key === 'packet_data' && attr.Value) {
+                const valueObj = JSON.parse(attr.Value)
+                if (valueObj) {
+                  for (const voKey in valueObj) {
+                    type[voKey] = valueObj[voKey]
                   }
                 }
               }
@@ -295,10 +302,9 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
 
     if (type['@type'] === '/ibc.core.client.v1.MsgCreateClient') {
       type.timestamp = timestamp ? (formatTime(timestamp) + ' ago (' + convertTime(timestamp) + ')') : ''
-      if (logs && JSON.parse(logs)) {
-        const logsObj = JSON.parse(logs)
-        for (const kEvent in logsObj[key].Events) {
-          const event = logsObj[key].Events[kEvent]
+      if (eventObj) {
+        for (const kEvent in eventObj) {
+          const event = eventObj[kEvent]
           if (event.Type === 'create_client') {
             for (const kAttr in event.Attributes) {
               const attr = event.Attributes[kAttr]
@@ -324,7 +330,7 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
         if (type['@type'] === '/cosmos.staking.v1beta1.MsgEditValidator' && ['@type'].includes(keyForCheck)) {
           continue
         }
-        if (arrKeyForAcc.includes(keyForCheck) || arrAmount.includes(keyForCheck) || arrText.includes(keyForCheck) || arrRate.includes(keyForCheck)) {
+        if (arrKeyForAcc.includes(keyForCheck) || arrAmount.includes(keyForCheck) || arrText.includes(keyForCheck)) {
           type[arrObjOpenTry[voKey].title] = arrObjOpenTry[voKey].details
         } else {
           if (keyForCheck === 'security_contact') {
@@ -345,33 +351,31 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
     }
 
     for (const kAttr in type) {
+      const itemForType = type[kAttr]
       if (arrKeyForAcc.includes(kAttr.toLowerCase())) {
         title = kAttr.replaceAll('_', function (str) {
           return ' '
         })
         title = title[0].toUpperCase() + title.substring(1)
-        details = accAddColumn(type[kAttr], currentPrefix)
+        details = accAddColumn(itemForType, currentPrefix)
         arrColumnPerType.push({ title, details })
       } else if (arrAmount.includes(kAttr.toLowerCase())) {
-        if (type[kAttr] === null) { continue }
-        let amount = type[kAttr].amount ? type[kAttr].amount : type[kAttr]
+        if (itemForType === null) { continue }
+        let amount = itemForType.amount ? itemForType.amount : itemForType
         if (typeof amount === 'object') {
           amount = calculateValueFromArr(amount)
         } else {
-          amount = parseFloat(amount) / (type[kAttr].denom && ['uatom', 'game'].includes(type[kAttr].denom) ? Math.pow(10, 6) : 1)
+          amount = parseFloat(amount) / (itemForType.denom && ['uatom', 'game'].includes(itemForType.denom) ? Math.pow(10, 6) : 1)
         }
         const decimal = (amount.toFixed(6).toString()).split('.')
         title = 'Amount'
         details = [formatNumber(parseInt(amount)), decimal[1]].join('.') + ` ${currentDenom}`
         arrColumnPerType.push({ title, details })
-      } else if (arrRate.includes(kAttr.toLowerCase())) {
-        if (type[kAttr] === null) { continue }
-        title = kAttr.replaceAll('_', function (str) {
-          return ' '
-        })
-        title = title[0].toUpperCase() + title.substring(1)
-        details = ((parseFloat(type[kAttr]) * Math.pow(10, 2)).toFixed(2)) + '%'
-        arrColumnPerType.push({ title, details })
+      } else if (kAttr.toLowerCase() === 'commission_rate') {
+        type[kAttr] = null
+        arrColumnPerType.push(typeMsg.getCommissionRate(kAttr, itemForType, eventObj))
+      } else if (kAttr.toLowerCase() === 'min_self_delegation') {
+        arrColumnPerType.push(typeMsg.getMinSelfDelegation(kAttr, itemForType, eventObj))
       } else if (arrText.includes(kAttr.toLowerCase())) {
         title = kAttr.replaceAll('_', function (str) {
           return ' '
@@ -379,16 +383,16 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
           return ''
         })
         title = title[0].toUpperCase() + title.substring(1)
-        details = type[kAttr]
+        details = itemForType
         arrColumnPerType.push({ title, details })
       } else if (['client_state'].includes(kAttr)) {
-        for (const kClKey in type[kAttr]) {
+        for (const kClKey in itemForType) {
           if (['chain_id', 'trusting_period', 'unbonding_period'].includes(kClKey)) {
             title = kClKey.replaceAll('_', function (str) {
               return ' '
             })
             title = title[0].toUpperCase() + title.substring(1)
-            details = type[kAttr][kClKey]
+            details = itemForType[kClKey]
             arrColumnPerType.push({ title, details })
           }
         }
@@ -431,25 +435,22 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
       }
     }
 
-    if (arrTxNeedLogs[type['@type']] && logs && JSON.parse(logs)) {
-      const logObj = JSON.parse(logs)
+    if (arrTxNeedLogs[type['@type']] && eventObj) {
       let amount = 0
-      if (logObj[key]) {
-        const events = logObj[key].Events
-        let out = false
-        if (events) {
-          for (const eKey in events) {
-            if (out) { break }
+      const events = eventObj
+      let out = false
+      if (events) {
+        for (const eKey in events) {
+          if (out) { break }
 
-            if (events[eKey].Type === arrTxNeedLogs[type['@type']].type) {
-              const attr = events[eKey].Attributes
-              for (const aKey in attr) {
-                if (attr[aKey].Key === 'amount') {
-                  const splitAmount = attr[aKey].Value.split('uatom')
-                  amount = splitAmount ? parseFloat(splitAmount[0]) : 0
-                  out = true
-                  break
-                }
+          if (events[eKey].Type === arrTxNeedLogs[type['@type']].type) {
+            const attr = events[eKey].Attributes
+            for (const aKey in attr) {
+              if (attr[aKey].Key === 'amount') {
+                const splitAmount = attr[aKey].Value.split('uatom')
+                amount = splitAmount ? parseFloat(splitAmount[0]) : 0
+                out = true
+                break
               }
             }
           }
@@ -465,19 +466,24 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
 
     /** remove double key */
     // eslint-disable-next-line prefer-const
-    let arrToRemove = []
+    let arrToRemove = {}
+    // eslint-disable-next-line prefer-const
     let convArrColumnPerType = arrColumnPerType
     for (const rvKey in convArrColumnPerType) {
       const titl = convArrColumnPerType[rvKey].title.toLowerCase()
+      if (arrToRemove[titl] !== undefined) { continue }
       arrToRemove[titl] = convArrColumnPerType[rvKey]
     }
-    convArrColumnPerType = []
+    const columnsConv = []
     for (const rvKey in arrToRemove) {
-      convArrColumnPerType.push(arrToRemove[rvKey])
+      if (rvKey === 'commission_rate' && arrToRemove['commission rate']) {
+        continue
+      }
+      columnsConv.push(arrToRemove[rvKey])
     }
     arrColumns.push({
       type: getTypeTxFromStr(type['@type']),
-      columns: convArrColumnPerType
+      columns: columnsConv
     })
   }
   return arrColumns
