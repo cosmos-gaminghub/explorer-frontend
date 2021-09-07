@@ -16,7 +16,7 @@ const mutations = {
     } else {
       state.txs_paginations.is_empty = true
     }
-    state.txs = state.txs.concat(helper.convertValueTxs(data))
+    state.txs = state.txs.concat(helper.convertValueTxs(data.data, data.acc_address))
   },
   SET_COMMISSIONS (state, data) {
     state.commissions = data

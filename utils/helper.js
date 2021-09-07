@@ -1,4 +1,5 @@
 import round from 'lodash/round'
+import typeMsg from '~/utils/typeMsg'
 
 const arrTypeDefined = {
   '/cosmos.bank.v1beta1.MsgMultiSend': 'Multi Send', /* DONE */
@@ -14,6 +15,7 @@ const arrTypeDefined = {
   '/cosmos.gov.v1beta1.MsgSubmitProposal': 'Submit Proposal', /* DONE */
   '/cosmos.slashing.v1beta1.MsgUnjail': 'Unjail', /* DONE */
   '/cosmos.bank.v1beta1.MsgSend': 'Send', /* DONE */
+  '/cosmos.bank.v1beta1.MsgReceive': 'Receive', /* DONE */
   '/ibc.applications.transfer.v1.MsgTransfer': 'IBC Transfer', /* DONE Xong D6D0D2DD143DCCE7968693F11774F7BF9EEC91BBA59DCE764A3EECD28DC03B8A */
   '/ibc.core.client.v1.MsgUpdateClient': 'IBC Update Client', /* DONE Xong D65EB4038D1713D3F2EB80CF291AA4F3F118F8FC760EC9B3A149295E24F68DE8 */
   '/ibc.core.channel.v1.MsgChannelOpenTry': 'IBC Channel Open Try', /* DONE Xong D65EB4038D1713D3F2EB80CF291AA4F3F118F8FC760EC9B3A149295E24F68DE8 */
@@ -161,9 +163,20 @@ const getTypeTxFromStr = (msg) => {
   return textType
 }
 
-const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'ATOM') => {
+const getColumnFromMsgTx = (data, timestamp = null) => {
+  if (!data) { return [] }
+  let msg = data.messages
+  // eslint-disable-next-line prefer-const
+  let logs = data.logs || ''
+  // eslint-disable-next-line prefer-const
+  let currentDenom = data.current_denom || 'ATOM'
+  // eslint-disable-next-line prefer-const
+  let currentPrefix = data.current_prefix || 'cosmos'
+
   if (!msg || !JSON.parse(msg)) { return [] }
   msg = JSON.parse(msg)
+
+  let eventObj = {}
 
   const arrKeyForAcc = [
     'delegator_address',
@@ -180,7 +193,7 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'A
     'proposer',
     'voter'
   ]
-  const arrAmount = ['token', 'amount', 'value', 'min_self_delegation']
+  const arrAmount = ['token', 'amount', 'value']
   const arrText = [
     'denom',
     'proposal_id',
@@ -190,7 +203,6 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'A
     'client_type',
     'timestamp'
   ]
-  const arrRate = ['commission_rate']
   const arrUnkownType = {
     '/ibc.core.connection.v1.MsgConnectionOpenInit': 'IBC Connection Open Init',
     '/ibc.core.channel.v1.MsgChannelOpenInit': 'IBC Channel Open Init',
@@ -253,6 +265,14 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'A
   // eslint-disable-next-line prefer-const
   let arrColumns = []
   for (const key in msg) {
+    if (logs && JSON.parse(logs)) {
+      eventObj = JSON.parse(logs)
+      if (eventObj[key] && eventObj[key].Events) {
+        eventObj = eventObj[key].Events
+      } else {
+        eventObj = {}
+      }
+    }
     // eslint-disable-next-line prefer-const
     let arrColumnPerType = []
     const type = msg[key]
@@ -260,20 +280,17 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'A
     let details = ''
 
     if (type['@type'] === '/ibc.core.channel.v1.MsgRecvPacket') {
-      if (logs && JSON.parse(logs)) {
-        const logsObj = JSON.parse(logs)
-        if (logsObj[key] && logsObj[key].Events) {
-          for (const kEvent in logsObj[key].Events) {
-            const event = logsObj[key].Events[kEvent]
-            if (event.Type === 'recv_packet') {
-              for (const kAttr in event.Attributes) {
-                const attr = event.Attributes[kAttr]
-                if (attr.Key === 'packet_data' && attr.Value) {
-                  const valueObj = JSON.parse(attr.Value)
-                  if (valueObj) {
-                    for (const voKey in valueObj) {
-                      type[voKey] = valueObj[voKey]
-                    }
+      if (eventObj) {
+        for (const kEvent in eventObj) {
+          const event = eventObj[kEvent]
+          if (event.Type === 'recv_packet') {
+            for (const kAttr in event.Attributes) {
+              const attr = event.Attributes[kAttr]
+              if (attr.Key === 'packet_data' && attr.Value) {
+                const valueObj = JSON.parse(attr.Value)
+                if (valueObj) {
+                  for (const voKey in valueObj) {
+                    type[voKey] = valueObj[voKey]
                   }
                 }
               }
@@ -285,10 +302,9 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'A
 
     if (type['@type'] === '/ibc.core.client.v1.MsgCreateClient') {
       type.timestamp = timestamp ? (formatTime(timestamp) + ' ago (' + convertTime(timestamp) + ')') : ''
-      if (logs && JSON.parse(logs)) {
-        const logsObj = JSON.parse(logs)
-        for (const kEvent in logsObj[key].Events) {
-          const event = logsObj[key].Events[kEvent]
+      if (eventObj) {
+        for (const kEvent in eventObj) {
+          const event = eventObj[kEvent]
           if (event.Type === 'create_client') {
             for (const kAttr in event.Attributes) {
               const attr = event.Attributes[kAttr]
@@ -311,9 +327,15 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'A
 
       for (const voKey in arrObjOpenTry) {
         const keyForCheck = arrObjOpenTry[voKey].title.toLowerCase()
-        if (arrKeyForAcc.includes(keyForCheck) || arrAmount.includes(keyForCheck) || arrText.includes(keyForCheck) || arrRate.includes(keyForCheck)) {
+        if (type['@type'] === '/cosmos.staking.v1beta1.MsgEditValidator' && ['@type'].includes(keyForCheck)) {
+          continue
+        }
+        if (arrKeyForAcc.includes(keyForCheck) || arrAmount.includes(keyForCheck) || arrText.includes(keyForCheck)) {
           type[arrObjOpenTry[voKey].title] = arrObjOpenTry[voKey].details
         } else {
+          if (keyForCheck === 'security_contact') {
+            arrObjOpenTry[voKey].title = 'Security content'
+          }
           arrColumnPerType.push(arrObjOpenTry[voKey])
         }
       }
@@ -324,45 +346,36 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'A
       const decimal = (amount.toFixed(6).toString()).split('.')
       title = 'Initial Deposit'
       // eslint-disable-next-line camelcase
-      details = `${[formatNumber(parseInt(amount)), decimal[1]].join('.')} ${current_denom}`
+      details = `${[formatNumber(parseInt(amount)), decimal[1]].join('.')} ${currentDenom}`
       arrColumnPerType.push({ title, details })
     }
 
     for (const kAttr in type) {
+      const itemForType = type[kAttr]
       if (arrKeyForAcc.includes(kAttr.toLowerCase())) {
         title = kAttr.replaceAll('_', function (str) {
           return ' '
         })
         title = title[0].toUpperCase() + title.substring(1)
-        details = accAddColumn(type[kAttr])
+        details = accAddColumn(itemForType, currentPrefix)
         arrColumnPerType.push({ title, details })
       } else if (arrAmount.includes(kAttr.toLowerCase())) {
-        if (type[kAttr] === null) { continue }
-        let amount = type[kAttr].amount ? type[kAttr].amount : type[kAttr]
+        if (itemForType === null) { continue }
+        let amount = itemForType.amount ? itemForType.amount : itemForType
         if (typeof amount === 'object') {
           amount = calculateValueFromArr(amount)
         } else {
-          amount = parseFloat(amount)
-        }
-        // eslint-disable-next-line camelcase
-        let unit = ` ${current_denom}`
-        if (type.denom && type.denom !== 'uatom') {
-          unit = ''
-        } else {
-          amount = amount / Math.pow(10, 6)
+          amount = parseFloat(amount) / (itemForType.denom && ['uatom', 'game'].includes(itemForType.denom) ? Math.pow(10, 6) : 1)
         }
         const decimal = (amount.toFixed(6).toString()).split('.')
         title = 'Amount'
-        details = [formatNumber(parseInt(amount)), decimal[1]].join('.') + unit
+        details = [formatNumber(parseInt(amount)), decimal[1]].join('.') + ` ${currentDenom}`
         arrColumnPerType.push({ title, details })
-      } else if (arrRate.includes(kAttr.toLowerCase())) {
-        if (type[kAttr] === null) { continue }
-        title = kAttr.replaceAll('_', function (str) {
-          return ' '
-        })
-        title = title[0].toUpperCase() + title.substring(1)
-        details = ((parseFloat(type[kAttr]) * Math.pow(10, 2)).toFixed(2)) + '%'
-        arrColumnPerType.push({ title, details })
+      } else if (kAttr.toLowerCase() === 'commission_rate') {
+        type[kAttr] = null
+        arrColumnPerType.push(typeMsg.getCommissionRate(kAttr, itemForType, eventObj))
+      } else if (kAttr.toLowerCase() === 'min_self_delegation') {
+        arrColumnPerType.push(typeMsg.getMinSelfDelegation(kAttr, itemForType, eventObj))
       } else if (arrText.includes(kAttr.toLowerCase())) {
         title = kAttr.replaceAll('_', function (str) {
           return ' '
@@ -370,16 +383,16 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'A
           return ''
         })
         title = title[0].toUpperCase() + title.substring(1)
-        details = type[kAttr]
+        details = itemForType
         arrColumnPerType.push({ title, details })
       } else if (['client_state'].includes(kAttr)) {
-        for (const kClKey in type[kAttr]) {
+        for (const kClKey in itemForType) {
           if (['chain_id', 'trusting_period', 'unbonding_period'].includes(kClKey)) {
             title = kClKey.replaceAll('_', function (str) {
               return ' '
             })
             title = title[0].toUpperCase() + title.substring(1)
-            details = type[kAttr][kClKey]
+            details = itemForType[kClKey]
             arrColumnPerType.push({ title, details })
           }
         }
@@ -410,37 +423,34 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'A
           const decimal1 = (parseFloat(senderCoins).toFixed(6).toString()).split('.')
           title = 'Senders'
           // eslint-disable-next-line camelcase
-          details = `${accAddColumn(input.address)}<span>(${[formatNumber(parseInt(senderCoins)), decimal1[1]].join('.')} ${current_denom})</span>`
+          details = `${accAddColumn(input.address, currentPrefix)}<span>(${[formatNumber(parseInt(senderCoins)), decimal1[1]].join('.')} ${currentDenom})</span>`
           arrColumnPerType.push({ title, details })
           const receiversCoins = calculateValueFromArr(type.outputs[iptKey].coins) / Math.pow(10, 6)
           const decimal2 = (parseFloat(receiversCoins).toFixed(6).toString()).split('.')
           title = 'Receivers'
           // eslint-disable-next-line camelcase
-          details = `${accAddColumn(type.outputs[iptKey].address)}<span>(${[formatNumber(parseInt(receiversCoins)), decimal2[1]].join('.')} ${current_denom})</span>`
+          details = `${accAddColumn(type.outputs[iptKey].address, currentPrefix)}<span>(${[formatNumber(parseInt(receiversCoins)), decimal2[1]].join('.')} ${currentDenom})</span>`
           arrColumnPerType.push({ title, details })
         }
       }
     }
 
-    if (arrTxNeedLogs[type['@type']] && logs && JSON.parse(logs)) {
-      const logObj = JSON.parse(logs)
+    if (arrTxNeedLogs[type['@type']] && eventObj) {
       let amount = 0
-      if (logObj[key]) {
-        const events = logObj[key].Events
-        let out = false
-        if (events) {
-          for (const eKey in events) {
-            if (out) { break }
+      const events = eventObj
+      let out = false
+      if (events) {
+        for (const eKey in events) {
+          if (out) { break }
 
-            if (events[eKey].Type === arrTxNeedLogs[type['@type']].type) {
-              const attr = events[eKey].Attributes
-              for (const aKey in attr) {
-                if (attr[aKey].Key === 'amount') {
-                  const splitAmount = attr[aKey].Value.split('uatom')
-                  amount = splitAmount ? parseFloat(splitAmount[0]) : 0
-                  out = true
-                  break
-                }
+          if (events[eKey].Type === arrTxNeedLogs[type['@type']].type) {
+            const attr = events[eKey].Attributes
+            for (const aKey in attr) {
+              if (attr[aKey].Key === 'amount') {
+                const splitAmount = attr[aKey].Value.split('uatom')
+                amount = splitAmount ? parseFloat(splitAmount[0]) : 0
+                out = true
+                break
               }
             }
           }
@@ -450,35 +460,41 @@ const getColumnFromMsgTx = (msg, logs = '', timestamp = null, current_denom = 'A
       const decimal = (amount.toFixed(6).toString()).split('.')
       title = arrTxNeedLogs[type['@type']].text
       // eslint-disable-next-line camelcase
-      details = `${[formatNumber(parseInt(amount)), decimal[1]].join('.')} ${current_denom}`
+      details = `${[formatNumber(parseInt(amount)), decimal[1]].join('.')} ${currentDenom}`
       arrColumnPerType.push({ title, details })
     }
 
     /** remove double key */
     // eslint-disable-next-line prefer-const
-    let arrToRemove = []
-    const convArrColumnPerType = arrColumnPerType
+    let arrToRemove = {}
+    // eslint-disable-next-line prefer-const
+    let convArrColumnPerType = arrColumnPerType
     for (const rvKey in convArrColumnPerType) {
-      const titl = convArrColumnPerType[rvKey].title
-      if (arrToRemove[titl]) {
-        const pos = arrToRemove[titl]
-        arrColumnPerType.splice(pos, 1)
+      const titl = convArrColumnPerType[rvKey].title.toLowerCase()
+      if (arrToRemove[titl] !== undefined) { continue }
+      arrToRemove[titl] = convArrColumnPerType[rvKey]
+    }
+    const columnsConv = []
+    for (const rvKey in arrToRemove) {
+      if (rvKey === 'commission_rate' && arrToRemove['commission rate']) {
+        continue
       }
-      arrToRemove[titl] = rvKey
+      columnsConv.push(arrToRemove[rvKey])
     }
     arrColumns.push({
       type: getTypeTxFromStr(type['@type']),
-      columns: arrColumnPerType
+      columns: columnsConv
     })
   }
   return arrColumns
 }
 
-const accAddColumn = (address) => {
-  const isValidator = !!/^(cosmosvaloper)[a-zA-Z0-9]{39}$/.test(address)
+const accAddColumn = (address, prefix) => {
+  const preValidator = new RegExp(`(${prefix}valoper)[a-zA-Z0-9]{39}`)
+  const isValidator = !!preValidator.test(address)
   const href = (isValidator ? '/validators/' : '/account/') + address
-  let html = '<a href="' + href + '" target="_blank">' + address + '</a>'
-  if (isValidator) { html = '<a href="' + href + '" target="_blank">' + address + '<p class="validator-moniker display-none">' + address + '</p></a>' }
+  let html = '<a href="' + href + '">' + address + '</a>'
+  if (isValidator) { html = '<a href="' + href + '">' + address + '<p class="validator-moniker display-none">' + address + '</p></a>' }
 
   return html
 }
@@ -602,9 +618,8 @@ const totalSupplyTokens = (data) => {
   let totalSupplyTokens = 0
 
   if (data && data.total_supply_tokens && data.total_supply_tokens.supply) {
-    for (let i = 0; i < data.total_supply_tokens.supply.length; i++) {
-      totalSupplyTokens += parseInt(data.total_supply_tokens.supply[i].amount)
-    }
+    const supplyTokens = data.total_supply_tokens.supply[data.total_supply_tokens.supply.length - 1]
+    totalSupplyTokens = supplyTokens.amount
   }
 
   return totalSupplyTokens
@@ -688,13 +703,17 @@ const convertValidators = (data) => {
   return dataConvert
 }
 
-const convertValueTxs = (data) => {
+const convertValueTxs = (data, accAddress = '') => {
   if (!data) { return [] }
 
   for (const i in data) {
     data[i].total_amount = getAmount(data[i].messages)
     const objMsg = JSON.parse(data[i].messages)
-    const strType = objMsg ? objMsg[0]['@type'] : ''
+    let strType = objMsg ? objMsg[0]['@type'] : ''
+    // eslint-disable-next-line eqeqeq
+    if (accAddress && strType === '/cosmos.bank.v1beta1.MsgSend' && objMsg[0].to_address && objMsg[0].to_address == accAddress) {
+      strType = '/cosmos.bank.v1beta1.MsgReceive'
+    }
     let str = getTypeTxFromStr(strType)
     if (objMsg.length > 1) {
       str += ' +' + (objMsg.length - 1)

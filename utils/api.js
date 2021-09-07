@@ -5,6 +5,7 @@ const api = {
     query GET_VALIDATORS_QUERY {
       validators {
         moniker,
+        image_url,
         voting_power,
         cumulative_share,
         uptime,
@@ -22,6 +23,7 @@ const api = {
     query GET_VALIDATORS_QUERY ($operator_address: String!) {
       validator_detail (operator_address: $operator_address) {
         moniker,
+        image_url,
         voting_power,
         cumulative_share,
         uptime,

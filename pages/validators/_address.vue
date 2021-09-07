@@ -30,7 +30,7 @@
                     <div class="validator-avatar">
                       <img
                         v-if="validator.operator_address"
-                        :src="'https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/moniker/cosmoshub/' + validator.operator_address + '.png'"
+                        :src="validator.image_url"
                         onload="console.log('loaded')"
                         onError="console.log('Error');this.onerror=null;this.src='https://www.mintscan.io/static/media/validator_none.83868b17.svg'"
                         :alt="validator.moniker"

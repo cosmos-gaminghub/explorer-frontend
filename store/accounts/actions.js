@@ -95,10 +95,17 @@ const actions = {
         query: api.GET_ACCOUNT_TRANSACTIONS_QUERY,
         variables: params
       }).then((response) => {
-        commit('SET_TRANSACTIONS', response.data.account_transactions)
+        // eslint-disable-next-line prefer-const
+        let dataToRender = {}
+        dataToRender.data = response.data.account_transactions
+        dataToRender.acc_address = params.acc_address
+        commit('SET_TRANSACTIONS', dataToRender)
         resolve()
       }).catch((error) => {
-        commit('SET_TRANSACTIONS', [])
+        commit('SET_TRANSACTIONS', {
+          data: [],
+          acc_address: params.acc_address
+        })
         reject(error)
       })
     })
