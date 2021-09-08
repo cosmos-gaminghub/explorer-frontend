@@ -28,7 +28,7 @@ const actions = {
         variables: params
       }).then((response) => {
         commit('SET_ACC_DETAIL', response.data.account_detail)
-        resolve(response.data.account_detail.is_validator)
+        resolve(response.data.account_detail)
       }).catch((error) => {
         commit('SET_ACC_DETAIL', { is_validator: false })
         reject(error)

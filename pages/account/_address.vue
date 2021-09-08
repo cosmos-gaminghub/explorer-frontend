@@ -767,34 +767,33 @@ export default {
       }).then((rewards) => {
         this.loaded.rewards = true
         this.dataChart.rewards = helper.getTotalRewards(rewards)
-        if (rewards.length > 0) {
-          const addressValidator = rewards[0].validator_address
-          this.getIsValidator({
-            acc_address: accountAddress
-          }).then((isValidator) => {
-            if (isValidator) {
-              this.getCommissions({
-                operator_address: addressValidator
-              }).then((commissions) => {
-                this.loaded.commissions = true
-                this.dataChart.commissions = helper.calculateValueFromArr(commissions)
-                this.getTotalAtom()
-              }).catch((error) => {
-                this.loaded.commissions = true
-                // eslint-disable-next-line no-console
-                console.log('error when get commission: ', error)
-              })
-            } else {
-              this.loaded.commissions = true
-            }
-          }).catch(() => {
-            this.loaded.commissions = true
-          })
-        }
+        this.getTotalAtom()
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.log('error when get rewards: ', error)
         this.loaded.rewards = true
+      })
+
+      this.getIsValidator({
+        acc_address: accountAddress
+      }).then((accountDetail) => {
+        if (accountDetail && accountDetail.isValidator) {
+          this.getCommissions({
+            operator_address: accountDetail.operator_address
+          }).then((commissions) => {
+            this.loaded.commissions = true
+            this.dataChart.commissions = helper.calculateValueFromArr(commissions)
+            this.getTotalAtom()
+          }).catch((error) => {
+            this.loaded.commissions = true
+            // eslint-disable-next-line no-console
+            console.log('error when get commission: ', error)
+          })
+        } else {
+          this.loaded.commissions = true
+        }
+      }).catch(() => {
+        this.loaded.commissions = true
       })
 
       this.getAvailable({
