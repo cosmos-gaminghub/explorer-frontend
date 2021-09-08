@@ -777,7 +777,7 @@ export default {
       this.getIsValidator({
         acc_address: accountAddress
       }).then((accountDetail) => {
-        if (accountDetail && accountDetail.isValidator) {
+        if (accountDetail && accountDetail.is_validator) {
           this.getCommissions({
             operator_address: accountDetail.operator_address
           }).then((commissions) => {
