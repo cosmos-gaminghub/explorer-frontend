@@ -168,7 +168,8 @@ const api = {
   GET_ACCOUNT_DETAIL_QUERY: gql`
     query GET_ACCOUNT_DETAIL_QUERY ($acc_address: String!) {
       account_detail(acc_address:$acc_address) {
-        is_validator
+        is_validator,
+        operator_address
       }
     }`,
   GET_ACCOUNT_TRANSACTIONS_QUERY: gql`
