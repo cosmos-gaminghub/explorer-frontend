@@ -83,14 +83,6 @@
                 </div>
                 <div class="status-items">
                   <div class="title">
-                    Missed Blocks
-                  </div>
-                  <div class="number">
-                    {{ validator.total_missed_block }}
-                  </div>
-                </div>
-                <div class="status-items">
-                  <div class="title">
                     Voting Power
                   </div>
                   <div class="number">
@@ -126,7 +118,7 @@
                 </div>
               </div>
               <div v-else class="status-validator skeleton">
-                <div v-for="i in 7" :key="i" class="status-items">
+                <div v-for="i in 6" :key="i" class="status-items">
                   <Skeleton />
                 </div>
               </div>
@@ -222,7 +214,7 @@
                   <div class="cos-table-title">
                     <div class="table-title">
                       <h2 class="card-title">
-                        UPTimes
+                        UPTimes (Missed blocks: {{ validator.total_missed_block }})
                       </h2>
                     </div>
                     <div class="table-total">
