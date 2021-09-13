@@ -368,9 +368,14 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
           amount = parseFloat(amount) / (itemForType.denom && ['uatom', 'game'].includes(itemForType.denom) ? Math.pow(10, 6) : 1)
         }
         const decimal = (amount.toFixed(6).toString()).split('.')
+        const notMainDenom = itemForType.denom && itemForType.denom !== currentDenom
+        const unit = notMainDenom ? '' : currentDenom
         title = 'Amount'
-        details = [formatNumber(parseInt(amount)), decimal[1]].join('.') + ` ${currentDenom}`
+        details = [formatNumber(parseInt(amount)), decimal[1]].join('.') + ` ${unit}`
         arrColumnPerType.push({ title, details })
+        if (notMainDenom) {
+          arrColumnPerType.push({ title: 'Denom', details: itemForType.denom })
+        }
       } else if (kAttr.toLowerCase() === 'commission_rate') {
         type[kAttr] = null
         arrColumnPerType.push(typeMsg.getCommissionRate(kAttr, itemForType, eventObj))
@@ -490,9 +495,17 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
 }
 
 const accAddColumn = (address, prefix) => {
-  const preValidator = new RegExp(`(${prefix}valoper)[a-zA-Z0-9]{39}`)
-  const isValidator = !!preValidator.test(address)
-  const href = (isValidator ? '/validators/' : '/account/') + address
+  const checkValidator = new RegExp(`(${prefix}valoper)[a-zA-Z0-9]{39}`)
+  const checkAccount = new RegExp(`(${prefix})[a-zA-Z0-9]{39}`)
+  const isValidator = !!checkValidator.test(address)
+  let href = ''
+  if (checkValidator.test(address)) {
+    href = '/validators/' + address
+  } else if (checkAccount.test(address)) {
+    href = '/account/' + address
+  } else {
+    return address
+  }
   let html = '<a href="' + href + '">' + address + '</a>'
   if (isValidator) { html = '<a href="' + href + '">' + address + '<p class="validator-moniker display-none">' + address + '</p></a>' }
 
