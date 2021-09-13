@@ -18,7 +18,7 @@
           Uptime
         </th>
         <th class="text-center">
-          Missed Blocks
+          Total Missed Blocks
         </th>
         <th class="text-center">
           Commission
@@ -84,7 +84,7 @@
       {{ row.value }}%
     </template>
     <template #cell(total_missed_block)="row">
-      <span class="title">Missed Blocks</span>
+      <span class="title">Total Missed Blocks</span>
       {{ row.value }}
     </template>
     <template #cell(commission)="row">
@@ -172,7 +172,7 @@ export default {
         },
         {
           key: 'total_missed_block',
-          label: 'Missed Blocks',
+          label: 'Total Missed Blocks',
           sortable: true
         },
         {
