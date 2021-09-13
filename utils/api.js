@@ -16,7 +16,8 @@ const api = {
         jailed,
         status,
         website,
-        rank
+        rank,
+        total_missed_block
       }
     }`,
   GET_VALIDATOR_DETAIL_QUERY: gql`
@@ -35,7 +36,8 @@ const api = {
         status,
         website,
         rank,
-        details
+        details,
+        total_missed_block
       }
     }`,
   GET_BLOCKS_QUERY: gql`

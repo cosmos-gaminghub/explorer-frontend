@@ -18,13 +18,16 @@
           Uptime
         </th>
         <th class="text-center">
+          Missed Blocks
+        </th>
+        <th class="text-center">
           Commission
         </th>
       </tr>
     </thead>
     <tbody>
       <tr v-for="i in 5" :key="i">
-        <td colspan="6" class="td-skeleton">
+        <td colspan="7" class="td-skeleton">
           <Skeleton />
         </td>
       </tr>
@@ -79,6 +82,10 @@
     <template #cell(uptime)="row">
       <span class="title">Uptime</span>
       {{ row.value }}%
+    </template>
+    <template #cell(total_missed_block)="row">
+      <span class="title">Missed Blocks</span>
+      {{ row.value }}
     </template>
     <template #cell(commission)="row">
       <span class="title">Commission</span>
@@ -161,6 +168,11 @@ export default {
         {
           key: 'uptime',
           label: 'Uptime',
+          sortable: true
+        },
+        {
+          key: 'total_missed_block',
+          label: 'Missed Blocks',
           sortable: true
         },
         {
