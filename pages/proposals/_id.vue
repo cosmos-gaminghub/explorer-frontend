@@ -406,7 +406,7 @@ export default {
       return (value && value[0]) ? value[0] : ''
     },
     getTotalFromArr (value, isInt) {
-      const total = helper.calculateValueFromArr(value) / Math.pow(10, 6)
+      const total = helper.calculateValueFromArr(value)
 
       if (isInt) {
         return helper.formatNumber(parseInt(total))
