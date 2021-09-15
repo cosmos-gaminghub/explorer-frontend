@@ -2,6 +2,9 @@ const mutations = {
   SET_PROPOSALS (state, data) {
     let i = 0
     for (; i < 5; i++) {
+      if (!data[i]) {
+        break
+      }
       const value = data[i].tally
       if (!value) {
         continue
