@@ -214,7 +214,7 @@
                   <div class="cos-table-title">
                     <div class="table-title">
                       <h2 class="card-title">
-                        UPTimes
+                        UPTimes (Total missed blocks: {{ validator.total_missed_block }})
                       </h2>
                     </div>
                     <div class="table-total">

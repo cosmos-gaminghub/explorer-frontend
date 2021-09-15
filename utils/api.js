@@ -16,7 +16,8 @@ const api = {
         jailed,
         status,
         website,
-        rank
+        rank,
+        total_missed_block
       }
     }`,
   GET_VALIDATOR_DETAIL_QUERY: gql`
@@ -35,7 +36,8 @@ const api = {
         status,
         website,
         rank,
-        details
+        details,
+        total_missed_block
       }
     }`,
   GET_BLOCKS_QUERY: gql`
@@ -168,7 +170,8 @@ const api = {
   GET_ACCOUNT_DETAIL_QUERY: gql`
     query GET_ACCOUNT_DETAIL_QUERY ($acc_address: String!) {
       account_detail(acc_address:$acc_address) {
-        is_validator
+        is_validator,
+        operator_address
       }
     }`,
   GET_ACCOUNT_TRANSACTIONS_QUERY: gql`
