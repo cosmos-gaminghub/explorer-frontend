@@ -342,7 +342,7 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
     }
 
     if (type.initial_deposit) {
-      const amount = calculateValueFromArr(type.initial_deposit) / Math.pow(10, 6)
+      const amount = calculateValueFromArr(type.initial_deposit)
       const decimal = (amount.toFixed(6).toString()).split('.')
       title = 'Initial Deposit'
       // eslint-disable-next-line camelcase
