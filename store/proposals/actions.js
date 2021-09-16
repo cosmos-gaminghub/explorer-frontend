@@ -41,7 +41,11 @@ const actions = {
         query: api.GET_DEPOSIT_QUERY,
         variables: params
       }).then((response) => {
-        commit('SET_DEPOSIT', response.data.deposit)
+        const res = {
+          data: response.data.deposit,
+          current_denom: params.current_denom
+        }
+        commit('SET_DEPOSIT', res)
         resolve(response.data.deposit)
       }).catch((error) => {
         reject(error)
