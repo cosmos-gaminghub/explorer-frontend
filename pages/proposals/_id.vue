@@ -349,7 +349,7 @@
                     </td>
                     <td class="text-left">
                       <span class="title">Amount</span>
-                      <span>{{ depositor.amountConv | convertAmount(true) }}.{{ depositor.amountConv | convertAmount(false) }} {{ current_denom }}</span>
+                      <span>{{ depositor.amountConv | convertAmount(true, false) }}.{{ depositor.amountConv | convertAmount(false, false) }} {{ current_denom }}</span>
                     </td>
                     <td>
                       <span class="title">Time</span>
@@ -415,8 +415,8 @@ export default {
         return decimal[1]
       }
     },
-    convertAmount (value, isInt) {
-      value = value / Math.pow(10, 6)
+    convertAmount (value, isInt, isDevice = true) {
+      value = value / (isDevice ? Math.pow(10, 6) : 1)
 
       if (isInt) {
         return helper.formatNumber(parseInt(value))
