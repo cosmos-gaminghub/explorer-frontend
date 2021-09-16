@@ -349,7 +349,7 @@
                     </td>
                     <td class="text-left">
                       <span class="title">Amount</span>
-                      <span>{{ depositor.amountConv | convertAmount(true) }}.{{ depositor.amountConv | convertAmount(false) }} {{ current_denom }}</span>
+                      <span>{{ depositor.amountConv | convertAmount(true, false) }}.{{ depositor.amountConv | convertAmount(false, false) }} {{ current_denom }}</span>
                     </td>
                     <td>
                       <span class="title">Time</span>
@@ -415,8 +415,8 @@ export default {
         return decimal[1]
       }
     },
-    convertAmount (value, isInt) {
-      value = value / Math.pow(10, 6)
+    convertAmount (value, isInt, isDevice = true) {
+      value = value / (isDevice ? Math.pow(10, 6) : 1)
 
       if (isInt) {
         return helper.formatNumber(parseInt(value))
@@ -605,10 +605,10 @@ export default {
         proposal_id: id
       }).then((proposalDetail) => {
         this.loaded.proposal_detail = true
-        const yes = parseFloat(proposalDetail.tally.yes)
-        const no = parseFloat(proposalDetail.tally.no)
-        const noWithVeto = parseFloat(proposalDetail.tally.no_with_veto)
-        const abstain = parseFloat(proposalDetail.tally.abstain)
+        const yes = parseFloat(proposalDetail.tally.yes || 0)
+        const no = parseFloat(proposalDetail.tally.no || 0)
+        const noWithVeto = parseFloat(proposalDetail.tally.no_with_veto || 0)
+        const abstain = parseFloat(proposalDetail.tally.abstain || 0)
         this.voteData.total = yes + no + noWithVeto + abstain
       }).catch((error) => {
         // eslint-disable-next-line no-console
@@ -618,7 +618,8 @@ export default {
       })
 
       this.getDeposit({
-        proposal_id: id
+        proposal_id: id,
+        current_denom: this.current_denom
       }).then((deposit) => {
         this.loaded.deposit = true
       }).catch((error) => {

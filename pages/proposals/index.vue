@@ -93,7 +93,7 @@ export default {
       return helper.formatNumber(value)
     },
     getTotalDeposit (value, isInt) {
-      const total = helper.calculateValueFromArr(value) / Math.pow(10, 6)
+      const total = helper.calculateValueFromArr(value)
 
       if (isInt) {
         return helper.formatNumber(parseInt(total))

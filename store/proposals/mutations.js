@@ -45,9 +45,15 @@ const mutations = {
   },
   SET_DEPOSIT (state, data) {
     let i = 0
+    const denom = data.current_denom === 'ATOM' ? 'uatom' : data.current_denom.toLowerCase()
+    data = data.data
     for (; i < data.length; i++) {
-      const amountConvert = data[i].amount.split('uatom')
-      data[i].amountConv = amountConvert[0] ? parseFloat(amountConvert[0]) : 0
+      let amountConvert = data[i].amount.split(denom)
+      amountConvert = amountConvert[0] ? parseFloat(amountConvert[0]) : 0
+      if (['uatom', 'game'].includes(denom)) {
+        amountConvert /= Math.pow(10, 6)
+      }
+      data[i].amountConv = amountConvert
     }
     state.deposit = data
   },
