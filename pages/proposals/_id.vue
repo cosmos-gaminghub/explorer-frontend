@@ -605,10 +605,10 @@ export default {
         proposal_id: id
       }).then((proposalDetail) => {
         this.loaded.proposal_detail = true
-        const yes = parseFloat(proposalDetail.tally.yes)
-        const no = parseFloat(proposalDetail.tally.no)
-        const noWithVeto = parseFloat(proposalDetail.tally.no_with_veto)
-        const abstain = parseFloat(proposalDetail.tally.abstain)
+        const yes = parseFloat(proposalDetail.tally.yes || 0)
+        const no = parseFloat(proposalDetail.tally.no || 0)
+        const noWithVeto = parseFloat(proposalDetail.tally.no_with_veto || 0)
+        const abstain = parseFloat(proposalDetail.tally.abstain || 0)
         this.voteData.total = yes + no + noWithVeto + abstain
       }).catch((error) => {
         // eslint-disable-next-line no-console
@@ -618,7 +618,8 @@ export default {
       })
 
       this.getDeposit({
-        proposal_id: id
+        proposal_id: id,
+        current_denom: this.current_denom
       }).then((deposit) => {
         this.loaded.deposit = true
       }).catch((error) => {
