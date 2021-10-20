@@ -50,7 +50,7 @@ const mutations = {
     for (; i < data.length; i++) {
       let amountConvert = data[i].amount.split(denom)
       amountConvert = amountConvert[0] ? parseFloat(amountConvert[0]) : 0
-      if (['uatom', 'game'].includes(denom)) {
+      if (['uatom', 'ugame'].includes(denom)) {
         amountConvert /= Math.pow(10, 6)
       }
       data[i].amountConv = amountConvert
