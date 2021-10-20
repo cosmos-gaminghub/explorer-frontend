@@ -119,6 +119,14 @@ module.exports = {
       logo: '/assets/images/icon/nibiru.png',
       denom: 'GAME',
       prefix: 'nibiru'
+    },
+    {
+      id: 3,
+      name: 'neuron',
+      link: 'https://neuron.game-explorer.io/',
+      logo: '/assets/images/icon/nibiru.png',
+      denom: 'GAME',
+      prefix: 'game'
     }
   ]
 }
