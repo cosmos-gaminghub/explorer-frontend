@@ -47,7 +47,7 @@
     <template #cell(operator_address)="row">
       <nuxt-link :to="'/validators/'+row.value" class="acount-snow">
         <div :class="'va_avatar' + (row.item.jailed ? ' inactive' : ' active')">
-          <img v-if="row.value" v-lazy="getValidatorImage(row.item.moniker)" onError="this.onerror=null;this.src='https://www.mintscan.io/static/media/validator_none.83868b17.svg'" :alt="row.item.moniker">
+          <img v-if="row.value" v-lazy="row.item.image_url" onError="this.onerror=null;this.src='https://www.mintscan.io/static/media/validator_none.83868b17.svg'" :alt="row.item.moniker">
         </div>
         <span class="va_name">{{ row.item.moniker }}</span>
       </nuxt-link>
@@ -192,9 +192,9 @@ export default {
     filterData (data) {
       this.searchValue = data
     },
-    getValidatorImage (value) {
-      return `https://keybase.io/${value}/picture?format=square_40`
-    }
+    // getValidatorImage (value) {
+    //   return `https://keybase.io/${value}/picture?format=square_40`
+    // }
   }
 }
 </script>
