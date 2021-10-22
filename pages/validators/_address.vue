@@ -78,7 +78,7 @@
                     Uptime
                   </div>
                   <div class="number">
-                    {{ 100 - validator.uptime }}%
+                    {{ validator.uptime }}%
                   </div>
                 </div>
                 <div class="status-items">
