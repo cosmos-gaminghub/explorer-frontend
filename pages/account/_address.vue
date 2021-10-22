@@ -323,7 +323,7 @@
                             -
                           </td>
                           <td>
-                            <span class="title">Free</span>
+                            <span class="title">Fee</span>
                             {{ tx.fee | getFeeTx }} {{ current_denom }}
                           </td>
                           <td class="text-center">
