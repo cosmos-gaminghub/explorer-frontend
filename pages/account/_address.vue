@@ -366,7 +366,7 @@
           <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="cos-table-item table-transactions">
               <div class="cos-item-content">
-                <div class="cos-title">
+                <div class="cos-title title-redelegation">
                   <h3 class="title-cos">
                     <span>Redelegation Status</span>
                   </h3>
@@ -377,7 +377,7 @@
                 </div>
                 <div class="cos-table-list">
                   <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-hover text-left">
+                    <table id="tbl-redelegation" class="table table-striped table-bordered table-hover text-left">
                       <thead>
                         <tr>
                           <th>From</th>
@@ -396,6 +396,7 @@
                       <tbody v-if="loaded.redelegations">
                         <tr v-for="(item, index) in filteredRowRedelegations" :key="'redelegation_'+index">
                           <td>
+                            <span class="title">From</span>
                             <nuxt-link class="box btn1" :to="'/validators/' + item.validator_src_address">
                               {{ item.validator_src_moniker }}
                             </nuxt-link>

@@ -1340,6 +1340,14 @@ table tbody tr td p {
   margin-bottom: 0;
 }
 
+.cos-table-item .cos-item-content .cos-title.title-redelegation {
+  padding-bottom: 0;
+}
+.cos-table-item .cos-item-content .cos-title.note-redelegation {
+  padding-top: 10px;
+  font-size: small;
+}
+
 .cos-table-item .cos-item-content .show-more {
   float: right;
   font-size: 12px;
@@ -3075,6 +3083,12 @@ table.table-proposals-page tbody tr td:nth-child(2){
   }
 }
 @media (max-width: 600px) {
+  .cos-table-item .cos-item-content table#tbl-redelegation tr td:nth-child(1),
+  .cos-table-item .cos-item-content table#tbl-redelegation tr td:nth-child(2) {
+    display: flex;
+    justify-content: space-between;
+    width: 100% !important;
+  }
   /* table tbody tr td a.box:hover{
     color: #0058ff;
   } */
@@ -3098,9 +3112,12 @@ table.table-proposals-page tbody tr td:nth-child(2){
   .cos-table-item .cos-item-content .cos-title {
     padding: 20px 15px;
   }
-
+  .cos-table-item .cos-item-content .cos-title.title-redelegation {
+    padding-bottom: 0;
+  }
   .cos-table-item .cos-item-content .cos-title.note-redelegation {
-    padding-top: 0;
+    padding-top: 10px;
+    font-size: small;
   }
 
   .cos-table-item .cos-item-content .cos-title .show-more {
