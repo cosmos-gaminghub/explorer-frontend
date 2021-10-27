@@ -408,7 +408,7 @@
                           </td>
                           <td class="text-left">
                             <span class="title">Height</span>
-                            <nuxt-link class="box btn1" :to="'/blocks/' + 1">
+                            <nuxt-link class="box btn1" :to="`/blocks/${item.height}`">
                               {{ item.height }}
                             </nuxt-link>
                           </td>
