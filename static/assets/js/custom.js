@@ -30,8 +30,15 @@ ready(() => {
 			dropdown.classList.remove("open");
 		});
 	}
-	document.querySelector(".dropdown-toggle").addEventListener("click", (e) => { 
-		dropdown.classList.toggle("open");
+	document.querySelector(".dropdown").addEventListener("click", (event) => {
+		event.stopPropagation();
+		dropdown.classList.toggle('open');
 	});
+	document.addEventListener("click", () => {
+		dropdown.classList.remove('open');
+	});
+	/*$(document).on('click', function () {
+		$(".dropdown").removeClass('open');
+	});*/
 });
 	
