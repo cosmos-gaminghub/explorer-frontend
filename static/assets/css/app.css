@@ -1977,6 +1977,12 @@ table thead tr th,
 .cos-acount-detail .DelegatorTable__delegators-table-container--15lfW{
   height: 220px;
 }
+.cos-acount-detail .cos-table-item.tbl-delegations{
+  padding-top: 32px;
+}
+.cos-table-item .cos-item-content table#tbl-redelegation tbody tr td:nth-child(2){
+  margin-top: 0;
+}
 .cnt-qr-code{
   position: relative;
 }
@@ -2277,7 +2283,7 @@ table.table-proposals-page tbody tr td:nth-child(2){
   }
 
   .sidebar-left .header-option-link .dropdown .dropdown-toggle span {
-    font-size: 14px;
+    font-size: 10px;
     line-height: 12px;
     display: block;
   }
