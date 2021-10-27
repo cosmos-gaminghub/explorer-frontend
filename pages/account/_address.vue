@@ -371,7 +371,7 @@
                     <span>Redelegation Status</span>
                   </h3>
                 </div>
-                <div class="cos-title">
+                <div class="cos-title note-redelegation">
                   <span>1. You must wait 21 days in order to be able to redelegate from the "To" validator.</span><br>
                   <span>2. You can redelegate from and to the same validator set only up to 7 times.</span>
                 </div>
@@ -418,7 +418,7 @@
                           </td>
                           <td class="text-left">
                             <span class="title">Time</span>
-                            <p>{{ item.time | convertTime }}({{ item.time | getTime }} remaining)</p>
+                            <p>{{ item.time | convertTime }} ({{ item.time | getTime }} remaining)</p>
                           </td>
                         </tr>
                       </tbody>

@@ -3099,6 +3099,10 @@ table.table-proposals-page tbody tr td:nth-child(2){
     padding: 20px 15px;
   }
 
+  .cos-table-item .cos-item-content .cos-title.note-redelegation {
+    padding-top: 0;
+  }
+
   .cos-table-item .cos-item-content .cos-title .show-more {
     position: absolute;
     bottom: 15px;
