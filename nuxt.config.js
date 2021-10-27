@@ -107,7 +107,7 @@ module.exports = {
     {
       id: 1,
       name: 'Cosmos',
-      link: 'http://188.166.238.102:9900',
+      link: 'https://game-explorer.io/',
       logo: '/assets/images/icon/atom.png',
       denom: 'ATOM',
       prefix: 'cosmos'
