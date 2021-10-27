@@ -131,7 +131,7 @@
           </div>
           <div class="col-lg-8 col-md-12 col-sm-12">
             <header-data />
-            <div class="cos-table-item">
+            <div class="cos-table-item tbl-delegations">
               <div class="cos-item-content md-full">
                 <div class="cos-title">
                   <h3 class="title-cos">
