@@ -26,7 +26,7 @@
                         <th>Title</th>
                         <th class="text-center">Status</th>
                         <th class="text-center">Voting Start</th>
-                        <th class="text-center">Summit time</th>
+                        <th class="text-center">Submit Time</th>
                         <th class="text-center">Total Deposit</th>
                       </tr>
                     </thead>
@@ -49,7 +49,7 @@
                           {{ proposal.voting_start | convertTime }}
                         </td>
                         <td class="text-center">
-                          <span class="title">Summit time</span>
+                          <span class="title">Submit Time</span>
                           {{ proposal.submit_time | convertTime }}
                         </td>
                         <td class="text-center">

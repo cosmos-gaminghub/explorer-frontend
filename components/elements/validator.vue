@@ -124,7 +124,7 @@ export default {
     },
     getCumulativeShare (value, index, token, type) {
       return helper.cumulativeShare(value, index, token, type)
-    },
+    }
   },
   // eslint-disable-next-line vue/require-prop-types
   props: ['validators', 'type', 'token', 'loaded', 'origin'],
@@ -188,13 +188,38 @@ export default {
       this.filterData(data)
     })
   },
+  watch: {
+    filteredRow (a, b) {
+      this.filteredRow.forEach((element, index) => {
+        if (element.identity !== '') {
+          this.getKeyBaseImage(element.identity).then((data) => {
+            if (data.status.name === 'OK') {
+              const imageUrl = data.them[0].pictures.primary.url
+              this.emitChangeImageUrl(index, imageUrl)
+            }
+          })
+        }
+      })
+    }
+  },
   methods: {
     filterData (data) {
       this.searchValue = data
     },
-    // getValidatorImage (value) {
-    //   return `https://keybase.io/${value}/picture?format=square_40`
-    // }
+    async getKeyBaseImage (identity) {
+      return await new Promise((resolve, reject) => {
+        this.$axios.get(`https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`)
+          .then(response => resolve(response.data))
+          .catch(error => reject(error))
+      })
+    },
+    emitChangeImageUrl (index, imageUrl) {
+      this.$store.commit('validators/SET_IMAGE_URL', {
+        type: this.type,
+        index,
+        imageUrl
+      })
+    }
   }
 }
 </script>

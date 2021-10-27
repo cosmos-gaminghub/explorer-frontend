@@ -17,7 +17,8 @@ const api = {
         status,
         website,
         rank,
-        total_missed_block
+        total_missed_block,
+        identity
       }
     }`,
   GET_VALIDATOR_DETAIL_QUERY: gql`
@@ -37,7 +38,8 @@ const api = {
         website,
         rank,
         details,
-        total_missed_block
+        total_missed_block,
+        identity
       }
     }`,
   GET_BLOCKS_QUERY: gql`

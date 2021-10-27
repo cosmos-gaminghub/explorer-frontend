@@ -43,6 +43,13 @@ const mutations = {
   },
   SET_LOADED_TRUE (state) {
     state.loaded = true
+  },
+  SET_IMAGE_URL (state, object) {
+    const { type, index, imageUrl } = object
+    state.validators[type][index].image_url = imageUrl
+  },
+  SET_VALIATOR_IMAGE_URL (state, imageUrl) {
+    state.validator.image_url = imageUrl
   }
 }
 
