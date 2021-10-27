@@ -541,6 +541,14 @@ export default {
         this.getDelegations({
           acc_address: validator.acc_address
         })
+        if (validator.identity !== '') {
+          this.getKeyBaseImage(validator.identity).then((data) => {
+            if (data.status.name === 'OK') {
+              const imageUrl = data.them[0].pictures.primary.url
+              this.$store.commit('validators/SET_VALIATOR_IMAGE_URL', imageUrl)
+            }
+          })
+        }
         this.notFound = false
       }).catch(() => {
         this.notFound = true
@@ -583,6 +591,13 @@ export default {
       this.setEmptyProposedBlocks()
       this.setEmptyPowerEvents()
       this.setEmptyValidator()
+    },
+    async getKeyBaseImage (identity) {
+      return await new Promise((resolve, reject) => {
+        this.$axios.get(`https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`)
+          .then(response => resolve(response.data))
+          .catch(error => reject(error))
+      })
     }
   }
 }
