@@ -358,6 +358,12 @@ table.table-validators tbody tr td {
 .cos-table-item .cos-item-content table.table-validators tbody tr td:nth-child(2) {
   text-align: left;
 }
+#table-validators th:nth-child(6) {
+    padding-right: 10px !important;
+}
+#table-validators th {
+    vertical-align: middle;
+}
 
 @media (max-width: 1110px) {
     .page-content.header-smaller .blocks-status {
