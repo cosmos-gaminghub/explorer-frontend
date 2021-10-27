@@ -388,7 +388,7 @@
                             Height
                           </th>
                           <th>Amount</th>
-                          <th class="text-right">
+                          <th class="text-left">
                             Time
                           </th>
                         </tr>
@@ -406,9 +406,9 @@
                               {{ item.validator_dst_moniker }}
                             </nuxt-link>
                           </td>
-                          <td class="text-center">
+                          <td class="text-left">
                             <span class="title">Height</span>
-                            <nuxt-link class="box btn1" :to="'/blocks/' + 1">
+                            <nuxt-link class="box btn1" :to="`/blocks/${item.height}`">
                               {{ item.height }}
                             </nuxt-link>
                           </td>
@@ -416,10 +416,9 @@
                             <span class="title">Amount</span>
                             {{ item.amount | convertNumber(true) }}.{{ item.amount | convertNumber(false) }} {{ current_denom }}
                           </td>
-                          <td class="text-right">
+                          <td class="text-left">
                             <span class="title">Time</span>
-                            <p>{{ item.time | convertTime }}</p>
-                            <p>({{ item.time | getTime }} remaining)</p>
+                            <p>{{ item.time | convertTime }}({{ item.time | getTime }} remaining)</p>
                           </td>
                         </tr>
                       </tbody>
