@@ -131,7 +131,7 @@
           </div>
           <div class="col-lg-8 col-md-12 col-sm-12">
             <header-data />
-            <div class="cos-table-item">
+            <div class="cos-table-item tbl-delegations">
               <div class="cos-item-content md-full">
                 <div class="cos-title">
                   <h3 class="title-cos">
@@ -366,18 +366,18 @@
           <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="cos-table-item table-transactions">
               <div class="cos-item-content">
-                <div class="cos-title">
+                <div class="cos-title title-redelegation">
                   <h3 class="title-cos">
                     <span>Redelegation Status</span>
                   </h3>
                 </div>
-                <div class="cos-title">
+                <div class="cos-title note-redelegation">
                   <span>1. You must wait 21 days in order to be able to redelegate from the "To" validator.</span><br>
                   <span>2. You can redelegate from and to the same validator set only up to 7 times.</span>
                 </div>
                 <div class="cos-table-list">
                   <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-hover text-left">
+                    <table id="tbl-redelegation" class="table table-striped table-bordered table-hover text-left">
                       <thead>
                         <tr>
                           <th>From</th>
@@ -388,7 +388,7 @@
                             Height
                           </th>
                           <th>Amount</th>
-                          <th class="text-right">
+                          <th class="text-left">
                             Time
                           </th>
                         </tr>
@@ -396,6 +396,7 @@
                       <tbody v-if="loaded.redelegations">
                         <tr v-for="(item, index) in filteredRowRedelegations" :key="'redelegation_'+index">
                           <td>
+                            <span class="title">From</span>
                             <nuxt-link class="box btn1" :to="'/validators/' + item.validator_src_address">
                               {{ item.validator_src_moniker }}
                             </nuxt-link>
@@ -406,9 +407,9 @@
                               {{ item.validator_dst_moniker }}
                             </nuxt-link>
                           </td>
-                          <td class="text-center">
+                          <td class="text-left">
                             <span class="title">Height</span>
-                            <nuxt-link class="box btn1" :to="'/blocks/' + 1">
+                            <nuxt-link class="box btn1" :to="`/blocks/${item.height}`">
                               {{ item.height }}
                             </nuxt-link>
                           </td>
@@ -416,10 +417,9 @@
                             <span class="title">Amount</span>
                             {{ item.amount | convertNumber(true) }}.{{ item.amount | convertNumber(false) }} {{ current_denom }}
                           </td>
-                          <td class="text-right">
+                          <td class="text-left">
                             <span class="title">Time</span>
-                            <p>{{ item.time | convertTime }}</p>
-                            <p>({{ item.time | getTime }} remaining)</p>
+                            <p>{{ item.time | convertTime }} ({{ item.time | getTime }} remaining)</p>
                           </td>
                         </tr>
                       </tbody>

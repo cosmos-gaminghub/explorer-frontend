@@ -190,16 +190,7 @@ export default {
   },
   watch: {
     filteredRow (a, b) {
-      this.filteredRow.forEach((element, index) => {
-        if (element.identity !== '') {
-          this.getKeyBaseImage(element.identity).then((data) => {
-            if (data.status.name === 'OK') {
-              const imageUrl = data.them[0].pictures.primary.url
-              this.emitChangeImageUrl(index, imageUrl)
-            }
-          })
-        }
-      })
+      this.changeValidatorImage(this.filteredRow)
     }
   },
   methods: {
@@ -212,6 +203,20 @@ export default {
           .then(response => resolve(response.data))
           .catch(error => reject(error))
       })
+    },
+    async changeValidatorImage (filteredRow) {
+      let index = 0
+      for (const element of filteredRow) {
+        if (element.identity !== '') {
+          await this.getKeyBaseImage(element.identity).then((data) => {
+            if (data.status.name === 'OK') {
+              const imageUrl = data.them[0].pictures.primary.url
+              this.emitChangeImageUrl(index, imageUrl)
+            }
+          })
+        }
+        index += 1
+      }
     },
     emitChangeImageUrl (index, imageUrl) {
       this.$store.commit('validators/SET_IMAGE_URL', {
