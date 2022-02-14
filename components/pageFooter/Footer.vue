@@ -7,11 +7,11 @@
             <div class="cnt">
               <h4>Abouts us</h4>
               <ul>
-                <li> <a href="https://cosmosgaminghub.com">Home Page</a></li>
-                <li> <a href="https://docs.cosmosgaminghub.com">Document</a></li>
-                <li> <a href="https://whitepaper.cosmosgaminghub.com/en">White Paper EN</a></li>
-                <li> <a href="https://whitepaper.cosmosgaminghub.com/ja">White Paper JA</a></li>
-                <li> <a href="https://whitepaper.cosmosgaminghub.com/ch">White Paper CH</a></li>
+                <li> <a href="https://gamenet.one">Home Page</a></li>
+                <li> <a href="https://docs.gamenet.one">Document</a></li>
+                <li> <a href="https://whitepaper.gamenet.one/en">White Paper EN</a></li>
+                <li> <a href="https://whitepaper.gamenet.one/ja">White Paper JA</a></li>
+                <li> <a href="https://whitepaper.gamenet.one/ch">White Paper CH</a></li>
               </ul>
             </div>
           </div>
@@ -19,10 +19,10 @@
             <div class="cnt">
               <h4>Community</h4>
               <ul>
-                <li><a href="https://twitter.com/cosmosgaminghub">Twitter</a></li>
+                <li><a href="https://twitter.com/_GAME_official">Twitter</a></li>
                 <li> <a href="https://discord.com/invite/VfvTCP7Rm2">Discord</a></li>
                 <li> <a href="https://github.com/cosmos-gaminghub">Github</a></li>
-                <li> <a href="https://medium.com/cosmosgaminghub">Medium</a></li>
+                <li> <a href="https://medium.com/game">Medium</a></li>
               </ul>
             </div>
           </div>
