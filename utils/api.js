@@ -17,7 +17,6 @@ const api = {
         status,
         website,
         rank,
-        total_missed_block,
         identity
       }
     }`,
@@ -38,7 +37,6 @@ const api = {
         website,
         rank,
         details,
-        total_missed_block,
         identity
       }
     }`,
