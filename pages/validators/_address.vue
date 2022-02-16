@@ -516,7 +516,6 @@ export default {
       })
     },
     filteredRowDelegator () {
-      console.log('delegators = ', this.delegators)
       return this.delegators.filter((row, index) => {
         const from = (this.pagination.delegator.page - 1) * this.paginateDelegators.itemsPerPage
         const to = from + this.paginateDelegators.itemsPerPage
