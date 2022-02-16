@@ -283,7 +283,7 @@
                             <td class="text-right">
                               <span class="title">Amount</span>
                               <div class="amount-power">
-                                {{ delegator.amount | getAmount(true) }}.<small>{{ delegator.amount | getAmount(false) }}</small> GAME
+                                {{ delegator.amount | getAmount(true) }}.<small>{{ delegator.amount | getAmount(false) }}</small> {{ current_denom }}
                               </div>
                             </td>
                           </tr>
