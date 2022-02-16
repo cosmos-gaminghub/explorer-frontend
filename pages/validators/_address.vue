@@ -671,7 +671,6 @@ export default {
     getDelegatorsTable () {
       this.getDelegators({
         offset: this.paginateDelegators.offset,
-        limit: this.paginateDelegators.limit,
         operator_address: this.$route.params.address
       }).then(() => {
         this.loaded.delegator = true

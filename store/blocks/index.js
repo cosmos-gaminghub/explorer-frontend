@@ -26,7 +26,7 @@ export const state = () => ({
     currentPage: 1
   },
   paginateDelegators: {
-    limit: 50,
+    limit: 10,
     offset: 0,
     itemsPerPage: 5,
     totalRecords: 0,

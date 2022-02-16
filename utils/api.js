@@ -153,8 +153,8 @@ const api = {
       }
     }`,
   GET_DELEGATORS_QUERY: gql`
-    query GET_DELEGATORS_QUERY ($operator_address: String!, $limit: Int!, $offset: Int!) {
-      delegators (operator_address:$operator_address, limit:$limit, offset:$offset) {
+    query GET_DELEGATORS_QUERY ($operator_address: String!, $offset: Int!) {
+      delegators (operator_address:$operator_address, offset:$offset) {
         delegators {
           delegator_address,
           amount
