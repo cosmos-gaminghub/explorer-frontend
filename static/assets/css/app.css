@@ -968,6 +968,7 @@ img {
   margin-bottom: 5px;
   margin-top:5px;
   padding: 0px 0;
+  min-height: 40.98px;
 }
 
 .well .row-per-page {
