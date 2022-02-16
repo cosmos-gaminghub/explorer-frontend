@@ -364,7 +364,21 @@ table.table-validators tbody tr td {
 #table-validators th {
     vertical-align: middle;
 }
-
+.delegated-missed .table-transactions .cos-table-title .table-total.table-delegators {
+    line-height: 1;
+}
+.delegated-missed .table-transactions .cos-table-title .table-total.table-delegators span.title-total {
+    display: flex ;
+    flex-direction: row ;
+    flex-wrap: wrap ;
+    justify-content: center ;
+    align-items: center ;
+    align-content: center ;
+}
+.delegated-missed .table-transactions .cos-table-title .table-total.table-delegators span.title-total img {
+    margin-right: 3px;
+    width: 15px;
+}
 @media (max-width: 1110px) {
     .page-content.header-smaller .blocks-status {
       background-color: #e3e3e3;
@@ -421,4 +435,8 @@ table.table-validators tbody tr td {
   .page-content.page-dashboard .custom-page-title .blocks-status {
     display: table;
   }
+    .delegated-missed .table-transactions table.tbl-delegator  tbody tr td:nth-child(2),
+    .delegated-missed .table-transactions table.tbl-delegator  tbody tr td:nth-child(1){
+        width: 100% !important;
+    }
 }

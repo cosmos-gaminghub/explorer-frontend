@@ -101,6 +101,22 @@ const actions = {
     })
   },
   // eslint-disable-next-line require-await
+  async GET_DELEGATORS_QUERY ({ commit }, params) {
+    return new Promise((resolve, reject) => {
+      const client = this.app.apolloProvider.defaultClient
+      client.cache.data.clear()
+      client.query({
+        query: api.GET_DELEGATORS_QUERY,
+        variables: params
+      }).then((response) => {
+        resolve()
+        commit('SET_DELEGATORS', response.data.delegators)
+      }).catch((error) => {
+        reject(error)
+      })
+    })
+  },
+  // eslint-disable-next-line require-await
   async GET_DELEGATIONS_QUERY ({ commit }, params) {
     return new Promise((resolve, reject) => {
       const client = this.app.apolloProvider.defaultClient
