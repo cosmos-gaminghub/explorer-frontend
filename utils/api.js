@@ -152,6 +152,16 @@ const api = {
         total_records
       }
     }`,
+  GET_DELEGATORS_QUERY: gql`
+    query GET_DELEGATORS_QUERY ($operator_address: String!, $offset: Int!) {
+      delegators (operator_address:$operator_address, offset:$offset) {
+        delegators {
+          delegator_address,
+          amount
+        },
+        total_count
+      }
+    }`,
   GET_TRANSACTIONS_QUERY: gql`
     query GET_TRANSACTIONS_QUERY ($size: Int!) {
       txs(size:$size) {

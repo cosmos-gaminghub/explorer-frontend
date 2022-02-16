@@ -133,7 +133,7 @@ export default {
     filteredRow () {
       return this.validators.filter((row) => {
         if (!this.searchValue) { return true }
-        if (String(row.moniker).includes(this.searchValue)) {
+        if (String(row.moniker).toLowerCase().includes(this.searchValue.toLowerCase())) {
           return true
         }
         return false
