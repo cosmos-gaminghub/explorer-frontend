@@ -48,6 +48,7 @@ module.exports = {
     '~/plugins/pagination2.js',
     '~/plugins/clipboard.js'
   ],
+  loading: false,
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: false,
