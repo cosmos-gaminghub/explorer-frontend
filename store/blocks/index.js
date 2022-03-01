@@ -9,6 +9,7 @@ export const state = () => ({
   lastProposedBlocks: 0,
   uptimes: [],
   powerEvents: [],
+  delegators: [],
   delegations: [],
   paginateBlocks: {
     before: 0,
@@ -20,6 +21,13 @@ export const state = () => ({
   paginateTx: {
     before: 0,
     size: 50,
+    itemsPerPage: 5,
+    totalRecords: 0,
+    currentPage: 1
+  },
+  paginateDelegators: {
+    limit: 10,
+    offset: 0,
     itemsPerPage: 5,
     totalRecords: 0,
     currentPage: 1

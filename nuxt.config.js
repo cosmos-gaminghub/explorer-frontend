@@ -48,6 +48,7 @@ module.exports = {
     '~/plugins/pagination2.js',
     '~/plugins/clipboard.js'
   ],
+  loading: false,
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: false,
@@ -114,11 +115,11 @@ module.exports = {
     },
     {
       id: 2,
-      name: 'nibiru-2000',
-      link: 'https://nibiru-2000.game-explorer.io/',
+      name: 'nibiru-3000',
+      link: 'https://nibiru-3000.game-explorer.io/',
       logo: '/assets/images/icon/nibiru.png',
       denom: 'GAME',
-      prefix: 'nibiru'
+      prefix: 'game'
     },
     {
       id: 3,

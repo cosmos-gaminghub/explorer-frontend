@@ -83,10 +83,6 @@
       <span class="title">Uptime</span>
       {{ row.value }}%
     </template>
-    <template #cell(total_missed_block)="row">
-      <span class="title">Total Missed Blocks</span>
-      {{ row.value }}
-    </template>
     <template #cell(commission)="row">
       <span class="title">Commission</span>
       {{ row.value | getPercent }}
@@ -137,7 +133,7 @@ export default {
     filteredRow () {
       return this.validators.filter((row) => {
         if (!this.searchValue) { return true }
-        if (String(row.moniker).includes(this.searchValue)) {
+        if (String(row.moniker).toLowerCase().includes(this.searchValue.toLowerCase())) {
           return true
         }
         return false
@@ -168,11 +164,6 @@ export default {
         {
           key: 'uptime',
           label: 'Uptime',
-          sortable: true
-        },
-        {
-          key: 'total_missed_block',
-          label: 'Total Missed Blocks',
           sortable: true
         },
         {

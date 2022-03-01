@@ -214,7 +214,7 @@
                   <div class="cos-table-title">
                     <div class="table-title">
                       <h2 class="card-title">
-                        UPTimes (Total missed blocks: {{ validator.total_missed_block }})
+                        Uptime
                       </h2>
                     </div>
                     <div class="table-total">
@@ -254,10 +254,61 @@
                       <h2 class="card-title">
                         Delegators
                       </h2>
-                      <div class="table-total" />
+                    </div>
+                    <div class="table-total table-delegators">
+                      <span class="title-total"><img src="/assets/images/icon_delegators.svg">{{ paginateDelegators.totalRecords | formatNumber }}</span>
                     </div>
                   </div>
-                  <empty-table :obj-name="'Delegators'" />
+                  <empty-table v-if="loaded.delegator && !delegators.length" :obj-name="'Delegators'" />
+                  <div v-else class="cos-table-list">
+                    <div class="table-responsive">
+                      <table class="table table-striped table-bordered table-hover text-center table-snow-power tbl-delegator">
+                        <thead>
+                          <tr>
+                            <th class="text-left">
+                              Delegator Address
+                            </th>
+                            <th class="text-right">
+                              Amount
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody v-if="loaded.delegator">
+                          <tr v-for="delegator in filteredRowDelegator" :key="delegator.delegator_address">
+                            <td class="text-left">
+                              <nuxt-link class="box btn1" :to="'/account/'+delegator.delegator_address">
+                                {{ delegator.delegator_address | formatHashBlock }}
+                              </nuxt-link>
+                            </td>
+                            <td class="text-right">
+                              <span class="title">Amount</span>
+                              <div class="amount-power">
+                                {{ delegator.amount | getAmount(true) }}.<small>{{ delegator.amount | getAmount(false) }}</small> {{ current_denom }}
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                        <tbody v-else>
+                          <tr v-for="i in 5" :key="i">
+                            <td colspan="2" class="td-skeleton">
+                              <Skeleton />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="well">
+                      <div v-if="loaded.delegator" class="pagination-wrapper">
+                        <pagination
+                          v-model="pagination.delegator.page"
+                          :records="paginateDelegators.totalRecords"
+                          :per-page="paginateDelegators.itemsPerPage"
+                          :options="optionPaginate"
+                          @paginate="getDelegatorWithPage"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -411,7 +462,8 @@ export default {
       blocks: [],
       loaded: {
         blocks: false,
-        tx: false
+        tx: false,
+        delegator: false
       },
       pagination: {
         blocks: {
@@ -420,6 +472,11 @@ export default {
           totalPage: 5
         },
         tx: {
+          page: 1,
+          totalRecords: 25,
+          totalPage: 5
+        },
+        delegator: {
           page: 1,
           totalRecords: 25,
           totalPage: 5
@@ -435,7 +492,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('blocks', ['proposedBlocks', 'powerEvents', 'delegations', 'lastProposedBlocks', 'uptimes', 'paginateBlocks', 'paginateTx']),
+    ...mapState('blocks', ['proposedBlocks', 'powerEvents', 'delegators', 'delegations', 'lastProposedBlocks', 'uptimes', 'paginateBlocks', 'paginateTx', 'paginateDelegators']),
     ...mapState('network', ['info', 'bondedTokens']),
     ...mapState('validators', ['validator', 'tokens']),
     filteredRow () {
@@ -452,6 +509,16 @@ export default {
       return this.powerEvents.filter((row, index) => {
         const from = (this.pagination.tx.page - 1) * this.paginateTx.itemsPerPage
         const to = from + this.paginateTx.itemsPerPage
+        if (index >= from && index < to) {
+          return true
+        }
+        return false
+      })
+    },
+    filteredRowDelegator () {
+      return this.delegators.filter((row, index) => {
+        const from = (this.pagination.delegator.page - 1) * this.paginateDelegators.itemsPerPage
+        const to = from + this.paginateDelegators.itemsPerPage
         if (index >= from && index < to) {
           return true
         }
@@ -499,6 +566,7 @@ export default {
       getValidator: 'validators/GET_VALIDATOR_DETAIL',
       getProposedBlocks: 'blocks/GET_PROPOSED_BLOCKS',
       getPowerEvents: 'blocks/GET_POWER_EVENT_QUERY',
+      getDelegators: 'blocks/GET_DELEGATORS_QUERY',
       getDelegations: 'blocks/GET_DELEGATIONS_QUERY',
       getMissedBlocks: 'blocks/GET_UPTIMES'
     }),
@@ -507,6 +575,8 @@ export default {
       setBlockPage: 'blocks/SET_PAGE_BLOCKS',
       setEmptyProposedBlocks: 'blocks/SET_EMPTY_PROPOSED_BLOCKS',
       setPowerEvents: 'blocks/SET_PAGE_POWER_EVENTS',
+      setDelegatorsOffset: 'blocks/SET_DELEGATOR_OFFSET',
+      setEmptyDelegators: 'blocks/SET_EMPTY_DELEGATORS',
       setEmptyPowerEvents: 'blocks/SET_EMPTY_POWER_EVENTS',
       setEmptyValidator: 'validators/SET_EMPTY_VALIDATOR'
     }),
@@ -520,6 +590,15 @@ export default {
             before: before.height
           })
           this.getProposedBlocksTable()
+        }
+      }
+    },
+    getDelegatorWithPage (page) {
+      const index = page * this.paginateDelegators.itemsPerPage
+      if (!this.delegators[index]) {
+        if (this.paginateDelegators.offset >= this.paginateDelegators.totalRecords) {
+          this.loaded.delegator = false
+          this.getDelegatorsTable()
         }
       }
     },
@@ -561,6 +640,7 @@ export default {
 
       this.getProposedBlocksTable()
       this.getPowerEventsTable()
+      this.getDelegatorsTable()
     },
     getProposedBlocksTable () {
       this.getProposedBlocks({
@@ -587,10 +667,23 @@ export default {
         console.log('error getPowerEvents ', error)
       })
     },
+    getDelegatorsTable () {
+      this.getDelegators({
+        offset: this.paginateDelegators.offset,
+        operator_address: this.$route.params.address
+      }).then(() => {
+        this.loaded.delegator = true
+      }).catch((error) => {
+        this.loaded.delegator = true
+        // eslint-disable-next-line no-console
+        console.log('error getDelegators ', error)
+      })
+    },
     emptyOldData () {
       this.setEmptyProposedBlocks()
       this.setEmptyPowerEvents()
       this.setEmptyValidator()
+      this.setEmptyDelegators()
     },
     async getKeyBaseImage (identity) {
       return await new Promise((resolve, reject) => {

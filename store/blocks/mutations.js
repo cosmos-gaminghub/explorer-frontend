@@ -47,6 +47,21 @@ const mutations = {
     state.paginateTx.currentPage++
     state.powerEvents = state.powerEvents.concat(data)
   },
+  SET_DELEGATORS (state, data) {
+    state.paginateDelegators.offset = state.paginateDelegators.offset + data.delegators.length
+    state.paginateDelegators.totalRecords = data.total_count
+    let indexDelegator = (state.paginateDelegators.currentPage - 1) * state.paginateDelegators.limit
+    let i = 0
+    for (i in data.delegators) {
+      data.delegators[i].index = indexDelegator
+      indexDelegator++
+    }
+    state.paginateDelegators.currentPage++
+    state.delegators = state.delegators.concat(data.delegators)
+  },
+  SET_DELEGATOR_OFFSET (state, data) {
+    state.paginateDelegators.offset = data
+  },
   SET_DELEGATIONS (state, data) {
     state.delegations = data
   },
@@ -65,6 +80,12 @@ const mutations = {
     state.paginateTx.before = 0
     state.paginateTx.totalRecords = 0
     state.paginateTx.currentPage = 1
+  },
+  SET_EMPTY_DELEGATORS (state) {
+    state.delegators = []
+    state.paginateDelegators.offset = 0
+    state.paginateDelegators.totalRecords = 0
+    state.paginateDelegators.currentPage = 1
   },
   SET_PAGE_POWER_EVENTS (state, data) {
     state.paginateTx.before = data.before
