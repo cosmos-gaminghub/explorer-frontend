@@ -400,7 +400,29 @@ const api = {
         volume_24h,
         timestamp
       }
-    }`
+    }`,
+  GET_CONTRACT: gql`
+    query GET_CONTRACT ($offset: Int!, $size: Int!, $keyword: String) {
+      contracts (
+        offset: $offset,
+        size: $size,
+        keyword: $keyword
+      ) {
+        code_id,
+        contract,
+        contract_address,
+        admin,
+        creator,
+        executed_count,
+        instantiated_at,
+        label,
+        last_executed_at,
+        permission,
+        permitted_address,
+        txhash,
+        version
+      }
+    }`,
 }
 
 export default api
