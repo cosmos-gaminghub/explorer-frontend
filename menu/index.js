@@ -33,5 +33,12 @@ export default [
     href: '/proposals',
     icon_black: '/assets/images/icon/printer.png',
     tablet_icon: '/assets/images/icon/printer-mb.png'
+  },
+  {
+    name: 'Smart contracts',
+    key: 'wasm',
+    href: '/wasm',
+    icon_black: '/assets/images/icon/printer.png',
+    tablet_icon: '/assets/images/icon/printer-mb.png'
   }
 ]
