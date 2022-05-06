@@ -44,7 +44,7 @@ export default {
             default: ''
         },
         execute: {
-            type: String,
+            type: Number,
             default: ''
         },
         contract_version: {

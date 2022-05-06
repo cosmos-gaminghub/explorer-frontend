@@ -3408,7 +3408,6 @@ h2{
   margin-bottom: 0;
 }
 .Card_container {
-  font-family: Open Sans,sans-serif;
   border: 1px solid #e6e6e6;
   border-radius: 5px;
   width: 100%;
@@ -3464,6 +3463,12 @@ h2{
 .CardItem_value{
   font-size:12px;
   color: #4b525d;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  width: 63%;
+  word-break: break-all;
 }
 .Card_cardContent .CardItem_container:not(:first-child){
   padding-top: 8px;
