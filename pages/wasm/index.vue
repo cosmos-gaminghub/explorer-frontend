@@ -1,118 +1,192 @@
 <template>
     <div class="page-content header-smaller">
         <div class="main-body-content">
-        <div class="cos-notice custom-page-title">
-            <div class="row">
-                <div class="col-lg-4 col-md-12 col-sm-12">
-                    <h2 class="page-title">
-                    Wasm Contracts
-                    </h2>
-                </div>
-                <!-- <div class="col-lg-8 col-md-12 col-sm-12">
-                    <header-data />
-                </div> -->
-            </div>
-            <div class="main-md-content delegated-missed md-full">
+            <div class="cos-notice custom-page-title">
                 <div class="row">
-                    <div class="col-lg-12 col-md-12 col-sm-12">
-                        <section class="Section_container PopularContracts_container">
-                            <div class="SectionHeader_sectionHeader">
-                                <h2 class="SectionHeader_sectionHeading">Popular Contracts</h2>
-                            </div>
-                            <div class="SectionContent_sectionContent">
-                                <section class="PopularContracts_cardContainer">
-                                    <PopularItem
-                                        v-for="contract in popular_contracts"
-                                        :key="contract.contract_address" 
-                                        :name="contract.label" 
-                                        :contract_address="contract.contract_address" 
-                                        :contract_version="contract.version" 
-                                        :execute="contract.executed_count" 
-                                        :instantiated_at="contract.instantiated_at" 
-                                    />
-                                </section>
-                            </div>
-                        </section>
-                        <div class="cos-table-item tbl-delegations">
-                            <div class="cos-item-content md-full">
-                                <CosTitle name="Contracts" />
-                                <empty-table v-if="loaded.contracts && !contracts.length" obj-name="Contracts" />
-                                <div v-else class="cos-table-list">
-                                    <div class="table-responsive">
-                                        <table class="table table-striped table-bordered table-hover text-left table-delegation-account">
-                                        <thead>
-                                            <tr>
-                                                <th>Contract Name</th>
-                                                <th>Contract</th>
-                                                <th>
-                                                    Contract Address
-                                                </th>
-                                                <th>
-                                                    Tx Hashs
-                                                </th>
-                                                <th>
-                                                    Creator
-                                                </th>
-                                                <th>
-                                                    Executes
-                                                </th>
-                                                <th>
-                                                    Instantiated At
-                                                </th>
-                                                <th>
-                                                    Last Executed At
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody v-if="loaded.contracts">
-                                            <tr v-for="(contract, index) in filteredRowContracts" :key="index">
-                                            <td>
-                                                {{ contract.label }}
-                                            </td>
-                                            <td>
-                                                {{ contract.version }}
-                                            </td>
-                                            <td>
-                                                {{ contract.contract_address | formatHashBlock }}
-                                            </td>
-                                            <td>
-                                                <nuxt-link v-if="contract.txhash" class="box btn1" :to="{name: 'transactions-address', params: { userId: contract.txhash }}">
-                                                     {{ contract.txhash }}
-                                                </nuxt-link>
-                                            </td>
-                                            <td>
-                                                <nuxt-link class="box btn1" :to="{name: 'account-address', params: { userId: contract.creator }}">
-                                                     {{ contract.creator | formatHashBlock }}
-                                                </nuxt-link>
-                                            </td>
-                                            <td>
-                                                {{ contract.executed_count }}
-                                            </td>
-                                            <td>
-                                                {{ contract.instantiated_at | formatTime }}
-                                            </td>
-                                            <td>
-                                                {{ contract.last_executed_at | formatTime}}
-                                            </td>
-                                            </tr>
-                                        </tbody>
-                                        <tbody v-else>
-                                            <tr v-for="i in 5" :key="i">
-                                            <td colspan="8" class="td-skeleton">
-                                                <Skeleton />
-                                            </td>
-                                            </tr>
-                                        </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="well">
-                                        <div v-if="loaded.contracts" class="pagination-wrapper">
-                                        <pagination
-                                            v-model="pagination.contracts.page"
-                                            :records="contracts.length"
-                                            :per-page="pagination.contracts.per"
-                                            :options="optionPaginate"
+                    <div class="col-lg-4 col-md-12 col-sm-12">
+                        <h2 class="page-title">
+                        Wasm Contracts
+                        </h2>
+                    </div>
+                    <!-- <div class="col-lg-8 col-md-12 col-sm-12">
+                        <header-data />
+                    </div> -->
+                </div>
+                <div class="main-md-content delegated-missed md-full">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <section class="Section_container PopularContracts_container">
+                                <div class="SectionHeader_sectionHeader">
+                                    <h2 class="SectionHeader_sectionHeading">Popular Contracts</h2>
+                                </div>
+                                <div class="SectionContent_sectionContent">
+                                    <section class="PopularContracts_cardContainer">
+                                        <PopularItem
+                                            v-for="contract in popular_contracts"
+                                            :key="contract.contract_address" 
+                                            :name="contract.label" 
+                                            :contract_address="contract.contract_address" 
+                                            :contract_version="contract.version" 
+                                            :execute="contract.executed_count" 
+                                            :instantiated_at="contract.instantiated_at" 
                                         />
+                                    </section>
+                                </div>
+                            </section>
+                            <div class="cos-table-item tbl-delegations">
+                                <div class="cos-item-content md-full">
+                                    <CosTitle name="Contracts" />
+                                    <empty-table v-if="emptyContract" obj-name="Contracts" />
+                                    <div v-else class="cos-table-list">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered table-hover text-left table-delegation-account">
+                                            <thead>
+                                                <tr>
+                                                    <th>Contract Name</th>
+                                                    <th>Contract</th>
+                                                    <th>
+                                                        Contract Address
+                                                    </th>
+                                                    <th>
+                                                        Tx Hashs
+                                                    </th>
+                                                    <th>
+                                                        Creator
+                                                    </th>
+                                                    <th>
+                                                        Executes
+                                                    </th>
+                                                    <th>
+                                                        Instantiated At
+                                                    </th>
+                                                    <th>
+                                                        Last Executed At
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody v-if="loaded.contracts">
+                                                <tr v-for="(contract, index) in filteredRowContracts" :key="index">
+                                                <td>
+                                                    {{ contract.label }}
+                                                </td>
+                                                <td>
+                                                    {{ contract.version }}
+                                                </td>
+                                                <td>
+                                                    {{ contract.contract_address | formatHashBlock }}
+                                                </td>
+                                                <td>
+                                                    <nuxt-link v-if="contract.txhash" class="box btn1" :to="{name: 'transactions-address', params: { address: contract.txhash }}">
+                                                        {{ contract.txhash | formatHashBlock }}
+                                                    </nuxt-link>
+                                                </td>
+                                                <td>
+                                                    <nuxt-link class="box btn1" :to="{name: 'account-address', params: { address: contract.creator }}">
+                                                        {{ contract.creator | formatHashBlock }}
+                                                    </nuxt-link>
+                                                </td>
+                                                <td>
+                                                    {{ contract.executed_count }}
+                                                </td>
+                                                <td>
+                                                    {{ contract.instantiated_at | formatTime }}
+                                                </td>
+                                                <td>
+                                                    {{ contract.last_executed_at | formatTime}}
+                                                </td>
+                                                </tr>
+                                            </tbody>
+                                            <tbody v-else>
+                                                <tr v-for="i in 5" :key="i">
+                                                <td colspan="8" class="td-skeleton">
+                                                    <Skeleton />
+                                                </td>
+                                                </tr>
+                                            </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="well">
+                                            <div v-if="loaded.contracts" class="pagination-wrapper">
+                                            <pagination
+                                                v-model="pagination.contracts.page"
+                                                :records="contracts.length"
+                                                :per-page="pagination.contracts.per"
+                                                :options="optionPaginate"
+                                            />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="cos-table-item tbl-delegations">
+                                <div class="cos-item-content md-full">
+                                    <CosTitle name="Codes" />
+                                    <empty-table v-if="emptyCode" obj-name="Codes" />
+                                    <div v-else class="cos-table-list">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered table-hover text-left table-delegation-account">
+                                            <thead>
+                                                <tr>
+                                                    <th>Verified</th>
+                                                    <th>Id</th>
+                                                    <th>Tx Hash</th>
+                                                    <th>Creator</th>
+                                                    <th>Contract</th>
+                                                    <th>Version</th>
+                                                    <th>Instantiates</th>
+                                                    <th>Created at</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody v-if="loaded.codes">
+                                                <tr v-for="code in codes" :key="code.code_id">
+                                                <td>
+                                                    1
+                                                </td>
+                                                <td>
+                                                    {{ code.code_id }}
+                                                </td>
+                                                <td>
+                                                    <nuxt-link v-if="code.txhash" class="box btn1" :to="{name: 'transactions-address', params: { address: code.txhash }}">
+                                                        {{ code.txhash | formatHashBlock }}
+                                                    </nuxt-link>
+                                                </td>
+                                                <td>
+                                                    <nuxt-link class="box btn1" :to="{name: 'account-address', params: { address: code.creator }}">
+                                                        {{ code.creator | formatHashBlock }}
+                                                    </nuxt-link>
+                                                </td>
+                                                <td>
+                                                    {{ code.contract }}
+                                                </td>
+                                                <td>
+                                                    {{ code.version }}
+                                                </td>
+                                                <td>
+                                                    {{ code.instantiate_count }}
+                                                </td>
+                                                <td>
+                                                    {{ code.created_at | formatTime}}
+                                                </td>
+                                                </tr>
+                                            </tbody>
+                                            <tbody v-else>
+                                                <tr v-for="i in 5" :key="i">
+                                                <td colspan="9" class="td-skeleton">
+                                                    <Skeleton />
+                                                </td>
+                                                </tr>
+                                            </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="well">
+                                            <div v-if="loaded.codes" class="pagination-wrapper">
+                                            <!-- <pagination
+                                                v-model="pagination.contracts.page"
+                                                :records="codes.length"
+                                                :per-page="pagination.contracts.per"
+                                                :options="optionPaginate"
+                                            /> -->
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -121,7 +195,6 @@
                     </div>
                 </div>
             </div>
-        </div>
         </div>
     </div>
 </template>
@@ -152,8 +225,10 @@ export default {
         return {
             popular_contracts: [],
             contracts: [],
+            codes: [],
             loaded: {
-                contracts: false
+                contracts: false,
+                codes: false
             },
             pagination: {
                 contracts: {
@@ -178,14 +253,22 @@ export default {
                 return false
             })
         },
+        emptyContract () {
+            return this.loaded.contracts && !this.contracts.length
+        },
+        emptyCode () {
+            return this.loaded.codes && !this.codes.length
+        },
     },
     mounted () {
         this.getPopularContracts()
         this.getContracts()
+        this.getCodeData()
     },
     methods: {
         ...mapActions({
             getDataContracts: 'contracts/GET_DATA',
+            getCodes: 'codes/GET_DATA'
         }),
         setPopularContracts (data) {
             this.popular_contracts = data
@@ -193,8 +276,15 @@ export default {
         setContracts (data) {
             this.contracts = data
         },
+        setCodes (data) {
+            console.log(data)
+            this.codes = data
+        },
         setLoadedContracts (value) {
-            this.loaded.contracts = true
+            this.loaded.contracts = value
+        },
+        setLoadedCodes (value) {
+            this.loaded.codes = value
         },
         getPopularContracts () {
             const params =  {
@@ -215,6 +305,18 @@ export default {
             this.getDataContracts(params).then((data) => {
                 this.setContracts(data)
                 this.setLoadedContracts(true)
+            }).catch(error => {
+                console.log(error)
+            })
+        },
+        getCodeData () {
+            const params =  {
+                after: 0,
+                size: 50
+            }
+            this.getCodes(params).then((data) => {
+                this.setCodes(data)
+                this.setLoadedCodes(true)
             }).catch(error => {
                 console.log(error)
             })

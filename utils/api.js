@@ -423,6 +423,24 @@ const api = {
         version
       }
     }`,
+  GET_CODE: gql`
+    query GET_CODE ($after: Int!, $size: Int!) {
+      codes (
+        after: $after,
+        size: $size
+      ) {
+        code_id,
+        contract,
+        data_hash,
+        created_at,
+        creator,
+        instantiate_count,
+        permission,
+        permitted_address,
+        txhash,
+        version
+      }
+    }`,
 }
 
 export default api

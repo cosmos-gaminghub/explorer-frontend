@@ -14,7 +14,7 @@
             <div class="CardItem_container">
                 <div class="CardItem_label">Contract Address</div>
                 <div class="CardItem_value">
-                <a class="PopularContracts_link" href="#">{{ contract_address }}</a>
+                <a class="PopularContracts_link" href="#">{{ contract_address | formatAddress }}</a>
                 </div>
             </div>
             <div class="CardItem_container">
@@ -23,13 +23,22 @@
             </div>
             <div class="CardItem_container">
                 <div class="CardItem_label">Instantiated At</div>
-                <div class="CardItem_value">{{ instantiated_at }}</div>
+                <div class="CardItem_value">{{ instantiated_at | formatTime }}</div>
             </div>
         </div>
     </div>
 </template>
 <script>
+import helper from '~/utils/helper'
 export default {
+    filters: {
+        formatTime (value) {
+            return helper.convertTime(value)
+        },
+        formatAddress (value) {
+            return helper.formatHash(value, 8, 8)
+        },
+    },
     props: {
         name: {
             type: String,
