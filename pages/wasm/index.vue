@@ -8,9 +8,9 @@
                         Wasm Contracts
                         </h2>
                     </div>
-                    <!-- <div class="col-lg-8 col-md-12 col-sm-12">
+                    <div class="col-lg-8 col-md-12 col-sm-12">
                         <header-data />
-                    </div> -->
+                    </div>
                 </div>
                 <div class="main-md-content delegated-missed md-full">
                     <div class="row">
@@ -112,6 +112,7 @@
                                                 :records="contracts.length"
                                                 :per-page="pagination.contracts.per"
                                                 :options="optionPaginate"
+                                                @paginate="getContractsWithPage"
                                             />
                                             </div>
                                         </div>
@@ -138,7 +139,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody v-if="loaded.codes">
-                                                <tr v-for="code in codes" :key="code.code_id">
+                                                <tr v-for="code in filteredRowCodes" :key="code.code_id">
                                                 <td>
                                                     1
                                                 </td>
@@ -180,12 +181,13 @@
                                         </div>
                                         <div class="well">
                                             <div v-if="loaded.codes" class="pagination-wrapper">
-                                            <!-- <pagination
-                                                v-model="pagination.contracts.page"
+                                            <pagination
+                                                v-model="pagination.codes.page"
                                                 :records="codes.length"
-                                                :per-page="pagination.contracts.per"
+                                                :per-page="pagination.codes.per"
                                                 :options="optionPaginate"
-                                            /> -->
+                                                @paginate="getCodesWithPage"
+                                            />
                                             </div>
                                         </div>
                                     </div>
@@ -232,12 +234,21 @@ export default {
             },
             pagination: {
                 contracts: {
-                    page: 1,
-                    per: 10
+                    page: 0,
+                    per: 10,
+                    offset: 0,
+                    size: 50
                 },
+                codes: {
+                    after: 0,
+                    page: 0,
+                    per: 10,
+                    offset: 0,
+                    size: 50
+                }
             },
             optionPaginate: {
-                chunk: 10
+                chunk: 5
             },
         }
     },
@@ -245,6 +256,17 @@ export default {
         filteredRowContracts () {
             return this.contracts.filter((_, index) => {
                 const { per, page } = this.pagination.contracts
+                const from = (page - 1) * per
+                const to = from + per
+                if (index >= from && index < to) {
+                    return true
+                }
+                return false
+            })
+        },
+        filteredRowCodes () {
+            return this.codes.filter((_, index) => {
+                const { per, page } = this.pagination.codes
                 const from = (page - 1) * per
                 const to = from + per
                 if (index >= from && index < to) {
@@ -274,17 +296,28 @@ export default {
             this.popular_contracts = data
         },
         setContracts (data) {
-            this.contracts = data
+            this.contracts = this.contracts.concat(data)
         },
         setCodes (data) {
-            console.log(data)
-            this.codes = data
+            this.codes = this.codes.concat(data)
         },
         setLoadedContracts (value) {
             this.loaded.contracts = value
         },
         setLoadedCodes (value) {
             this.loaded.codes = value
+        },
+        setContractOffset () {
+            this.pagination.contracts.offset += this.pagination.contracts.size
+        },
+        setCodeAfter () {
+            this.pagination.codes.after = this.codes.slice(-1).pop().code_id;
+        },
+        incrementContractPage () {
+            this.pagination.contracts.page += 1;
+        },
+        incrementCodePage () {
+            this.pagination.codes.page += 1;
         },
         getPopularContracts () {
             const params =  {
@@ -298,28 +331,40 @@ export default {
             })
         },
         getContracts () {
-            const params =  {
-                offset: 0,
-                size: 50
-            }
-            this.getDataContracts(params).then((data) => {
+            const {offset, size} = this.pagination.contracts
+            this.getDataContracts({offset, size}).then((data) => {
                 this.setContracts(data)
                 this.setLoadedContracts(true)
+                this.incrementContractPage()
             }).catch(error => {
                 console.log(error)
             })
         },
         getCodeData () {
-            const params =  {
-                after: 0,
-                size: 50
-            }
-            this.getCodes(params).then((data) => {
+            const {after, size} = this.pagination.codes
+            this.getCodes({after, size}).then((data) => {
                 this.setCodes(data)
                 this.setLoadedCodes(true)
+                this.incrementCodePage()
             }).catch(error => {
                 console.log(error)
             })
+        },
+        getContractsWithPage (page) {
+            const index = page * this.pagination.contracts.per
+            if (!this.contracts[index]) { 
+                this.setContractOffset()
+                this.setLoadedContracts(false)
+                this.getContracts()
+            }
+        },
+        getCodesWithPage (page) {
+            const index = page * this.pagination.codes.per
+            if (!this.codes[index]) { 
+                this.setCodeAfter()
+                this.setLoadedCodes(false)
+                this.getCodeData()
+            }
         }
     }
 }
