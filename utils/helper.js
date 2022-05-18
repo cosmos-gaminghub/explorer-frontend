@@ -79,7 +79,9 @@ const arrTypeDefined = {
   '/osmosis.lockup.MsgUnlockTokens': 'Unlock Tokens',
   '/osmosis.lockup.MsgBeginUnlocking': 'Begin Unlocking',
   '/osmosis.lockup.MsgUnlockPeriodLock': 'Unlock Period Lock',
-  '/osmosis.poolincentives.v1beta1.UpdatePoolIncentivesProposal': 'Update Pool Incentives Proposal'
+  '/osmosis.poolincentives.v1beta1.UpdatePoolIncentivesProposal': 'Update Pool Incentives Proposal',
+  '/cosmwasm.wasm.v1.MsgExecuteContract': 'Execute Contract',
+  '/cosmwasm.wasm.v1.MsgInstantiateContract': 'Instantiate Contract'
 }
 const arrTxNeedLogs = {
   '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward': {

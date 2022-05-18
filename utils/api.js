@@ -423,6 +423,27 @@ const api = {
         version
       }
     }`,
+  GET_CONTRACT_DETAIL: gql`
+    query GET_CONTRACT_DETAIL ($contract_address: String!) {
+      contract_detail (
+        contract_address: $contract_address
+      ) {
+        code_id,
+        contract,
+        contract_address,
+        admin,
+        creator,
+        executed_count,
+        instantiated_at,
+        label,
+        last_executed_at,
+        permission,
+        permitted_address,
+        txhash,
+        version,
+        messages
+      }
+    }`,  
   GET_CODE: gql`
     query GET_CODE ($after: Int!, $size: Int!) {
       codes (

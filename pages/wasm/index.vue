@@ -322,7 +322,7 @@ export default {
         getPopularContracts () {
             const params =  {
                 offset: 0,
-                size: 8
+                size: 10
             }
             this.getDataContracts(params).then((data) => {
                 this.setPopularContracts(data)

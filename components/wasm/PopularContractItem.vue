@@ -3,7 +3,9 @@
         <div class="Card_cardHeader Card_border">
             <div class="PopularContracts_cardHeader">
                 <img class="PopularContracts_contractIcon" src="icon.svg" alt="img" />
-                <a class="PopularContracts_link" href="#">{{ name }}</a>
+                <nuxt-link class="PopularContracts_link" :to="{name: 'wasm-contract-address', params: { address: contract_address }}">
+                    {{ name }}
+                </nuxt-link>
             </div>
         </div>
         <div class="Card_cardContent">
@@ -14,7 +16,9 @@
             <div class="CardItem_container">
                 <div class="CardItem_label">Contract Address</div>
                 <div class="CardItem_value">
-                <a class="PopularContracts_link" href="#">{{ contract_address | formatAddress }}</a>
+                    <nuxt-link class="PopularContracts_link" :to="{name: 'wasm-contract-address', params: { address: contract_address }}">
+                        {{ contract_address | formatAddress }}
+                    </nuxt-link>
                 </div>
             </div>
             <div class="CardItem_container">

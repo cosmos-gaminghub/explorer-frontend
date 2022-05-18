@@ -3473,6 +3473,120 @@ h2{
 .Card_cardContent .CardItem_container:not(:first-child){
   padding-top: 8px;
 }
+.content-contact-detail{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  padding-top: 15px;
+  border-top: 1px solid #e6e6e6;
+}
+.inforow{
+  display: flex;
+  font-family: Open Sans,sans-serif;
+  font-size: 15px;
+  margin-bottom: 15px;
+}
+.inforow-label{
+  width: 20%;
+  font-weight: 600;
+}
+.infor-value{
+  width: 80%;
+  color: #4b525d;
+}
+.infor-value a{
+  color:#4472de;
+  text-decoration: none;
+}
+.cnt-search{
+  position: relative;
+}
+.cnt-search input{
+  border: 1px solid #e6e6e6;
+  border-radius: 5px;
+  padding: 5px 10px 5px 35px;
+  display: flex;
+  align-items: center;
+  min-height: 26px;
+}
+.cnt-search .icon-search{
+  position: absolute;
+  left: 0;
+  z-index: 1;
+  height: 38px;
+  top: 0;
+  display: flex;
+  align-items: center;
+  width: 32px;
+  justify-content: center;
+}
+.cnt-updateAt{
+  text-align: right;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+.card_container{
+  font-family: Open Sans,sans-serif;
+  border: 1px solid #e6e6e6;
+  border-radius: 5px;
+  width: 100%;
+  height: fit-content;
+  padding: 10px 0 8px;
+  display: flex;
+  flex-flow: column;
+  margin-bottom: 8px;
+}
+.card_cardHeader{
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 10px;
+  padding-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.card_cardHeader a{
+  text-decoration: none;
+  color: #4472de;
+}
+.card_cardContent{
+  padding: 0 10px;
+}
+.decimal_decimal{
+  font-weight: 600;
+  text-align: right;
+  display: block;
+}
+.balanceLabel{
+  color: #89909b;
+}
+.decimal-text-big,.text-demo{
+  font-size: 13px;
+}
+.decimal-text-small{
+  font-size: 11px;
+}
+.defaultpagination{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.deg-180{
+  transform: rotate(180deg);
+}
+.list_pagination button{
+  background-color: transparent;
+  border: 0;
+}
+.list_pagination button:disabled{
+  opacity: 0.6;
+}
+.pagination-page{
+  opacity: 0.6;
+}
+.pagination-page.active{
+  opacity: 1;
+}
 @media screen and (min-width: 980px){
   .Section_container{
       padding: 20px;
