@@ -193,7 +193,12 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
     'sender',
     'receiver',
     'proposer',
-    'voter'
+    'voter',
+    'contract',
+    'messages',
+    'admin',
+    'code_id',
+    ''
   ]
   const arrAmount = ['token', 'amount', 'value']
   const arrText = [
@@ -203,7 +208,7 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
     'source_channel',
     'client_id',
     'client_type',
-    'timestamp'
+    'timestamp',
   ]
   const arrUnkownType = {
     '/ibc.core.connection.v1.MsgConnectionOpenInit': 'IBC Connection Open Init',
@@ -315,6 +320,16 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
           }
         }
       }
+    }
+
+    if (type['@type'] === '/cosmwasm.wasm.v1.MsgExecuteContract') {
+      const {funds, msg} = type
+      type.messages = JSON.stringify(
+        {
+          msg,
+          funds
+        }
+      )
     }
 
     if ([
