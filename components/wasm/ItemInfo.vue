@@ -7,9 +7,9 @@
             {{ value }}
         </div>
         <div class="infor-value" v-if="type == 'link'">
-            <a class="contact-link" href="">
+            <nuxt-link class="contact-link" :to="route">
                 {{ value }}
-            </a>
+            </nuxt-link>
         </div>
     </li>
 </template>
@@ -26,6 +26,12 @@ export default {
             type: String,
             default: "string"
         },
+        route: {
+            type: Object,
+            default: function () { 
+                return {}
+            }
+        }
     }
 }
 </script>

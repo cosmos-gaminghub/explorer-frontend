@@ -144,7 +144,9 @@
                                                     1
                                                 </td>
                                                 <td>
-                                                    {{ code.code_id }}
+                                                    <nuxt-link class="box btn1" :to="{name: 'wasm-code-id', params: { id: code.code_id }}">
+                                                        {{ code.code_id }}
+                                                    </nuxt-link>
                                                 </td>
                                                 <td>
                                                     <nuxt-link v-if="code.txhash" class="box btn1" :to="{name: 'transactions-address', params: { address: code.txhash }}">

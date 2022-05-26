@@ -15,5 +15,32 @@ const actions = {
       })
     })
   },
+  async GET_CODE_DETAIL ({}, params) {
+    return new Promise((resolve, reject) => {
+      const client = this.app.apolloProvider.defaultClient
+      client.query({
+        query: api.GET_CODE_DETAIL,
+        variables: params
+      }).then((response) => {
+        resolve(response.data.code_detail)
+      }).catch((error) => {
+        reject(error)
+      })
+    })
+  },
+
+  async GET_CODE_TRANSACTIONS ({}, params) {
+    return new Promise((resolve, reject) => {
+      const client = this.app.apolloProvider.defaultClient
+      client.query({
+        query: api.GET_CODE_TRANSACTIONS,
+        variables: params
+      }).then((response) => {
+        resolve(response.data.code_transactions)
+      }).catch((error) => {
+        reject(error)
+      })
+    })
+  },
 }
 export default actions

@@ -6,7 +6,7 @@
                 <div class="row">
                     <div class="col-lg-4 col-md-12 col-sm-12">
                     <h2 class="page-title">
-                        WASM CONTRACT
+                        WASM CODE
                     </h2>
                     </div>
                     <div class="col-lg-8 col-md-12 col-sm-12">
@@ -16,70 +16,115 @@
                 <div class="main-md-content transaction-detail-content">
                     <section class="Section_container PopularContracts_container">
                         <div class="SectionHeader_sectionHeader">
-                            <h2 class="SectionHeader_sectionHeading">Contract Detail</h2>
+                            <h2 class="SectionHeader_sectionHeading">Code Detail</h2>
                         </div>
                         <div class="SectionContent_sectionContent">
                             <ul class="content-contact-detail">
-                                <ItemInfo label="Contract Name" :value="contract_detail.label" />
-                                <ItemInfo label="Code ID" :value="contract_detail.code_id" />
-                                <ItemInfo label="Contract" :value="contract_detail.contract" />
-                                <ItemInfo label="Contract Address" :value="contract_detail.contract_address" />
-                                <ItemInfo label="Creator" :value="contract_detail.creator" />
-                                <ItemInfo label="Admin" :value="contract_detail.admin" />
-                                <ItemInfo 
-                                    label="Tx Hash" 
-                                    :value="contract_detail.txhash" 
-                                    type="link" 
-                                    :route="{name: 'transactions-address', params: { address: contract_detail.txhash }}"
-                                />
-                                <ItemInfo label="Denom" :value="symbol" />
-                                <ItemInfo label="Decimal" :value="contract_detail.messages | getDecimal" />
-                                <ItemInfoJson label="Init Messages" :value="contract_detail.messages | getMsg" />
-                                <ItemInfoJson label="Funds" :value="contract_detail.messages | getFunds" />
-                                <ItemInfo label="Executes" :value="contract_detail.executed_count" />
-                                <ItemInfo label="Last Executed At" :value="contract_detail.last_executed_at | formatTime" />
-                                <ItemInfo label="Instantiated At" :value="contract_detail.instantiated_at | formatTime" />
-                                <ItemInfoJson label="Token Info" :value="contract_detail.messages | getTokenInfo" />
+                                <ItemInfo label="Code ID" :value="code_detail.code_id" />
+                                <ItemInfo label="Creator" :value="code_detail.creator" type="link" :route="{name: 'account-address', params: { address: code_detail.creator }}"/>
+                                <ItemInfo label="Tx Hash" :value="code_detail.txhash" type="link" :route="{name: 'transactions-address', params: { address: code_detail.txhash }}"/>
+                                <ItemInfo label="Checksum" :value="code_detail.data_hash" />
+                                <ItemInfo label="Contract" :value="code_detail.contract" />
+                                <ItemInfo label="Version" :value="code_detail.version"/>
+                                <ItemInfo label="Instantiates" :value="code_detail.instantiate_count" />
+                                <ItemInfo label="Permission" :value="code_detail.permission" />
+                                <ItemInfo label="Permitted Address" :value="code_detail.permitted_address" />
+                                <ItemInfo label="Created At" :value="code_detail.created_at | formatTime" />
                             </ul>
-                        </div>
-                    </section>
-                    <section class="Section_container PopularContracts_container">
-                        <div class="SectionHeader_sectionHeader">
-                            <h2 class="SectionHeader_sectionHeading">Balances</h2>
-                            <div class="cnt-search">
-                                <span class="icon-search"><img src="search.svg" alt=""></span>
-                                <input type="text" placeholder="Search Address">
-                            </div>
-                        </div>
-                        <div class="SectionContent_sectionContent">
-                            <div class="cnt-updateAt">
-                                <b>Updated At:</b>
-                                <span>2022-05-16 07:34:40</span>
-                            </div>
-                            <BalanceInfo v-for="(balance, index) in filteredRowBalances" :key="index" :address="balance.key" :value="balance.value" :symbol="symbol" />
-                            <div class="well">
-                                <div v-if="loaded.balances" class="pagination-wrapper">
-                                <pagination
-                                    v-model="pagination.balances.page"
-                                    :records="balances.length"
-                                    :per-page="pagination.balances.per"
-                                    :options="optionPaginate"
-                                    @paginate="getNextBalance"
-                                />
-                                </div>
-                            </div>
                         </div>
                     </section>
                 </div>
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12">
+                        <div class="cos-table-item tbl-delegations">
+                            <div class="cos-item-content md-full">
+                                <CosTitle name="Contracts" />
+                                <empty-table v-if="emptyContract" obj-name="Contracts" />
+                                <div v-else class="cos-table-list">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-bordered table-hover text-left table-delegation-account">
+                                        <thead>
+                                            <tr>
+                                                <th>Contract Name</th>
+                                                <th>Contract</th>
+                                                <th>
+                                                    Contract Address
+                                                </th>
+                                                <th>
+                                                    Tx Hashs
+                                                </th>
+                                                <th>
+                                                    Creator
+                                                </th>
+                                                <th>
+                                                    Executes
+                                                </th>
+                                                <th>
+                                                    Instantiated At
+                                                </th>
+                                                <th>
+                                                    Last Executed At
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody v-if="loaded.contracts">
+                                            <tr v-for="(contract, index) in filteredRowContracts" :key="index">
+                                            <td>
+                                                {{ contract.label }}
+                                            </td>
+                                            <td>
+                                                {{ contract.version }}
+                                            </td>
+                                            <td>
+                                                {{ contract.contract_address | formatHashBlock }}
+                                            </td>
+                                            <td>
+                                                <nuxt-link v-if="contract.txhash" class="box btn1" :to="{name: 'transactions-address', params: { address: contract.txhash }}">
+                                                    {{ contract.txhash | formatHashBlock }}
+                                                </nuxt-link>
+                                            </td>
+                                            <td>
+                                                <nuxt-link class="box btn1" :to="{name: 'account-address', params: { address: contract.creator }}">
+                                                    {{ contract.creator | formatHashBlock }}
+                                                </nuxt-link>
+                                            </td>
+                                            <td>
+                                                {{ contract.executed_count }}
+                                            </td>
+                                            <td>
+                                                {{ contract.instantiated_at | formatTime }}
+                                            </td>
+                                            <td>
+                                                {{ contract.last_executed_at | formatTime}}
+                                            </td>
+                                            </tr>
+                                        </tbody>
+                                        <tbody v-else>
+                                            <tr v-for="i in 5" :key="i">
+                                            <td colspan="8" class="td-skeleton">
+                                                <Skeleton />
+                                            </td>
+                                            </tr>
+                                        </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="well">
+                                        <div v-if="loaded.contracts" class="pagination-wrapper">
+                                        <pagination
+                                            v-model="pagination.contracts.page"
+                                            :records="contracts.length"
+                                            :per-page="pagination.contracts.per"
+                                            :options="optionPaginate"
+                                            @paginate="getContractsWithPage"
+                                        />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="cos-table-item table-transactions">
                             <div class="cos-item-content">
-                                <div class="cos-title">
-                                <h3 class="title-cos">
-                                    <span>Transactions</span>
-                                </h3>
-                                </div>
+                                <CosTitle name="Transactions" />
                                 <empty-table v-if="loaded.txs && !txs.length" :obj-name="'Transactions'" />
                                 <div v-else class="cos-table-list">
                                 <div class="table-responsive">
@@ -170,7 +215,7 @@ import BalanceInfo from '@/components/wasm/BalanceInfo.vue'
 import EmptyTable from '@/components/error/EmptyTable.vue'
 import AmountInfo from '@/components/elements/AmountInfo.vue'
 import helper from '@/utils/helper'
-import {coswmwasmHelper} from "@/utils/cosmwasm";
+import CosTitle from '@/components/cos/CosTitle.vue'
 
 export default {
     components: {
@@ -179,59 +224,10 @@ export default {
         BalanceInfo,
         EmptyTable,
         NotFound,
-        AmountInfo
+        AmountInfo,
+        CosTitle
     },
     filters: {
-        getDecimal (messages) {
-            if (messages) {
-                const message = messages.find(x => x["@type"] == "/cosmwasm.wasm.v1.MsgInstantiateContract")
-                if (message && message.msg != undefined) {
-                    return message.msg.decimals.toString()
-                }
-            }
-            return ""
-        },
-        getSymbol (messages) {
-            if (messages) {
-                const message = messages.find(x => x["@type"] == "/cosmwasm.wasm.v1.MsgInstantiateContract")
-                if (message && message.msg != undefined) {
-                    return message.msg.symbol
-                }
-            }
-            
-            return ""
-        },
-        getMsg (messages) {
-            if (messages) {
-                const message = messages.find(x => x["@type"] == "/cosmwasm.wasm.v1.MsgInstantiateContract")
-                if (message && message.msg != undefined) {
-                    return message.msg
-                }
-                return {}
-            }
-            
-            return {}
-        },
-        getFunds (messages) {
-            if (messages) {
-                const message = messages.find(x => x["@type"] == "/cosmwasm.wasm.v1.MsgInstantiateContract")
-                if (message && message.funds) {
-                    return message.funds
-                }
-            }
-            return {}
-        },
-        getTokenInfo (messages) {
-            if (messages) {
-                const message = messages.find(x => x["@type"] == "/cosmwasm.wasm.v1.MsgInstantiateContract")
-                if (message && message.msg != undefined) {
-                    const {decimals, symbol, name} = message.msg
-                    return {name, symbol, decimals}
-                }
-                return {}
-            }
-            return {}
-        },
         formatTime (value) {
             return helper.convertTime(value)
         },
@@ -267,17 +263,6 @@ export default {
         },
     },
     computed: {
-        filteredRowBalances () {
-            return this.balances.filter((_, index) => {
-                const { per, page } = this.pagination.balances
-                const from = (page - 1) * per
-                const to = from + per
-                if (index >= from && index < to) {
-                    return true
-                }
-                return false
-            })
-        },
         filteredRowTxs () {
             return this.txs.filter((_, index) => {
                 const { per, page } = this.pagination.txs
@@ -295,17 +280,11 @@ export default {
     },
     data () {
         return {
-            contract_detail: {},
+            code_detail: {},
             symbol: "",
             balances: [],
             txs: [],
             pagination: {
-                balances: {
-                    per: 10,
-                    page: 1,
-                    nextKey: new Uint8Array(),
-                    total: null,
-                },
                 txs: {
                     before: 0,
                     size: 50,
@@ -320,49 +299,24 @@ export default {
             optionPaginate: {
                 chunk: 5
             },
-            cosmwasmClient: null,
-            address: this.$route.params.address,
+            id: this.$route.params.id,
             notFound: false,
         }
     },
     mounted() {
-        this.getContractDetailData()
-        this.getBalances()
-        this.getContractTransactionData()
+        this.getCodeDetailData()
+        this.getCodeTransactionData()
     },
     methods: {
         ...mapActions({
-            getContractDetail: 'contracts/GET_CONTRACT_DETAIL',
-            getContractTransaction: 'contracts/GET_CONTRACT_TRANSACTIONS'
+            getCodeDetail: 'codes/GET_CODE_DETAIL',
+            getContractTransaction: 'codes/GET_CODE_TRANSACTIONS'
         }),
-        setContractDetail (data) {
-            data.messages = JSON.parse(data.messages)
-            this.contract_detail = data
-        },
-        setSymbol (data) {
-            const { messages } = data
-            if (messages) {
-                const message = messages.find(x => x["@type"] == "/cosmwasm.wasm.v1.MsgInstantiateContract")
-                if (message && message.msg != undefined) {
-                    this.symbol =  message.msg.symbol
-                }
-            }
-        },
-        setBalanaces (data) {
-            this.balances = this.balances.concat(data)
+        setCodeDetail (data) {
+            this.code_detail = data
         },
         setNotFound (value) {
             this.notFound = value
-        },
-        async setCosmwasmClient() {
-            this.cosmwasmClient = await coswmwasmHelper.connect()
-        },
-        setBalanacePagination (value) {
-            this.pagination.balances.nextKey = value.nextKey
-            this.pagination.balances.total = value.total
-        },
-        setLoadedBalance (value) {
-            this.loaded.balances = value
         },
         setLoadedTxs (value) {
             this.loaded.txs = value
@@ -373,30 +327,26 @@ export default {
         incrementTxsPage () {
             this.pagination.txs.page += 1
         },
-        getAddress () {
-            return this.address
-        },
-        getCosmwasmClient () {
-            return this.cosmwasmClient
+        getCode () {
+            return this.id
         },
         setTxsBefore () {
             this.pagination.txs.before = this.txs.slice(-1).pop().height;
         },
-        getContractDetailData () {
-            this.getContractDetail({contract_address: this.getAddress()}).then((data) => {
-                this.setContractDetail(data)
-                this.setSymbol(data)
+        getCodeDetailData () {
+            this.getCodeDetail({code_id: this.getCode()}).then((data) => {
+                this.setCodeDetail(data)
                 this.setNotFound(false)
             }).catch(error => {
                 console.log(error)
                 this.setNotFound(true)
             })
         },
-        getContractTransactionData () {
+        getCodeTransactionData () {
             const {before, size} = this.pagination.txs
             this.setLoadedTxs(false)
             this.getContractTransaction({
-                acc_address: this.getAddress(),
+                code_id: this.getCode(),
                 before,
                 size
             }).then((data) => {
@@ -407,27 +357,11 @@ export default {
                 this.setLoadedTxs(true)
             })
         },
-        async getBalances () {
-            this.setLoadedBalance(false)
-            if(! this.getCosmwasmClient()) {
-                await this.setCosmwasmClient()
-            }
-            const {models, pagination} = await this.getCosmwasmClient().getAllContractState(this.getAddress(), this.pagination.balances.nextKey)
-            this.setBalanaces(models)
-            this.setBalanacePagination(pagination)
-            this.setLoadedBalance(true)
-        },
-        getNextBalance (page) {
-            const index = page * this.pagination.balances.per
-            if (!this.balances[index]) {
-                this.getBalances()
-            }
-        },
         getNextTxs (page) {
             const index = page * this.pagination.txs.per
             if (!this.txs[index]) {
                 this.setTxsBefore()
-                this.getContractTransactionData()
+                this.getCodeTransactionData()
             }
         }
     }
