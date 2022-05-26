@@ -73,7 +73,9 @@
                                                     {{ contract.version }}
                                                 </td>
                                                 <td>
-                                                    {{ contract.contract_address | formatHashBlock }}
+                                                    <nuxt-link class="box btn1" :to="{name: 'wasm-contract-address', params: { address: contract.contract_address }}">
+                                                        {{ contract.contract_address | formatHashBlock }}
+                                                    </nuxt-link>
                                                 </td>
                                                 <td>
                                                     <nuxt-link v-if="contract.txhash" class="box btn1" :to="{name: 'transactions-address', params: { address: contract.txhash }}">
