@@ -423,6 +423,7 @@ const api = {
         version
       }
     }`,
+
   GET_CONTRACT_DETAIL: gql`
     query GET_CONTRACT_DETAIL ($contract_address: String!) {
       contract_detail (
@@ -443,7 +444,8 @@ const api = {
         version,
         messages
       }
-    }`,  
+    }`, 
+   
   GET_CODE: gql`
     query GET_CODE ($after: Int!, $size: Int!) {
       codes (
@@ -493,6 +495,29 @@ const api = {
         memo,
         gas_used,
         gas_wanted
+      }
+    }`,
+
+  GET_CODE_CONTRACTS: gql`
+    query GET_CODE_CONTRACTS ($offset: Int!, $size: Int!, $code_id: Int!) {
+      code_contracts (
+        offset: $offset,
+        size: $size,
+        code_id: $code_id
+      ) {
+        code_id,
+        contract,
+        contract_address,
+        admin,
+        creator,
+        executed_count,
+        instantiated_at,
+        label,
+        last_executed_at,
+        permission,
+        permitted_address,
+        txhash,
+        version
       }
     }`,
 }

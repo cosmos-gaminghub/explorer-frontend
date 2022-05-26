@@ -236,7 +236,7 @@ export default {
             },
             pagination: {
                 contracts: {
-                    page: 0,
+                    page: 1,
                     per: 10,
                     offset: 0,
                     size: 50
@@ -337,7 +337,6 @@ export default {
             this.getDataContracts({offset, size}).then((data) => {
                 this.setContracts(data)
                 this.setLoadedContracts(true)
-                this.incrementContractPage()
             }).catch(error => {
                 console.log(error)
             })

@@ -261,6 +261,9 @@ export default {
                 return str
             }
         },
+        formatHashBlock (value) {
+            return helper.formatHash(value, 8, 8)
+        },
     },
     computed: {
         filteredRowTxs () {
@@ -274,6 +277,20 @@ export default {
                 return false
             })
         },
+        filteredRowContracts () {
+            return this.contracts.filter((_, index) => {
+                const { per, page } = this.pagination.contracts
+                const from = (page - 1) * per
+                const to = from + per
+                if (index >= from && index < to) {
+                    return true
+                }
+                return false
+            })
+        },
+        emptyContract () {
+            return this.loaded.contracts && !this.contracts.length
+        },
         current_denom () {
             return this.$store.state.network.current_network ? this.$store.state.network.current_network.denom : 'ATOM'
         }
@@ -282,7 +299,7 @@ export default {
         return {
             code_detail: {},
             symbol: "",
-            balances: [],
+            contracts: [],
             txs: [],
             pagination: {
                 txs: {
@@ -291,10 +308,16 @@ export default {
                     per: 10,
                     page: 1
                 },
+                contracts: {
+                    page: 1,
+                    per: 10,
+                    offset: 0,
+                    size: 50
+                },
             },
             loaded: {
-                balances: false,
                 txs: false,
+                contracts: false,
             },
             optionPaginate: {
                 chunk: 5
@@ -306,11 +329,13 @@ export default {
     mounted() {
         this.getCodeDetailData()
         this.getCodeTransactionData()
+        this.getCodeContractData()
     },
     methods: {
         ...mapActions({
             getCodeDetail: 'codes/GET_CODE_DETAIL',
-            getContractTransaction: 'codes/GET_CODE_TRANSACTIONS'
+            getCodeTransaction: 'codes/GET_CODE_TRANSACTIONS',
+            getCodeContract: 'codes/GET_CODE_CONTRACTS'
         }),
         setCodeDetail (data) {
             this.code_detail = data
@@ -323,6 +348,18 @@ export default {
         },
         setTxsData (data) {
             this.txs = this.txs.concat(data)
+        },
+        setContracts (data) {
+            this.contracts = this.contracts.concat(data)
+        },
+        setLoadedContracts (value) {
+            this.loaded.contracts = value
+        },
+        setContractOffset () {
+            this.pagination.contracts.offset += this.pagination.contracts.size
+        },
+        incrementContractPage () {
+            this.pagination.contracts.page += 1;
         },
         incrementTxsPage () {
             this.pagination.txs.page += 1
@@ -345,7 +382,7 @@ export default {
         getCodeTransactionData () {
             const {before, size} = this.pagination.txs
             this.setLoadedTxs(false)
-            this.getContractTransaction({
+            this.getCodeTransaction({
                 code_id: this.getCode(),
                 before,
                 size
@@ -357,13 +394,30 @@ export default {
                 this.setLoadedTxs(true)
             })
         },
+        getCodeContractData () {
+            const {offset, size} = this.pagination.contracts
+            this.getCodeContract({offset, size, code_id: this.getCode()}).then((data) => {
+                this.setContracts(data)
+                this.setLoadedContracts(true)
+            }).catch(error => {
+                console.log(error)
+            })
+        },
         getNextTxs (page) {
             const index = page * this.pagination.txs.per
             if (!this.txs[index]) {
                 this.setTxsBefore()
                 this.getCodeTransactionData()
             }
-        }
+        },
+        getContractsWithPage (page) {
+            const index = page * this.pagination.contracts.per
+            if (!this.contracts[index]) { 
+                this.setContractOffset()
+                this.setLoadedContracts(false)
+                this.getCodeContractData()
+            }
+        },
     }
 }
 </script>

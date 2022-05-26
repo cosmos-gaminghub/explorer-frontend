@@ -42,5 +42,19 @@ const actions = {
       })
     })
   },
+
+  async GET_CODE_CONTRACTS ({}, params) {
+    return new Promise((resolve, reject) => {
+      const client = this.app.apolloProvider.defaultClient
+      client.query({
+        query: api.GET_CODE_CONTRACTS,
+        variables: params
+      }).then((response) => {
+        resolve(response.data.code_contracts)
+      }).catch((error) => {
+        reject(error)
+      })
+    })
+  },
 }
 export default actions
