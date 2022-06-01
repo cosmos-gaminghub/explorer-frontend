@@ -400,7 +400,126 @@ const api = {
         volume_24h,
         timestamp
       }
-    }`
+    }`,
+  GET_CONTRACT: gql`
+    query GET_CONTRACT ($offset: Int!, $size: Int!, $keyword: String) {
+      contracts (
+        offset: $offset,
+        size: $size,
+        keyword: $keyword
+      ) {
+        code_id,
+        contract,
+        contract_address,
+        admin,
+        creator,
+        executed_count,
+        instantiated_at,
+        label,
+        last_executed_at,
+        permission,
+        permitted_address,
+        txhash,
+        version
+      }
+    }`,
+
+  GET_CONTRACT_DETAIL: gql`
+    query GET_CONTRACT_DETAIL ($contract_address: String!) {
+      contract_detail (
+        contract_address: $contract_address
+      ) {
+        code_id,
+        contract,
+        contract_address,
+        admin,
+        creator,
+        executed_count,
+        instantiated_at,
+        label,
+        last_executed_at,
+        permission,
+        permitted_address,
+        txhash,
+        version,
+        messages
+      }
+    }`, 
+   
+  GET_CODE: gql`
+    query GET_CODE ($after: Int!, $size: Int!) {
+      codes (
+        after: $after,
+        size: $size
+      ) {
+        code_id,
+        contract,
+        data_hash,
+        created_at,
+        creator,
+        instantiate_count,
+        permission,
+        permitted_address,
+        txhash,
+        version
+      }
+    }`,
+  GET_CODE_DETAIL: gql`
+    query GET_CODE_DETAIL ($code_id: Int!) {
+      code_detail (
+        code_id: $code_id,
+      ) {
+        code_id,
+        contract,
+        data_hash,
+        created_at,
+        creator,
+        instantiate_count,
+        permission,
+        permitted_address,
+        txhash,
+        version
+      }
+    }`,
+
+  GET_CODE_TRANSACTIONS: gql`
+    query GET_CODE_TRANSACTIONS ($code_id: Int!, $before: Int!, $size: Int!) {
+      code_transactions(code_id:$code_id, before: $before, size: $size) {
+        tx_hash,
+        status,
+        fee,
+        height,
+        timestamp,
+        messages,
+        logs,
+        memo,
+        gas_used,
+        gas_wanted
+      }
+    }`,
+
+  GET_CODE_CONTRACTS: gql`
+    query GET_CODE_CONTRACTS ($offset: Int!, $size: Int!, $code_id: Int!) {
+      code_contracts (
+        offset: $offset,
+        size: $size,
+        code_id: $code_id
+      ) {
+        code_id,
+        contract,
+        contract_address,
+        admin,
+        creator,
+        executed_count,
+        instantiated_at,
+        label,
+        last_executed_at,
+        permission,
+        permitted_address,
+        txhash,
+        version
+      }
+    }`,
 }
 
 export default api

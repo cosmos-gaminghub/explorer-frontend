@@ -99,7 +99,8 @@
                       <div class="title title-unset">
                         {{ column.title }}
                       </div>
-                      <div class="detail" v-html="column.details" />
+                      <vue-json-pretty v-if="typeTx.type == 'Execute Contract' && column.title == 'Messages'" :data="JSON.parse(column.details)"> </vue-json-pretty>
+                      <div v-else class="detail" v-html="column.details" />
                     </li>
                   </ul>
                 </li>
@@ -116,6 +117,8 @@ import { mapState, mapActions, mapMutations } from 'vuex'
 import headerData from '@/components/header/Header.vue'
 import NotFound from '@/components/error/NotFound.vue'
 import helper from '~/utils/helper'
+import VueJsonPretty from 'vue-json-pretty';
+import 'vue-json-pretty/lib/styles.css';
 
 export default {
   filters: {
@@ -135,7 +138,8 @@ export default {
   },
   components: {
     headerData,
-    NotFound
+    NotFound,
+    VueJsonPretty
   },
   data () {
     return {

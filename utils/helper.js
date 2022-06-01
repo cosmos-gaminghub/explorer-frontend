@@ -79,7 +79,9 @@ const arrTypeDefined = {
   '/osmosis.lockup.MsgUnlockTokens': 'Unlock Tokens',
   '/osmosis.lockup.MsgBeginUnlocking': 'Begin Unlocking',
   '/osmosis.lockup.MsgUnlockPeriodLock': 'Unlock Period Lock',
-  '/osmosis.poolincentives.v1beta1.UpdatePoolIncentivesProposal': 'Update Pool Incentives Proposal'
+  '/osmosis.poolincentives.v1beta1.UpdatePoolIncentivesProposal': 'Update Pool Incentives Proposal',
+  '/cosmwasm.wasm.v1.MsgExecuteContract': 'Execute Contract',
+  '/cosmwasm.wasm.v1.MsgInstantiateContract': 'Instantiate Contract'
 }
 const arrTxNeedLogs = {
   '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward': {
@@ -191,7 +193,12 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
     'sender',
     'receiver',
     'proposer',
-    'voter'
+    'voter',
+    'contract',
+    'messages',
+    'admin',
+    'code_id',
+    ''
   ]
   const arrAmount = ['token', 'amount', 'value']
   const arrText = [
@@ -201,7 +208,7 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
     'source_channel',
     'client_id',
     'client_type',
-    'timestamp'
+    'timestamp',
   ]
   const arrUnkownType = {
     '/ibc.core.connection.v1.MsgConnectionOpenInit': 'IBC Connection Open Init',
@@ -313,6 +320,16 @@ const getColumnFromMsgTx = (data, timestamp = null) => {
           }
         }
       }
+    }
+
+    if (type['@type'] === '/cosmwasm.wasm.v1.MsgExecuteContract') {
+      const {funds, msg} = type
+      type.messages = JSON.stringify(
+        {
+          msg,
+          funds
+        }
+      )
     }
 
     if ([

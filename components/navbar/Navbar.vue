@@ -11,69 +11,20 @@
           </nuxt-link>
         </div>
         <div class="clearfix" />
-        <div class="header-option-link select-option">
-          <div class="dropdown">
-            <button v-if="current_network && current_network.id" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-              <img :src="current_network.logo" alt="index" width="15px">
-              <span>{{ current_network.name }}</span>
-              <span class="caret" />
-            </button>
-            <ul class="dropdown-menu">
-              <li v-for="(network, index) in lst_network" :key="index">
-                <a :href="network.link"> <img :src="network.logo" alt="index" width="18px"><span>{{ network.name }}</span></a>
-              </li>
-            </ul>
-          </div>
-        </div>
+        <SelectNetwork />
         <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
           <div class="icon-menu">
             <img src="/assets/images/icon/icon_menu.png" alt="menu">
           </div>
           <div class="menu_section">
             <ul class="side-menu">
-              <li :class="isActiveMenu('dashboard')">
-                <nuxt-link to="/dashboard" class="item-menu">
+              <li :class="isActiveMenu(menu.key)" v-for="menu in menus" :key="menu.key">
+                <nuxt-link :to="menu.href" class="item-menu">
                   <div class="icon">
-                    <img class="icon-black" src="/assets/images/icon/icon1.png" alt="demo">
-                    <img class="tablet-icon" src="/assets/images/icon/icon1-mb.png" alt="demo-tablet">
+                    <img class="icon-black" :src="menu.icon_black" alt="demo">
+                    <img class="tablet-icon" :src="menu.tablet_icon" alt="demo-tablet">
                   </div>
-                  <span>Dashboard</span>
-                </nuxt-link>
-              </li>
-              <li :class="isActiveMenu('validators') || isActiveMenu('account')">
-                <nuxt-link to="/validators" class="item-menu">
-                  <div class="icon">
-                    <img class="icon-black" src="/assets/images/icon/icon2.png" alt="demo">
-                    <img class="tablet-icon" src="/assets/images/icon/icon2-mb.png" alt="demo">
-                  </div>
-                  <span>Validators</span>
-                </nuxt-link>
-              </li>
-              <li :class="isActiveMenu('blocks')">
-                <nuxt-link to="/blocks" class="item-menu">
-                  <div class="icon">
-                    <img class="icon-black" src="/assets/images/icon/icon.png" alt="demo">
-                    <img class="tablet-icon" src="/assets/images/icon/icon-mb.png" alt="demo">
-                  </div>
-                  <span>Blocks</span>
-                </nuxt-link>
-              </li>
-              <li :class="isActiveMenu('transactions')">
-                <nuxt-link to="/transactions" class="item-menu">
-                  <div class="icon">
-                    <img class="icon-black" src="/assets/images/icon/icon3.png" alt="demo">
-                    <img class="tablet-icon" src="/assets/images/icon/icon3-mb.png" alt="demo">
-                  </div>
-                  <span>Transactions</span>
-                </nuxt-link>
-              </li>
-              <li :class="isActiveMenu('proposals')">
-                <nuxt-link to="/proposals" class="item-menu">
-                  <div class="icon">
-                    <img class="icon-black" src="/assets/images/icon/printer.png" alt="demo">
-                    <img class="tablet-icon" src="/assets/images/icon/printer-mb.png" alt="demo">
-                  </div>
-                  <span>Proposals</span>
+                  <span>{{ menu.name }}</span>
                 </nuxt-link>
               </li>
             </ul>
@@ -84,21 +35,16 @@
   </div>
 </template>
 <script>
+import menus from '@/menu'
+import SelectNetwork from '@/components/navbar/SelectNetwork.vue'
 export default {
   data () {
     return {
+      menus: menus
     }
   },
-  computed: {
-    lst_network () {
-      return this.$store.state.network.lst_networks
-    },
-    current_network () {
-      return this.$store.state.network.current_network
-    }
-  },
-  mounted () {
-    this.$store.commit('network/SET_CURRENT_NETWORK')
+  components: {
+    SelectNetwork
   },
   methods: {
     isActiveMenu (route) {
