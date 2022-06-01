@@ -1,5 +1,5 @@
 <template>
-    <div class="card_container">
+    <div class="card_container" v-if="isAddress(address)">
         <div class="card_cardHeader">
             <nuxt-link class="balances_address" :to="{name: 'account-address', params: { address: formatAddress(address) }}">
                 {{ formatAddress(address) }}
@@ -36,6 +36,11 @@ export default {
         formatAddress (value) {
             return Buffer.from(value).toString().slice(9);
         },
+        isAddress (value) {
+            const prefix = this.$store.state.network.current_network ? this.$store.state.network.current_network.prefix : 'cosmos'
+            const address = Buffer.from(value).toString().slice(9);
+            return address.indexOf(prefix) == 0
+        }
     }
 }
 </script>
