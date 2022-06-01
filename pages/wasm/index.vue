@@ -245,7 +245,7 @@ export default {
                 },
                 codes: {
                     after: 0,
-                    page: 0,
+                    page: 1,
                     per: 10,
                     offset: 0,
                     size: 50
@@ -317,12 +317,6 @@ export default {
         setCodeAfter () {
             this.pagination.codes.after = this.codes.slice(-1).pop().code_id;
         },
-        incrementContractPage () {
-            this.pagination.contracts.page += 1;
-        },
-        incrementCodePage () {
-            this.pagination.codes.page += 1;
-        },
         getPopularContracts () {
             const params =  {
                 offset: 0,
@@ -348,7 +342,6 @@ export default {
             this.getCodes({after, size}).then((data) => {
                 this.setCodes(data)
                 this.setLoadedCodes(true)
-                this.incrementCodePage()
             }).catch(error => {
                 console.log(error)
             })
